@@ -1,6 +1,6 @@
 ###SET WORK DIRECTORY
 
-setwd("C:/Users/gradi/Documents/Github/fish_parasite")
+setwd("C:/Users/gradi/Documents/Github/fish_parasite/R")
 
 ###IMPORT RAW DATA
 all_data <- read.table("all_data.csv",header=T, sep=";")
