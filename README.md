@@ -39,38 +39,38 @@ This type of data structure could apply to researchers working on a wide range o
 
 ### Key File Description
 
-1. **Data_raw folder** contains 2 files:
-a) **all_data.csv** : all the raw data collected for the Fish Parasite Project
-b) **meta.data.csv** : all the variables explained with unit of measurement
+1. **Data_raw folder** contains 2 files:  
+a) **all_data.csv** : all the raw data collected for the Fish Parasite Project  
+b) **meta.data.csv** : all the variables explained with unit of measurement  
 
-2. **R folder** contains: 
-a) **fish_parasite**, which is the R project
-b) **fish_parasite**, which is the script used in the project
+2. **R folder** contains:  
+a) **fish_parasite**, which is the R project  
+b) **fish_parasite**, which is the script used in the project  
 
 ### Statistical hypotheses
 
-**Exploration** 
-H0: experimental infection has no effect on individuals' exploration.  
-H1: experimental infection increases exploration (parasitic manipulation, more risk of predation)  
-H2: experimental infection decreases exploration (pathological response, amorphous)   
+**Exploration**  
+H0: experimental infection has no effect on individuals' exploration  
+H1: experimental infection increases exploration (parasitic manipulation, more risk of predation)   
+H2: experimental infection decreases exploration (pathological response, amorphous)  
 
-**Boldness**
-H0: experimental infection has no effect on boldness 
+**Boldness**  
+H0: experimental infection has no effect on boldness  
 H1: experimental infection increases fish boldness (parasitic manipulation to transmit the parasite, thus more risk of predation by increasing boldness)  
-H2: experimental infection decreases fish boldness (disease behaviour that makes the fish more cautious for survival) 
+H2: experimental infection decreases fish boldness (disease behaviour that makes the fish more cautious for survival)  
 
-**Activity** 
+**Activity**  
 H0: experimental infection has no effect on fish activity  
-H1: experimental infection increases activity (to counteract weakening by infection and seek more resources) 
-H2: experimental infection decreases activity (since fish are weakened by parasites) 
+H1: experimental infection increases activity (to counteract weakening by infection and seek more resources)  
+H2: experimental infection decreases activity (since fish are weakened by parasites)  
 
 **Behavioural syndrome**  
-H0: the three traits are not correlated 
+H0: the three traits are not correlated  
 H1: the three traits are positively correlated (which is often seen with these three traits)  
 
-**Repeatability** 
-H0: traits remain constant before and after infection (facilitates predictability of behaviors for future infection)  
-H1: traits do not remain constant before and after infection (infection changes trait constancy, making fish more vulnerable)   
+**Repeatability**  
+H0: traits remain constant before and after infection (facilitates predictability of behaviors for future infection)   
+H1: traits do not remain constant before and after infection (infection changes trait constancy, making fish more vulnerable)  
 
 <!-- GETTING STARTED -->
 ## Getting Started
