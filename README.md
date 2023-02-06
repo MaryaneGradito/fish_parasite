@@ -9,6 +9,7 @@ Created on 06-02-2023
       <a href="#about-the-project">About The Project</a>
       <ul>
         <li><a href="#key-file-description">Key File Description</a></li>
+	<li><a href="#statistical-hypotheses">Statistical Hypotheses</a></li>
       </ul>
     </li>
     <li>
@@ -46,6 +47,31 @@ b) **meta.data.csv** : all the variables explained with unit of measurement
 a) **fish_parasite**, which is the R project
 b) **fish_parasite**, which is the script used in the project
 
+### Statistical hypotheses
+
+**Exploration** 
+H0: experimental infection has no effect on individuals' exploration.  
+H1: experimental infection increases exploration (parasitic manipulation, more risk of predation)  
+H2: experimental infection decreases exploration (pathological response, amorphous)   
+
+**Boldness**
+H0: experimental infection has no effect on boldness 
+H1: experimental infection increases fish boldness (parasitic manipulation to transmit the parasite, thus more risk of predation by increasing boldness)  
+H2: experimental infection decreases fish boldness (disease behaviour that makes the fish more cautious for survival) 
+
+**Activity** 
+H0: experimental infection has no effect on fish activity  
+H1: experimental infection increases activity (to counteract weakening by infection and seek more resources) 
+H2: experimental infection decreases activity (since fish are weakened by parasites) 
+
+**Behavioural syndrome**  
+H0: the three traits are not correlated 
+H1: the three traits are positively correlated (which is often seen with these three traits)  
+
+**Repeatability** 
+H0: traits remain constant before and after infection (facilitates predictability of behaviors for future infection)  
+H1: traits do not remain constant before and after infection (infection changes trait constancy, making fish more vulnerable)   
+
 <!-- GETTING STARTED -->
 ## Getting Started
 
@@ -54,8 +80,6 @@ How to set the project...
 ### Prerequisites
 
 Softwares needed and how to install them
-
-This is an example of how to list things you need to use the software and how to install them.
 * ggplot2
   ```sh
   install.packages("ggplot2")
