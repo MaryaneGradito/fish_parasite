@@ -31,7 +31,7 @@ This project looks at the effect of internal parasites on the fish host personal
 Data were collected between May-September 2022 at la Station de Biologie des Laurentides, Université de Montréal, Canada.
 
 The objective is to determine whether an experimental co-infection caused by trematodes (*Uvulifer ambloplitis* and *Apophallus sp*)
-and cestodes (**Proteocephalus ambloplitis**) will change the host’s personality (*Lepomis gibbosus*). We looked at exploration, boldness 
+and cestodes (*Proteocephalus ambloplitis*) will change the host’s personality (*Lepomis gibbosus*). We looked at exploration, boldness 
 and activity before and after an experimental infection in a semi-natural environment (caging experiment in lake). 
 
 This project will generate complex datasets (i.e. repeated measures of behavioral traits through time, responses following a perturbation). 
@@ -70,8 +70,8 @@ Project Link: [https://github.com/MaryaneGradito/fish_parasite](https://github.c
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+<!-- Acknowledgments -->
 
-
-
+Thanks Dan, Sandra and Fred :) 
 
 <
