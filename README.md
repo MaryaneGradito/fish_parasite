@@ -68,10 +68,10 @@ Maryane Gradito - [@mary_gradito](https://twitter.com/mary_gradito) - email: mar
 
 Project Link: [https://github.com/MaryaneGradito/fish_parasite](https://github.com/MaryaneGradito/fish_parasite)
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- Acknowledgments -->
 
 Thanks Dan, Sandra and Fred :) 
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 <
