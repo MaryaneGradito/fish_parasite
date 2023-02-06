@@ -30,8 +30,8 @@ Created on 06-02-2023
 This project looks at the effect of internal parasites on the fish host personality, the pumpkinseed sunfish.
 Data were collected between May-September 2022 at la Station de Biologie des Laurentides, Université de Montréal, Canada.
 
-The objective is to determine whether an experimental co-infection caused by trematodes (**Uvulifer ambloplitis** and **Apophallus sp**)
-and cestodes (**Proteocephalus ambloplitis**) will change the host’s personality (**Lepomis gibbosus**). We looked at exploration, boldness 
+The objective is to determine whether an experimental co-infection caused by trematodes (*Uvulifer ambloplitis* and *Apophallus sp*)
+and cestodes (**Proteocephalus ambloplitis**) will change the host’s personality (*Lepomis gibbosus*). We looked at exploration, boldness 
 and activity before and after an experimental infection in a semi-natural environment (caging experiment in lake). 
 
 This project will generate complex datasets (i.e. repeated measures of behavioral traits through time, responses following a perturbation). 
