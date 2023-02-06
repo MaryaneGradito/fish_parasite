@@ -1,5 +1,5 @@
 # Fish Parasite Project
 
-### **Introduction to Repository**
+### Introduction to Repository
 
 ### *Key File Descriptions*	
