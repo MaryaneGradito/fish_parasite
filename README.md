@@ -59,7 +59,6 @@ This is an example of how to list things you need to use the software and how to
 * ggplot2
   ```sh
   install.packages("ggplot2")
-library(ggplot2)
   ```
 
 <!-- USAGE EXAMPLES -->
