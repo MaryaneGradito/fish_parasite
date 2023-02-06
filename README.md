@@ -54,11 +54,6 @@ How to set the project...
 ### Prerequisites
 
 Softwares needed and how to install them
-* ggplot2
-  ```sh
-install.packages("ggplot2")
-library(ggplot2) -g
-  ```
 
 This is an example of how to list things you need to use the software and how to install them.
 * npm
