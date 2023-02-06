@@ -38,21 +38,26 @@ This type of data structure could apply to researchers working on a wide range o
 
 ### Key File Description
 
-Data_raw folder: you will find all_data.csv, which contains all the data collected for the project. All the variables are explained in the meta.data.csv file.
+1. **Data_raw folder** contains 2 files:
+a) **all_data.csv** : all the raw data collected for the Fish Parasite Project
+b) **meta.data.csv** : all the variables explained with unit of measurement
 
+2. **R folder** contains: 
+a) **fish_parasite**, which is the R project
+b) **fish_parasite**, which is the script used in the project
 
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+How to set the project...
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
+Softwares needed and how to install them
+* ggplot2
   ```sh
-  npm install npm@latest -g
+install.packages("ggplot2")
+library(ggplot2)
   ```
 
 <!-- USAGE EXAMPLES -->
