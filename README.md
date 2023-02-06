@@ -44,8 +44,8 @@ a) **all_data.csv** : all the raw data collected for the Fish Parasite Project
 b) **meta.data.csv** : all the variables explained with unit of measurement  
 
 2. **R folder** contains:  
-a) **fish_parasite**, which is the R project  
-b) **fish_parasite**, which is the script used in the project  
+a) **fish_parasite.Rproj**, which is the R project  
+b) **fish_parasite.R**, which is the script used in the project  
 
 ### Statistical hypotheses
 
@@ -65,8 +65,8 @@ H1: experimental infection increases activity (to counteract weakening by infect
 H2: experimental infection decreases activity (since fish are weakened by parasites)  
 
 **Behavioural syndrome**  
-H0: the three traits are not correlated  
-H1: the three traits are positively correlated (which is often seen with these three traits)  
+H0: traits are not correlated  
+H1: traits are positively correlated (which is often seen with these three traits)  
 
 **Repeatability**  
 H0: traits remain constant before and after infection (facilitates predictability of behaviors for future infection)   
