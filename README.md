@@ -27,6 +27,8 @@ Created on 06-02-2023
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
+![photo](https://user-images.githubusercontent.com/124327996/216885394-6af47385-65ec-425b-98a1-cad19f8a065f.jpg)
+
 This project looks at the effect of internal parasites on the fish host personality, the pumpkinseed sunfish.
 Data were collected between May-September 2022 at la Station de Biologie des Laurentides, Université de Montréal, Canada.
 
