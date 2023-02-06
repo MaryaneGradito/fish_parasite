@@ -56,9 +56,10 @@ How to set the project...
 Softwares needed and how to install them
 
 This is an example of how to list things you need to use the software and how to install them.
-* npm
+* ggplot2
   ```sh
-  npm install npm@latest -g
+  install.packages("ggplot2")
+library(ggplot2)
   ```
 
 <!-- USAGE EXAMPLES -->
