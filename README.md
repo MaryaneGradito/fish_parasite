@@ -57,7 +57,7 @@ Softwares needed and how to install them
 * ggplot2
   ```sh
 install.packages("ggplot2")
-library(ggplot2)
+library(ggplot2) -g
   ```
 
 <!-- USAGE EXAMPLES -->
