@@ -19,6 +19,7 @@ as.factor(all_data$gonade)
 #############################INSTALL PACKAGES
 install.packages("ggplot2")
 library(ggplot2)
+
 #############################
 
 ### relationship between treatment (cage vs control) and number of parasites
@@ -170,3 +171,30 @@ qqline(log(all_data$boldness))
 # Test normality
 shapiro.test(log(all_data$boldness)) ## we are visually CLOSE to normality with log
 
+#############################CORRELATION BETWEEN TRAITS
+
+# Exploration and activity
+cor.test(all_data$exploration, log(all_data$activity), method = c("pearson")) #positive relationship
+
+# Visualize the relationship 
+ggplot(all_data, aes(exploration, log(activity)))+
+  geom_smooth()+
+  geom_point()
+
+# Exploration and boldness
+cor.test(all_data$exploration, log(all_data$boldness), method = c("pearson")) #negative, meaning more bold, more explorative
+
+# Visualize the relationship 
+ggplot(all_data, aes(exploration, log(boldness)))+
+  geom_smooth()+
+  geom_point()
+
+geom_raster(aes(exploration, log(activity, log(boldness))))
+
+# Activity and boldness
+cor.test(log(all_data$activity), log(all_data$boldness), method = c("pearson"))
+
+# Visualize the relationship 
+ggplot(all_data, aes(log(activity), log(boldness)))+
+  geom_smooth()+
+  geom_point()
