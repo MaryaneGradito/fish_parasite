@@ -154,7 +154,7 @@ qqnorm(all_data$exploration)
 qqline(all_data$exploration)
 
 # Test normality
-shapiro.test(all_data$exploration)
+shapiro.test(all_data$exploration) #not normal, but the distribution was quite normal. I don't know if we should transform it
 
 # Activity
 qqnorm(log(all_data$activity))
@@ -168,5 +168,5 @@ qqnorm(log(all_data$boldness))
 qqline(log(all_data$boldness))
 
 # Test normality
-shapiro.test(log(all_data$boldness)) ## we are CLOSE to normality with log
+shapiro.test(log(all_data$boldness)) ## we are visually CLOSE to normality with log
 
