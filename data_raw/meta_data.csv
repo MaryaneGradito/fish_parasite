@@ -1,6 +1,6 @@
 ID_fish;visual tag of colour for each fish (3 colours)
 num_fish;fish number 
-cage;cage number, used for the caging experiment to infect the fish (6 fish per group)
+cage;cage number, used for the caging experiment to infect the fish (6 fish per cage). There is 10 cages and 2 control groups who stayed in the lab (C1 and C2)
 trial;trial number (1-2-3-4)
 boldness;boldness trials, latency to emerge from a shelter (seconds, for a max of 1200s) after a 15 minutes acclimatation
 bassin_bold;bassin number used during the boldness trials
@@ -26,11 +26,13 @@ SL_2;standard length (millimeters) of the fish before the experimental infection
 SL_3;standard length (millimeters) of the fish after the experimental infection, i.e. after the caging experiment (08-08-2022)
 SL_4;standard length (millimeters) of the fish before sacrifice for dissection (29-08-2022)
 BS_pre;number of black spots in total before the experimental infection with caging experiment
-BS_post;number of black spots in total after the experimental infection with caging experiment
+BS_post_corps;number of blackspots in total on the body, fins and gills after the experimental infection with caging experiment
+BS_muscle;number of blackspots in total in the muscles after the experimental infection with caging experiment
+BS_post_tot;number of blackspots in total after the experimental infection with caging experiment (body, fins, gills and muscles combined)
 P04_alive;number of cestodes alive, i.e. moving in the digestive tract or liver of the fish when dissecting the fish
 P04_dead;number of cestodes dead, i.e. not moving in the digestive tract or liver of the fish when dissecting the fish
 P013_alive;number of nematode alive, i.e. moving when dissecting the fish
 P013_dead;number of nematode dead, i.e. not moving when dissecting the fish
-P06;number of 
+P06;number of cestodes in larval form
 gonade;presence (1) or absence (0) of gonads in the fish
-treatment;C (Control, not infected experimentally, during trial 1 and 2) or E (Experimentally infected, during trial 3 and 4)
+treatment;treatment group associated with the fish : C (Control, not infected experimentally, during trial 1 and 2) or E (Experimentally infected, during trial 3 and 4)
