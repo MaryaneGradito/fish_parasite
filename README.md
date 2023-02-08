@@ -55,23 +55,23 @@ Analysis Step 1:
 
 Question 1: Do we find evidence of personality (i.e., consistent differences in behaviour among individuals)? Does boldness, exploration and activity form a beavioural syndrome?
 
-Questions 2: Does parasitic infection impact the reatability of each trait and the strength of behavioural syndromes?
+Question 2: Does parasitic infection impact the repeatability of each trait and the strength of behavioural syndromes?
 
-+ Hypothesis 1: We expect that the repatability of the of the traits to be reduced because parasites should reduce between individual variance to maximize transmission. Behavioural syndromes should be un-affected. 
++ Hypothesis 1: We expect that the repeatability of the traits to be reduced because parasites should reduce between individual variance to maximize transmission. Behavioural syndromes should be un-affected. 
 
-+ Hypothesis 2: We expect that the repatability of the of the traits to increase because different parasite and host genotypes / immune systems will result in some parasites being more or less affected which should increase between individual variance. Behavioural syndromes might be expected to become stronger (more correlated). 
++ Hypothesis 2: We expect that the repeatability of the traits to increase because different parasite and host genotypes / immune systems will result in some parasites being more or less affected which should increase between individual variance. Behavioural syndromes might be expected to become stronger (more correlated). 
 
-Analsysi Step 2: 
+Analysis Step 2: 
 
-Question 2: How does behaviour change with parasite infection? 
+Question 2: How does behaviour change with parasite infection?  
 
-Hypothesis 1: Parasites increase boldness, exploration, and activity because fish are intermediate hosts and increased boldness, activity etc results in a higher probability of predation which facilitates parasite host tranmissson. 
+Hypothesis 1: Parasites increase boldness, exploration, and activity because fish are intermediate hosts and increased boldness, activity etc results in a higher probability of predation which facilitates parasite host transmission.  
     
-+ Predition 1(H1): We expect mean boldness, exploration and activity to increase in indiviudals experimentally infected with parasite.
++ Prediction 1(H1): We expect mean boldness, exploration and activity to increase in indiviudals experimentally infected with parasites.  
 
-Hypothesis 2: Parasites decrease boldness, exploration, and activity because because it's energetically costly to mount an immune response against parasite infection. 
+Hypothesis 2: Parasites decrease boldness, exploration, and activity because it's energetically costly to mount an immune response against parasite infection.  
     
-+ Predition 1(H1): We expect mean boldness, exploration and activity to decrease in indiviudals experimentally infected with parasite.
++ Prediction 1(H1): We expect mean boldness, exploration and activity to decrease in indiviudals experimentally infected with parasites.  
 
 ### Statistical hypotheses
 
@@ -113,7 +113,7 @@ H2: experimental infection decreases activity (since fish are weakened by parasi
 1) Model 1: [B, E, A] = u + trtment_{E} + tank + (-1 + trtment_{E}| ID) + (1|Cage)
 2) Model 2: [B, E, A] = u + trtment_{E} + (-1 + trtment_{E}| ID) + (1|Cage)
 
-+ Above models allow us to 1) estimate repeatbility for ALL traits; 2) estimate the behavioual trait correlations; 3) estimate these within EACH treatment group (C vs E).
++ Above models allow us to 1) estimate repeatability for ALL traits; 2) estimate the behavioual trait correlations; 3) estimate these within EACH treatment group (C vs E).
 
 *Step 2*
 + Subset the experimental and control fish into two datasets (60 fish and 3 measurements for each C and E group) then fit the following models:
