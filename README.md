@@ -53,7 +53,7 @@ b) **fish_parasite.R**, which is the script used in the project
 
 Analysis Step 1:
 
-Question 1: Do we find evidence of personality (i.e., consistent difference sin behaviour among individuals)? Does boldness, exploration and activity form a beavioural syndrome?
+Question 1: Do we find evidence of personality (i.e., consistent differences in behaviour among individuals)? Does boldness, exploration and activity form a beavioural syndrome?
 
 Questions 2: Does parasitic infection impact the reatability of each trait and the strength of behavioural syndromes?
 
@@ -105,11 +105,26 @@ H2: experimental infection decreases activity (since fish are weakened by parasi
 
 ## Models:
 
-Two-step Strategy:
+**Three-step Strategy**:
 
-+ Using all data (72 fish and 4 measurements / fish) we will fit the following models:
+*Step 1*
++ Using all data (60 fish and 4 measurements / fish) we will fit the following models:
 
-1) Model 1: [B, E, A] = $\Beta_{o}$
+1) Model 1: [B, E, A] = u + trtment_{E} + tank + (-1 + trtment_{E}| ID) + (1|Cage)
+2) Model 2: [B, E, A] = u + trtment_{E} + (-1 + trtment_{E}| ID) + (1|Cage)
+
++ Above models allow us to 1) estimate repeatbility for ALL traits; 2) estimate the behavioual trait correlations; 3) estimate these within EACH treatment group (C vs E).
+
+*Step 2*
++ Subset the experimental and control fish into two datasets (60 fish and 3 measurements for each C and E group) then fit the following models:
+
+
+1) Model 1 (Experimental Group): [B, E, A] = u + z_body_condition + z_parasite_load + tank + (1 | ID) + + (1|Cage)
+2) Model 2 (Experimental Group): [B, E, A] = u + z_body_condition + z_parasite_load + z_parasite_load^2 + tank + (1 | ID) + + (1|Cage)
+3) Model 3 (Control Group): [B, E, A] = u + z_body_condition + tank + (1 | ID) + (1|Cage)
+
+*Step 3*
++ We have two different parasites in E group. So, we want to fit models that possibly look at interactive effects of the two, but this will depend on how many parameters that we need to estimate above.
 
 
 <!-- GETTING STARTED -->
