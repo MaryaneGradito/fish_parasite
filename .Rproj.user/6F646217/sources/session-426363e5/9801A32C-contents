@@ -10,7 +10,6 @@ all_data
 summary(all_data)
 head(all_data)
 
-###
 as.factor(all_data$num_fish)
 as.factor(all_data$cage)
 as.factor(all_data$trial)
