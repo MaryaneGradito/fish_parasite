@@ -29,7 +29,7 @@ boxplot(all_data$BS_pre ~ as.factor(all_data$cage))
 ###
 
 ### relationship between different parasites
-plot(all_data$P04_tot~ all_data$BS_post_tot) #cestode alive + BS after infection
+plot(all_data$P04_tot ~ all_data$BS_post_tot) #cestode alive + BS after infection
 
 ###correlation between traits
 ggplot(all_data, aes(x=exploration, y= boldness)) +
@@ -198,3 +198,139 @@ cor.test(log(all_data$activity), log(all_data$boldness), method = c("pearson"))
 ggplot(all_data, aes(log(activity), log(boldness)))+
   geom_smooth()+
   geom_point()
+
+############################# MODELS ############ FIRST TRY
+# install.packages('pacman') Load Libraries and relevant data
+install.packages('pacman')
+pacman::p_load(klippy, brms, dplyr, here, flextable, pander)
+
+
+# Get the raw data. We need this for back transformation from z-scale making
+# sure fish_ID is coded as a factor (done automatically before R v4+)
+# square-root transforming novel and predator response variables z-scaling all
+# variables
+
+dat <- read.table("./data_raw/all_data.csv",header=T, sep=";")
+dat
+dat <- dat %>%
+  dplyr::mutate(ID_fish = factor(ID_fish, levels = unique(ID_fish)),
+                activity = scale(log(activity)), boldness = scale(log(boldness)),
+                exploration = scale(exploration), tank1 = scale(bassin_bold), tank2 = scale(bassin_exp),
+                id = ID_fish)
+dat
+# processed Stan models for comparison
+load("./Results/stanmodels_processed.Rdata")
+stanproc_personality_shglm_aggression <- stanmods[stanmods$model == "personality shglm" &
+                                                    stanmods$behaviour1 == "aggression", ]
+stanproc_personality_dhglm_aggression <- stanmods[stanmods$model == "personality dhglm" &
+                                                    stanmods$behaviour1 == "aggression", ]
+stanproc_personality_plasticity_shglm_aggression <- stanmods[stanmods$model == "personality & plasticity shglm" &
+                                                               stanmods$behaviour1 == "aggression", ]
+stanproc_personality_plasticity_dhglm_aggression <- stanmods[stanmods$model == "personality & plasticity dhglm" &
+                                                               stanmods$behaviour1 == "aggression", ]
+stanproc_bivar_shglm_activity_aggression <- stanmods[stanmods$model == "bivariate shglm" &
+                                                       stanmods$behaviour1 == "activity" & stanmods$behaviour2 == "aggression", ]
+stanproc_bivar_dhglm_activity_aggression <- stanmods[stanmods$model == "bivariate dhglm" &
+                                                       stanmods$behaviour1 == "activity" & stanmods$behaviour2 == "aggression", ]
+#Load in the functions that will be needed to process output from the models:
+
+# Population-level intercept
+func_Bp <- function(B0, B1) {
+  Bp <- (2 * B0 + B1)/2  # assumes 50/50 ratio for B1 (in our example = sex)
+  return(Bp)
+}
+
+# Total variance, equation 40. Function for summing dataframe of variance
+# components
+func_sum_var <- function(vars) {
+  sum_var <- sapply(1:nrow(vars), function(x) sum(vars[x, ], na.rm = T))
+  return(sum_var)
+}
+
+
+# Variance for fixed effects
+func_var_fixed <- function(B1, B2, data) {
+  # model matrix for fixed effects
+  X <- model.matrix(~1 + sex + age.Z, data = data)
+  X1 <- X[, 2]
+  X2 <- X[, 3]
+  var_fixed <- sapply(1:length(B1), function(x) var(X1 * B1[x] + X2 * B2[x]))
+  return(var_fixed)
+}
+
+# within-individual standard deviation
+func_var_within <- function(Bpv, sigma_v0, var_fixed_v) {
+  
+  # summed variance components
+  var_within_exp <- func_sum_var(vars = data.frame(sigma_v0^2, var_fixed_v))
+  # conversion back from log scale
+  var_within <- func_ln_convert(mu_ln = Bpv, sigma_ln = sqrt(var_within_exp))$mu_raw
+  
+  return(var_within)
+}
+
+# Repeatability for the dispersion model for DHGLM
+func_Rp_var <- function(Bpv, sigma_v0, var_fixed_v, var_p) {
+  
+  # sum of IDv0 and fixedV = total variance in residual variance on
+  # log-normal scale:
+  var_residvar_exp <- func_sum_var(vars = data.frame(sigma_v0^2, var_fixed_v))
+  # converting back to same scale as mean model:
+  sigma_residvar <- func_ln_convert(mu_ln = Bpv, sigma_ln = sqrt(var_residvar_exp))$sigma_raw
+  
+  # variance in phenotypic variance
+  total_var_var <- 2 * var_p^2 + 3 * sigma_residvar^2
+  
+  # getting variance in individual component through the preservation of the
+  # proportionality (i.e. ratio method)
+  ratio <- sigma_v0^2/(var_residvar_exp)
+  var_ID <- sigma_residvar^2 * ratio
+  
+  Rp_var <- var_ID/total_var_var
+  return(Rp_var)
+}
+
+# Convert from ln to raw scale
+func_ln_convert <- function(mu_ln, sigma_ln) {
+  
+  mu_raw <- exp(mu_ln + sigma_ln^2/2)
+  var_raw <- (exp(sigma_ln^2) - 1) * exp(2 * mu_ln + sigma_ln^2)
+  
+  x <- data.frame(mu_raw, sigma_raw = sqrt(var_raw))
+  return(x)
+}
+
+
+# Function takes random slopes and intercepts and calculates the between
+# individual correlation between them and returns this correlation for each row
+# (i.e., posterior sampling iteration). It returns a posterior distribution of
+# the correlation.
+
+cor_calc <- function(slopes, intercepts) {
+  cors <- c()
+  for (i in 1:dim(intercepts)[1]) {
+    cors <- c(cors, cor(as.numeric(slopes[i, ]), as.numeric(intercepts[i, ])))
+  }
+  return(cors)
+}
+
+########### Personality ########## EXAMPLE 1:
+########### standata_personality_shglm_aggression; replicates the following
+########### model stan_personality_shglm_aggression <- stan(file =
+########### './Code/stancode_personality_shglm.stan', data =
+########### standata_personality_shglm_aggression, pars = save_pars, iter =
+########### 6000, warmup = 2000, chains = 3, cores = 3)
+
+rerun1 = FALSE
+
+if (rerun1) {
+  formula_personality_shglm_boldness <- bf(boldness ~ treatment + tank1 + tank2 + (-1 + treatment | id) + (1 | cage))
+  brms_personality_shglm_boldness <- brms::brm(formula_personality_shglm_boldness,
+                                                 data = dat, iter = 6000, warmup = 2000, chains = 3, cores = 3, save_pars = save_pars())
+  saveRDS(brms_personality_shglm_boldness, "./Models/brms_models/brms_personality_shglm_boldness")
+} else {
+  brms_personality_shglm_boldness <- readRDS(here::here("Models/brms_models",
+                                                          "brms_personality_shglm_boldness"))
+}
+
+summary(brms_personality_shglm_boldness)
