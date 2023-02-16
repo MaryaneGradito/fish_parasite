@@ -203,12 +203,15 @@ ggplot(all_data, aes(log(activity), log(boldness)))+
 # install.packages('pacman') Load Libraries and relevant data
 install.packages('pacman')
 pacman::p_load(klippy, brms, dplyr, here, flextable, pander)
-
+library(pacman)
 
 # Get the raw data. We need this for back transformation from z-scale making
 # sure fish_ID is coded as a factor (done automatically before R v4+)
 # square-root transforming novel and predator response variables z-scaling all
 # variables
+
+### DO I need to scale all my variables? ###
+### WHICH body condition do we use in the models ? There is two body condition measure for each group (before trial 1 and 3, after trial 2 and 4)
 
 dat <- read.table("./data_raw/all_data.csv",header=T, sep=";")
 dat
@@ -216,7 +219,8 @@ dat <- dat %>%
   dplyr::mutate(ID_fish = factor(ID_fish, levels = unique(ID_fish)),
                 activity = scale(log(activity)), boldness = scale(log(boldness)),
                 exploration = scale(exploration), tank1 = scale(bassin_bold), tank2 = scale(bassin_exp),
-                id = ID_fish)
+                z_body_condition = scale(fulton3), z_parasite_load = scale(parasite_load), 
+                (id = ID_fish))
 dat
 # processed Stan models for comparison
 load("./Results/stanmodels_processed.Rdata")
@@ -246,7 +250,6 @@ func_sum_var <- function(vars) {
   sum_var <- sapply(1:nrow(vars), function(x) sum(vars[x, ], na.rm = T))
   return(sum_var)
 }
-
 
 # Variance for fixed effects
 func_var_fixed <- function(B1, B2, data) {
@@ -314,23 +317,98 @@ cor_calc <- function(slopes, intercepts) {
   return(cors)
 }
 
-########### Personality ########## EXAMPLE 1:
-########### standata_personality_shglm_aggression; replicates the following
-########### model stan_personality_shglm_aggression <- stan(file =
-########### './Code/stancode_personality_shglm.stan', data =
-########### standata_personality_shglm_aggression, pars = save_pars, iter =
-########### 6000, warmup = 2000, chains = 3, cores = 3)
+##################### STEP 1 :
+###Using all data (60 fish and 4 measurements / fish) we will fit the following models:
+###Model 1: [B, E, A] = u + trtment_{E} + tank + (-1 + trtment_{E}| ID) + (1|Cage)
+###Model 2: [B, E, A] = u + trtment_{E} + (-1 + trtment_{E}| ID) + (1|Cage)
+###Above models allow us to 
+###1) estimate repeatability for ALL traits; 2) estimate the behavioual trait correlations; 3) estimate these within EACH treatment group (C vs E).
 
+###Can't run it. How do I include all traits in the y? ###
+### I don't remember what is u ###
+### There is two tanks, because one for exploration + activity and one for boldness ###
+
+### Model 1: with tank effect
 rerun1 = FALSE
 
 if (rerun1) {
-  formula_personality_shglm_boldness <- bf(boldness ~ treatment + tank1 + tank2 + (-1 + treatment | id) + (1 | cage))
+  formula_personality_shglm_boldness <- bf(boldness ~ u + treatment + tank1 + tank2 + (-1 + treatment | id) + (1 | cage))
   brms_personality_shglm_boldness <- brms::brm(formula_personality_shglm_boldness,
                                                  data = dat, iter = 6000, warmup = 2000, chains = 3, cores = 3, save_pars = save_pars())
   saveRDS(brms_personality_shglm_boldness, "./Models/brms_models/brms_personality_shglm_boldness")
 } else {
   brms_personality_shglm_boldness <- readRDS(here::here("Models/brms_models",
                                                           "brms_personality_shglm_boldness"))
+}
+
+summary(brms_personality_shglm_boldness)
+
+### Model 2: without tank effect
+if (rerun1) {
+  formula_personality_shglm_boldness <- bf(boldness ~ u + treatment + (-1 + treatment | id) + (1 | cage))
+  brms_personality_shglm_boldness <- brms::brm(formula_personality_shglm_boldness,
+                                               data = dat, iter = 6000, warmup = 2000, chains = 3, cores = 3, save_pars = save_pars())
+  saveRDS(brms_personality_shglm_boldness, "./Models/brms_models/brms_personality_shglm_boldness")
+} else {
+  brms_personality_shglm_boldness <- readRDS(here::here("Models/brms_models",
+                                                        "brms_personality_shglm_boldness"))
+}
+
+summary(brms_personality_shglm_boldness)
+
+
+##################### STEP 2 :
+###Subset the experimental and control fish into two datasets (60 fish and 4 measurements for each C and E group) then fit the following models:
+###Model 1 (Experimental Group): [B, E, A] = u + z_body_condition + z_parasite_load + tank + (1 | ID) + + (1|Cage)
+###Model 2 (Experimental Group): [B, E, A] = u + z_body_condition + z_parasite_load + z_parasite_load^2 + tank + (1 | ID) + + (1|Cage)
+###Model 3 (Control Group): [B, E, A] = u + z_body_condition + tank + (1 | ID) + (1|Cage)
+
+### Which body condition we use ? I have 4 measures ###
+
+### Subset of dataset into two groups
+# Experimental group
+dat_E <-subset(dat, treatment == "E")
+dat_E
+
+# Control group
+dat_C <-subset(dat, treatment == "C")
+dat_C
+
+### Model 1: experimental group
+if (rerun1) {
+  formula_personality_shglm_boldness <- bf(boldness ~ u + z_body_condition + z_parasite_load + tank1 + tank2 + (1 | id) + (1 | cage))
+  brms_personality_shglm_boldness <- brms::brm(formula_personality_shglm_boldness,
+                                               data = dat_E, iter = 6000, warmup = 2000, chains = 3, cores = 3, save_pars = save_pars())
+  saveRDS(brms_personality_shglm_boldness, "./Models/brms_models/brms_personality_shglm_boldness")
+} else {
+  brms_personality_shglm_boldness <- readRDS(here::here("Models/brms_models",
+                                                        "brms_personality_shglm_boldness"))
+}
+
+summary(brms_personality_shglm_boldness)
+
+### Model 2: experimental group
+if (rerun1) {
+  formula_personality_shglm_boldness <- bf(boldness ~ u + z_body_condition + z_parasite_load + z_parasite_load^2 + tank1 + tank2 + (1 | id) + (1 | cage))
+  brms_personality_shglm_boldness <- brms::brm(formula_personality_shglm_boldness,
+                                               data = dat_E, iter = 6000, warmup = 2000, chains = 3, cores = 3, save_pars = save_pars())
+  saveRDS(brms_personality_shglm_boldness, "./Models/brms_models/brms_personality_shglm_boldness")
+} else {
+  brms_personality_shglm_boldness <- readRDS(here::here("Models/brms_models",
+                                                        "brms_personality_shglm_boldness"))
+}
+
+summary(brms_personality_shglm_boldness)
+
+### Model 3: control group 
+if (rerun1) {
+  formula_personality_shglm_boldness <- bf(boldness ~ u + z_body_condition + tank1 + tank2 + (1 | id) + (1 | cage))
+  brms_personality_shglm_boldness <- brms::brm(formula_personality_shglm_boldness,
+                                               data = dat_C, iter = 6000, warmup = 2000, chains = 3, cores = 3, save_pars = save_pars())
+  saveRDS(brms_personality_shglm_boldness, "./Models/brms_models/brms_personality_shglm_boldness")
+} else {
+  brms_personality_shglm_boldness <- readRDS(here::here("Models/brms_models",
+                                                        "brms_personality_shglm_boldness"))
 }
 
 summary(brms_personality_shglm_boldness)
