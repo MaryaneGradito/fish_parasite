@@ -22,6 +22,39 @@ library(ggplot2)
 
 #############################
 
+
+### BS distribution
+hist(all_data$BS_post_tot)
+
+min(all_data$BS_post_tot)
+max(all_data$BS_post_tot)
+median(all_data$BS_post_tot)
+
+### Cestodes distribution
+hist(all_data$P04_alive)
+
+min(all_data$P04_alive)
+max(all_data$P04_alive)
+median(all_data$P04_alive)
+mean(all_data$P04_alive)
+
+### Nematodes distribution
+hist(all_data$P013_alive)
+
+min(all_data$P013_alive)
+max(all_data$P013_alive)
+
+### BS gained after infection
+
+all_data$BS_gain<- all_data$BS_post_tot - all_data$BS_pre
+all_data
+
+hist(all_data$BS_gain)
+min(all_data$BS_gain) ### miscount, some fish have less BS after infection
+max(all_data$BS_gain)
+median(all_data$BS_gain)
+mean(all_data$BS_gain)
+
 ### relationship between treatment (cage vs control) and number of parasites
 boxplot(all_data$P04_alive ~ as.factor(all_data$cage))
 boxplot(all_data$BS_post_tot ~ as.factor(all_data$cage))
