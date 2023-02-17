@@ -125,6 +125,7 @@ H2: experimental infection decreases activity (since fish are weakened by parasi
 
 *Step 3*
 + We have two different parasites in E group. So, we want to fit models that possibly look at interactive effects of the two, but this will depend on how many parameters that we need to estimate above.
++ Yes, we want to do this as the parasites have different final hosts and should be in conflict. 
 
 
 <!-- GETTING STARTED -->
