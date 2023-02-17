@@ -1,0 +1,35 @@
+---
+title: "results_maryane"
+output: html_document
+date: '2023-02-16'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+# RESULTS
+
+### Internal parasites
+
+The caging experiment successfully infected our treatment fish. Control fish that stayed in the laboratory had no alive parasite, which indicate that the praziquantel treatment was effective. The two most abundant species found in the experimentally infected fish were trematodes causing the blackspot disease (Trematoda: *Apophallus sp.* and *Uvulifer sp.*; min-max: 0-62; median = 9) and the bass tapeworm (Cestoda: *Proteocephalus ambloplites*; min-max: 0-36; median = 4). The most abundant species of trematode causing blackspots was *Apophallus sp*. (Binning, Lanthier, unpublished data), but *Uvulifer sp.* was found more frequently inside the muscles (MG, personal observations).Experimentally fish gained in mean 8 blackspots, and were found on the fines, body, gills and inside the muscles. Bass tapeworm were mostly found in the liver, stomach and digestive tract, occasionally around the spleen (parasite count: 9), and rarely on the gills (parasite count: 3) or the heart (parasite count: 2). Unknown nematode species were found rarely in the body cavity (alive parasite count: 4).
