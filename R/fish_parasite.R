@@ -280,11 +280,18 @@ dat
                      sigma ~ -1 + treatment) + gaussian()
      explore_2 <- bf(exploration ~ 1 + treatment + (-1 + treatment |q| ID_fish) + (1 | cage),
                      sigma ~ -1 + treatment) + gaussian()
-    
+
+if(rerun){
     model2 <- brms::brm(boldness_2 + activity_2 + explore_2 + set_rescor(TRUE), 
                         data = dat, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
-                        save_pars = save_pars(), file = "./output/models/model2", file_refit = "on_change",
+                        save_pars = save_pars(),
                         control = list(adapt_delta = 0.98))
+    
+    saveRDS(model2, file = "./output/models/model2")
+    
+} else{
+  model2 <- readRDS(file = "./output/models/model2")
+}
     model2 <- add_criterion(model2, c("loo", "waic"))
     
     # Calculate repeatability
