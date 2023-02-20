@@ -1,8 +1,13 @@
-#############################IMPORT RAW DATA
-all_data <- read.table("./data_raw/all_data.csv",header=T, sep=";")
-all_data
+#############################
+# IMPORT RAW DATA
+#############################
+  all_data <- read.table("./data_raw/all_data.csv",header=T, sep=";")
+  all_data
 
-#############################Checking out the data
+#############################
+# Checking out the data
+#############################
+
 summary(all_data)
 head(all_data)
 str(all_data)
@@ -250,7 +255,8 @@ dat
   activity_1 <- bf(log_activity ~ 1 + treatment + tank2 + (-1 + treatment |q| ID_fish) + (1 | cage)) + gaussian()
    explore_1 <- bf(exploration ~ 1 + treatment + tank2 + (-1 + treatment |q| ID_fish) + (1 | cage)) + gaussian()
    
-  model1 <- brms::brm(boldness_1 + activity_1 + explore_1, data = dat, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
+  model1 <- brms::brm(boldness_1 + activity_1 + explore_1 + set_rescor(TRUE), 
+                      data = dat, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
                       save_pars = save_pars(), file = "./output/models/model1", file_refit = "on_change",
                       control = list(adapt_delta = 0.98))
     
@@ -266,7 +272,8 @@ dat
     activity_2 <- bf(log_activity ~ 1 + treatment + (-1 + treatment |q| ID_fish) + (1 | cage)) + gaussian()
     explore_2 <- bf(exploration ~ 1 + treatment + (-1 + treatment |q| ID_fish) + (1 | cage)) + gaussian()
     
-    model2 <- brms::brm(boldness_2 + activity_2 + explore_2, data = dat, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
+    model2 <- brms::brm(boldness_2 + activity_2 + explore_2 + set_rescor(TRUE), 
+                        data = dat, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
                         save_pars = save_pars(), file = "./output/models/model2", file_refit = "on_change",
                         control = list(adapt_delta = 0.98))
     
@@ -300,7 +307,8 @@ boldness_E1 <- bf(log_boldness ~ 1 + z_parasite_load + tank1 + (1 | ID_fish) + (
 activity_E1 <- bf(log_activity ~ 1 + z_parasite_load + tank2 + (1 | ID_fish) + (1 | cage)) + gaussian()
 explore_E1 <- bf(exploration ~ 1 + z_parasite_load + tank2 + (1 | ID_fish) + (1 | cage)) + gaussian()
 
-model_E1 <- brms::brm(boldness_E1 + activity_E1 + explore_E1, data = dat, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
+model_E1 <- brms::brm(boldness_E1 + activity_E1 + explore_E1 + set_rescor(TRUE), 
+                      data = dat_E, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
                     save_pars = save_pars(), file = "./output/models/model_E1", file_refit = "on_change",
                    control = list(adapt_delta = 0.98))
 
