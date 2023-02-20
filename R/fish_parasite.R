@@ -287,10 +287,10 @@ if(rerun){
                         save_pars = save_pars(),
                         control = list(adapt_delta = 0.98))
     
-    saveRDS(model2, file = "./output/models/model2")
+    saveRDS(model2, file = "./output/models/model2.rds")
     
 } else{
-  model2 <- readRDS(file = "./output/models/model2")
+  model2 <- readRDS(file = "./output/models/model2.rds")
 }
     model2 <- add_criterion(model2, c("loo", "waic"))
     
