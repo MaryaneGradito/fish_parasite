@@ -20,12 +20,12 @@ as.factor(all_data$gonade)
 install.packages("ggplot2")
 library(ggplot2)
 
-#############################
-
-
-### BS distribution
+#############################let's explore the data
+#############################Parasites count
+### Blackspots distribution
 hist(all_data$BS_post_tot)
 
+# Blackspots info
 min(all_data$BS_post_tot)
 max(all_data$BS_post_tot)
 median(all_data$BS_post_tot)
@@ -33,6 +33,7 @@ median(all_data$BS_post_tot)
 ### Cestodes distribution
 hist(all_data$P04_alive)
 
+# Cestodes info
 min(all_data$P04_alive)
 max(all_data$P04_alive)
 median(all_data$P04_alive)
@@ -41,15 +42,18 @@ mean(all_data$P04_alive)
 ### Nematodes distribution
 hist(all_data$P013_alive)
 
+# Nematodes info
 min(all_data$P013_alive)
 max(all_data$P013_alive)
 
-### BS gained after infection
-
+### Looking at BS gained after infection
+# Create new columns in the dataset
 all_data$BS_gain<- all_data$BS_post_tot - all_data$BS_pre
-all_data
 
+# BS gain distribution
 hist(all_data$BS_gain)
+
+# BS gain info
 min(all_data$BS_gain) ### miscount, some fish have less BS after infection
 max(all_data$BS_gain)
 median(all_data$BS_gain)
@@ -64,7 +68,7 @@ boxplot(all_data$BS_pre ~ as.factor(all_data$cage))
 ### relationship between different parasites
 plot(all_data$P04_tot ~ all_data$BS_post_tot) #cestode alive + BS after infection
 
-###correlation between traits
+###Visual correlation between traits
 ggplot(all_data, aes(x=exploration, y= boldness)) +
   geom_point() #relation positive ? 
 
@@ -99,25 +103,18 @@ ggplot(data = all_data,
   stat_summary(fun = mean, shape = 13, size = 1, colour = "red")
 
 #############################DATA PREP, CREATION OF DIFFERENT VARIABLES
-###Create a new columm with total cestode (alive + dead)
+###Create a new column with total cestode (alive + dead)
 
 all_data$P04_tot<-all_data$P04_alive + all_data$P04_dead
 all_data$P04_tot #we have all cestodes together, dead or alive, to know their weight 
 
-###Create a new columm with total nématode (alive + dead)
-### We might not use this parasite in the analysis since there were not abundant, but they are heavy so need it for adjusted mass
-
-all_data$P013_tot <- all_data$P013_alive + all_data$P013_dead
-all_data$P013_tot
-
-###Add new colum in dataset for parasite loads (BS post infection + cestodes alive combined)
+###Add new column in dataset for parasite loads (BS post infection + cestodes alive combined)
 all_data$parasite_load<- (all_data$BS_post_tot + (all_data$P04_alive + all_data$P06))
 all_data$parasite_load #this will be useful later in the models
 
 ###Calculate adjusted fish mass (total fish mass - parasite mass)
 ###Mean average for adult cestodes: 0.003g, larval form: 0.0008g, nematode ___g
-## P04_tot*0.003 / P06*0008 / P013_tot* _____ (need this info from Marie)
-
+## P04_tot*0.003 / P06*0008
 ###I can't calculate the adjusted mass for when they arrive in the lab and before the caging experiment, since we don't know their internal parasite loads yet
 
 ###Adjusted mass after caging experiment
@@ -147,6 +144,7 @@ all_data$fulton4
 #############################DATA DISTRIBUTION & NORMALITY
 ###Let's look at the data distribution for our response variables (boldness, exploration and activity) for both treatment group
 
+### Distribution for all fish
 hist(all_data$exploration)
 hist(all_data$activity)
 hist(as.numeric(all_data$boldness))
@@ -158,18 +156,12 @@ ggplot(all_data, aes(x = exploration)) +
   scale_color_manual(values = c("#00AFBB", "#E7B800")) +
   scale_fill_manual(values = c("#00AFBB", "#E7B800"))
 
-# Density plot
-ggplot(all_data, aes(x=exploration)) + geom_density(color="blue")
-
 # Distribution of activity for group C and E
 ggplot(all_data, aes(x = activity)) +
   geom_histogram(aes(color = treatment, fill = treatment), 
                  position = "identity", bins = 30, alpha = 0.4) +
   scale_color_manual(values = c("#00AFBB", "#E7B800")) +
   scale_fill_manual(values = c("#00AFBB", "#E7B800"))
-
-# Density plot
-ggplot(all_data, aes(x=activity)) + geom_density(color="blue")
 
 # Distribution of boldness for group C and E
 ggplot(all_data, aes(x = boldness)) +
@@ -178,21 +170,16 @@ ggplot(all_data, aes(x = boldness)) +
   scale_color_manual(values = c("#00AFBB", "#E7B800")) +
   scale_fill_manual(values = c("#00AFBB", "#E7B800"))
 
-# Density plot
-ggplot(all_data, aes(x=boldness)) + geom_density(color="blue")
-
-
 #############################NORMALITY AND TRANSFORMATION
 # Exploration
 qqnorm(all_data$exploration)
-qqline(all_data$exploration)
+qqline(all_data$exploration) #looks normal
 
-# Test normality
-shapiro.test(all_data$exploration) #not normal, but the distribution was quite normal. I don't know if we should transform it
+shapiro.test(all_data$exploration) #not normal but visually yes
 
 # Activity
 qqnorm(log(all_data$activity))
-qqline(log(all_data$activity))
+qqline(log(all_data$activity)) #looks normal with log transformation
 
 # Test normality
 shapiro.test(log(all_data$activity)) ## normality if we transform with log
@@ -204,7 +191,7 @@ qqline(log(all_data$boldness))
 # Test normality
 shapiro.test(log(all_data$boldness)) ## we are visually CLOSE to normality with log
 
-#############################CORRELATION BETWEEN TRAITS
+#############################EXPLORATION OF CORRELATION BETWEEN TRAITS
 
 # Exploration and activity
 cor.test(all_data$exploration, log(all_data$activity), method = c("pearson")) #positive relationship
@@ -222,8 +209,6 @@ ggplot(all_data, aes(exploration, log(boldness)))+
   geom_smooth()+
   geom_point()
 
-geom_raster(aes(exploration, log(activity, log(boldness))))
-
 # Activity and boldness
 cor.test(log(all_data$activity), log(all_data$boldness), method = c("pearson"))
 
@@ -235,42 +220,39 @@ ggplot(all_data, aes(log(activity), log(boldness)))+
 ############################# MODELS ############ FIRST TRY
 # install.packages('pacman') Load Libraries and relevant data
 install.packages('pacman')
-pacman::p_load(klippy, brms, dplyr, here, flextable, pander)
+pacman::p_load(lme4,rstan, rstantools, brms, Rcpp, dplyr, here, flextable, pander, StanHeaders)
 
+example(stan_model, package = "rstan", run.dontrun = TRUE)
+
+
+install.packages("StanHeaders", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))
+install.packages("rstan", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))
 
 # Get the raw data. We need this for back transformation from z-scale making
 # sure fish_ID is coded as a factor (done automatically before R v4+)
 # square-root transforming novel and predator response variables z-scaling all
-# variables
 
-### DO I need to scale all my variables? ###
-### WHICH body condition do we use in the models ? There is two body condition measure for each group (before trial 1 and 3, after trial 2 and 4)
-
-dat <- read.table("./data_raw/all_data.csv",header=T, sep=";")
+dat <- all_data
 dat
 dat <- dat %>%
-  dplyr::mutate(ID_fish = factor(ID_fish, levels = unique(ID_fish)),
-                activity = scale(log(activity)), boldness = scale(log(boldness)),
-                exploration = scale(exploration), tank1 = scale(bassin_bold), tank2 = scale(bassin_exp),
+  dplyr::mutate(id = factor(ID_fish, levels = unique(ID_fish)),
+                log_activity = scale(log(activity)), log_boldness = scale(log(boldness)),
+                exploration = scale(exploration), tank1 = as.factor(bassin_bold), tank2 = as.factor(bassin_exp),
                 (id = ID_fish))
 dat
 
 
 ##################### STEP 1 :
-###Using all data (60 fish and 4 measurements / fish) we will fit the following models:
+###Using all data (60 fish and 4 measurements / fish), we will fit the following models:
 ###Model 1: [B, E, A] = u + trtment_{E} + tank + (-1 + trtment_{E}| ID) + (1|Cage)
 ###Model 2: [B, E, A] = u + trtment_{E} + (-1 + trtment_{E}| ID) + (1|Cage)
 ###Above models allow us to 
-###1) estimate repeatability for ALL traits; 2) estimate the behavioual trait correlations; 3) estimate these within EACH treatment group (C vs E).
-
-###Can't run it. How do I include all traits in the y? ###
-### I don't remember what is u ###
-### There is two tanks, because one for exploration + activity and one for boldness ###
+###1) estimate repeatability for ALL traits; 2) estimate the behavioural trait correlations; 3) estimate these within EACH treatment group (C vs E).
 
 ### Model 1: with tank effect
 
-  boldness_1 <- bf(boldness ~ 1 + treatment + tank1 + (-1 + treatment |q| ID_fish) + (1 | cage)) + gaussian()
-  activity_1 <- bf(activity ~ 1 + treatment + tank2 + (-1 + treatment |q| ID_fish) + (1 | cage)) + gaussian()
+  boldness_1 <- bf(log_boldness ~ 1 + treatment + tank1 + (-1 + treatment |q| ID_fish) + (1 | cage)) + gaussian()
+  activity_1 <- bf(log_activity ~ 1 + treatment + tank2 + (-1 + treatment |q| ID_fish) + (1 | cage)) + gaussian()
    explore_1 <- bf(exploration ~ 1 + treatment + tank2 + (-1 + treatment |q| ID_fish) + (1 | cage)) + gaussian()
    
   model1 <- brms::brm(boldness_1 + activity_1 + explore_1, data = dat, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
@@ -284,17 +266,20 @@ dat
     summary(model1)
 
 ### Model 2: without tank effect
-if (rerun1) {
-  formula_personality_shglm_boldness <- bf(boldness ~ u + treatment + (-1 + treatment | id) + (1 | cage))
-  brms_personality_shglm_boldness <- brms::brm(formula_personality_shglm_boldness,
-                                               data = dat, iter = 6000, warmup = 2000, chains = 3, cores = 3, save_pars = save_pars())
-  saveRDS(brms_personality_shglm_boldness, "./Models/brms_models/brms_personality_shglm_boldness")
-} else {
-  brms_personality_shglm_boldness <- readRDS(here::here("Models/brms_models",
-                                                        "brms_personality_shglm_boldness"))
-}
 
-summary(brms_personality_shglm_boldness)
+    boldness_2 <- bf(log_boldness ~ 1 + treatment + (-1 + treatment |q| ID_fish) + (1 | cage)) + gaussian()
+    activity_2 <- bf(log_activity ~ 1 + treatment + (-1 + treatment |q| ID_fish) + (1 | cage)) + gaussian()
+    explore_2 <- bf(exploration ~ 1 + treatment + (-1 + treatment |q| ID_fish) + (1 | cage)) + gaussian()
+    
+    model2 <- brms::brm(boldness_2 + activity_2 + explore_2, data = dat, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
+                        save_pars = save_pars(), file = "./output/models/model2", file_refit = "on_change",
+                        control = list(adapt_delta = 0.98))
+    
+    # Look at the MCMC chains.
+    plot(model2)
+    
+    # Look at the model
+    summary(model2)
 
 
 ##################### STEP 2 :
@@ -315,40 +300,64 @@ dat_C <-subset(dat, treatment == "C")
 dat_C
 
 ### Model 1: experimental group
-if (rerun1) {
-  formula_personality_shglm_boldness <- bf(boldness ~ u + z_body_condition + z_parasite_load + tank1 + tank2 + (1 | id) + (1 | cage))
-  brms_personality_shglm_boldness <- brms::brm(formula_personality_shglm_boldness,
-                                               data = dat_E, iter = 6000, warmup = 2000, chains = 3, cores = 3, save_pars = save_pars())
-  saveRDS(brms_personality_shglm_boldness, "./Models/brms_models/brms_personality_shglm_boldness")
-} else {
-  brms_personality_shglm_boldness <- readRDS(here::here("Models/brms_models",
-                                                        "brms_personality_shglm_boldness"))
-}
 
-summary(brms_personality_shglm_boldness)
+boldness_E1 <- bf(log_boldness ~ 1 + z_parasite_load + tank1 + (1 | ID_fish) + (1 | cage)) + gaussian()
+activity_E1 <- bf(log_activity ~ 1 + z_parasite_load + tank2 + (1 | ID_fish) + (1 | cage)) + gaussian()
+explore_E1 <- bf(exploration ~ 1 + z_parasite_load + tank2 + (1 | ID_fish) + (1 | cage)) + gaussian()
+
+model_E1 <- brms::brm(boldness_E1 + activity_E1 + explore_E1, data = dat_E, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
+                    save_pars = save_pars(), file = "./output/models/model_E1", file_refit = "on_change",
+                   control = list(adapt_delta = 0.98))
+
+# Look at the MCMC chains.
+plot(model_E1)
+
+# Look at the model
+summary(model_E1)
 
 ### Model 2: experimental group
-if (rerun1) {
-  formula_personality_shglm_boldness <- bf(boldness ~ u + z_body_condition + z_parasite_load + z_parasite_load^2 + tank1 + tank2 + (1 | id) + (1 | cage))
-  brms_personality_shglm_boldness <- brms::brm(formula_personality_shglm_boldness,
-                                               data = dat_E, iter = 6000, warmup = 2000, chains = 3, cores = 3, save_pars = save_pars())
-  saveRDS(brms_personality_shglm_boldness, "./Models/brms_models/brms_personality_shglm_boldness")
-} else {
-  brms_personality_shglm_boldness <- readRDS(here::here("Models/brms_models",
-                                                        "brms_personality_shglm_boldness"))
-}
 
-summary(brms_personality_shglm_boldness)
+boldness_E2 <- bf(log_boldness ~ 1 + z_parasite_load + z_parasite_load^2 + tank1 + (1 | ID_fish) + (1 | cage)) + gaussian()
+activity_E2 <- bf(log_activity ~ 1 + z_parasite_load + z_parasite_load^2 + tank2 + (1 | ID_fish) + (1 | cage)) + gaussian()
+explore_E2 <- bf(exploration ~ 1 + z_parasite_load + z_parasite_load^2 + tank2 + (1 | ID_fish) + (1 | cage)) + gaussian()
+
+model_E2 <- brms::brm(boldness_E2 + activity_E2 + explore_E2, data = dat_E, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
+                      save_pars = save_pars(), file = "./output/models/model_E2", file_refit = "on_change",
+                      control = list(adapt_delta = 0.98))
+
+# Look at the MCMC chains.
+plot(model_E2)
+
+# Look at the model
+summary(model_E2)
 
 ### Model 3: control group 
-if (rerun1) {
-  formula_personality_shglm_boldness <- bf(boldness ~ u + z_body_condition + tank1 + tank2 + (1 | id) + (1 | cage))
-  brms_personality_shglm_boldness <- brms::brm(formula_personality_shglm_boldness,
-                                               data = dat_C, iter = 6000, warmup = 2000, chains = 3, cores = 3, save_pars = save_pars())
-  saveRDS(brms_personality_shglm_boldness, "./Models/brms_models/brms_personality_shglm_boldness")
-} else {
-  brms_personality_shglm_boldness <- readRDS(here::here("Models/brms_models",
-                                                        "brms_personality_shglm_boldness"))
-}
 
-summary(brms_personality_shglm_boldness)
+boldness_C <- bf(log_boldness ~ 1  + tank1 + (1 | ID_fish) + (1 | cage)) + gaussian()
+activity_C <- bf(log_activity ~ 1  + tank2 + (1 | ID_fish) + (1 | cage)) + gaussian()
+explore_C <- bf(exploration ~ 1  + tank2 + (1 | ID_fish) + (1 | cage)) + gaussian()
+
+model_C <- brms::brm(boldness_C + activity_C + explore_C, data = dat_C, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
+                      save_pars = save_pars(), file = "./output/models/model_C", file_refit = "on_change",
+                      control = list(adapt_delta = 0.98))
+
+# Look at the MCMC chains.
+plot(model_C)
+
+# Look at the model
+summary(model_C)
+
+### Model 4: body condition as a response variable
+
+body_condition <- bf(z_body_condition ~ 1  + (1 | ID_fish) + (1 | cage)) + gaussian()
+
+
+model_BC <- brms::brm(boldness_C + activity_C + explore_C, data = dat, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
+                     save_pars = save_pars(), file = "./output/models/model_BC", file_refit = "on_change",
+                     control = list(adapt_delta = 0.98))
+
+# Look at the MCMC chains.
+plot(model_BC)
+
+# Look at the model
+summary(model_BC)
