@@ -225,8 +225,13 @@ ggplot(all_data, aes(log(activity), log(boldness)))+
 ############################# MODELS ############ FIRST TRY
 # install.packages('pacman') Load Libraries and relevant data
 install.packages('pacman')
-pacman::p_load(klippy, brms, dplyr, here, flextable, pander)
+pacman::p_load(lme4,rstan, rstantools, brms, Rcpp, dplyr, here, flextable, pander, StanHeaders)
 
+example(stan_model, package = "rstan", run.dontrun = TRUE)
+
+
+install.packages("StanHeaders", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))
+install.packages("rstan", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))
 
 # Get the raw data. We need this for back transformation from z-scale making
 # sure fish_ID is coded as a factor (done automatically before R v4+)
@@ -237,7 +242,7 @@ dat
 dat <- dat %>%
   dplyr::mutate(id = factor(ID_fish, levels = unique(ID_fish)),
                 log_activity = scale(log(activity)), log_boldness = scale(log(boldness)),
-                exploration = scale(exploration), tank1 = scale(bassin_bold), tank2 = scale(bassin_exp),
+                exploration = scale(exploration), tank1 = as.factor(bassin_bold), tank2 = as.factor(bassin_exp),
                 (id = ID_fish))
 dat
 
@@ -318,40 +323,63 @@ plot(model_E1)
 # Look at the model
 summary(model_E1)
 
-if (rerun1) {
-  formula_personality_shglm_boldness <- bf(boldness ~ z_parasite_load + tank1 + tank2 + (1 | id) + (1 | cage))
-  brms_personality_shglm_boldness <- brms::brm(formula_personality_shglm_boldness,
-                                               data = dat_E, iter = 6000, warmup = 2000, chains = 3, cores = 3, save_pars = save_pars())
-  saveRDS(brms_personality_shglm_boldness, "./Models/brms_models/brms_personality_shglm_boldness")
-} else {
-  brms_personality_shglm_boldness <- readRDS(here::here("Models/brms_models",
-                                                        "brms_personality_shglm_boldness"))
-}
+boldness_E1 <- bf(log_boldness ~ 1 + z_parasite_load + tank1 + (1 | ID_fish) + (1 | cage)) + gaussian()
+activity_E1 <- bf(log_activity ~ 1 + z_parasite_load + tank2 + (1 | ID_fish) + (1 | cage)) + gaussian()
+explore_E1 <- bf(exploration ~ 1 + z_parasite_load + tank2 + (1 | ID_fish) + (1 | cage)) + gaussian()
 
-summary(brms_personality_shglm_boldness)
+model_E1 <- brms::brm(boldness_E1 + activity_E1 + explore_E1, data = dat_E, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
+                    save_pars = save_pars(), file = "./output/models/model_E1", file_refit = "on_change",
+                   control = list(adapt_delta = 0.98))
+
+# Look at the MCMC chains.
+plot(model_E1)
+
+# Look at the model
+summary(model_E1)
 
 ### Model 2: experimental group
-if (rerun1) {
-  formula_personality_shglm_boldness <- bf(boldness ~ u + z_body_condition + z_parasite_load + z_parasite_load^2 + tank1 + tank2 + (1 | id) + (1 | cage))
-  brms_personality_shglm_boldness <- brms::brm(formula_personality_shglm_boldness,
-                                               data = dat_E, iter = 6000, warmup = 2000, chains = 3, cores = 3, save_pars = save_pars())
-  saveRDS(brms_personality_shglm_boldness, "./Models/brms_models/brms_personality_shglm_boldness")
-} else {
-  brms_personality_shglm_boldness <- readRDS(here::here("Models/brms_models",
-                                                        "brms_personality_shglm_boldness"))
-}
 
-summary(brms_personality_shglm_boldness)
+boldness_E2 <- bf(log_boldness ~ 1 + z_parasite_load + z_parasite_load^2 + tank1 + (1 | ID_fish) + (1 | cage)) + gaussian()
+activity_E2 <- bf(log_activity ~ 1 + z_parasite_load + z_parasite_load^2 + tank2 + (1 | ID_fish) + (1 | cage)) + gaussian()
+explore_E2 <- bf(exploration ~ 1 + z_parasite_load + z_parasite_load^2 + tank2 + (1 | ID_fish) + (1 | cage)) + gaussian()
+
+model_E2 <- brms::brm(boldness_E2 + activity_E2 + explore_E2, data = dat_E, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
+                      save_pars = save_pars(), file = "./output/models/model_E2", file_refit = "on_change",
+                      control = list(adapt_delta = 0.98))
+
+# Look at the MCMC chains.
+plot(model_E2)
+
+# Look at the model
+summary(model_E2)
 
 ### Model 3: control group 
-if (rerun1) {
-  formula_personality_shglm_boldness <- bf(boldness ~ u + z_body_condition + tank1 + tank2 + (1 | id) + (1 | cage))
-  brms_personality_shglm_boldness <- brms::brm(formula_personality_shglm_boldness,
-                                               data = dat_C, iter = 6000, warmup = 2000, chains = 3, cores = 3, save_pars = save_pars())
-  saveRDS(brms_personality_shglm_boldness, "./Models/brms_models/brms_personality_shglm_boldness")
-} else {
-  brms_personality_shglm_boldness <- readRDS(here::here("Models/brms_models",
-                                                        "brms_personality_shglm_boldness"))
-}
 
-summary(brms_personality_shglm_boldness)
+boldness_C <- bf(log_boldness ~ 1  + tank1 + (1 | ID_fish) + (1 | cage)) + gaussian()
+activity_C <- bf(log_activity ~ 1  + tank2 + (1 | ID_fish) + (1 | cage)) + gaussian()
+explore_C <- bf(exploration ~ 1  + tank2 + (1 | ID_fish) + (1 | cage)) + gaussian()
+
+model_C <- brms::brm(boldness_C + activity_C + explore_C, data = dat_C, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
+                      save_pars = save_pars(), file = "./output/models/model_C", file_refit = "on_change",
+                      control = list(adapt_delta = 0.98))
+
+# Look at the MCMC chains.
+plot(model_C)
+
+# Look at the model
+summary(model_C)
+
+### Model 4: body condition as a response variable
+
+body_condition <- bf(z_body_condition ~ 1  + (1 | ID_fish) + (1 | cage)) + gaussian()
+
+
+model_BC <- brms::brm(boldness_C + activity_C + explore_C, data = dat, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
+                     save_pars = save_pars(), file = "./output/models/model_BC", file_refit = "on_change",
+                     control = list(adapt_delta = 0.98))
+
+# Look at the MCMC chains.
+plot(model_BC)
+
+# Look at the model
+summary(model_BC)
