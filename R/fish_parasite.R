@@ -1,9 +1,10 @@
 #############################
-# IMPORT RAW DATA
+# Import raw data
 #############################
   all_data <- read.table("./data_raw/all_data.csv",header=T, sep=";")
   all_data
-
+  
+  
 #############################
 # Checking out the data
 #############################
@@ -20,13 +21,14 @@ as.factor(all_data$bassin_bold)
 as.factor(all_data$bassin_exp)
 as.factor(all_data$gonade)
 
-#############################EXPLORE THE DATA WITH GRAPH
-#############################INSTALL PACKAGES
+
+#############################
+# Explore the data
+#############################
+# Need to install this package for the graph
 install.packages("ggplot2")
 library(ggplot2)
 
-#############################let's explore the data
-#############################Parasites count
 ### Blackspots distribution
 hist(all_data$BS_post_tot)
 
@@ -107,7 +109,10 @@ ggplot(data = all_data,
   geom_jitter(alpha = 0.2, size = 2, width = 0.1, height = 0)+
   stat_summary(fun = mean, shape = 13, size = 1, colour = "red")
 
-#############################DATA PREP, CREATION OF DIFFERENT VARIABLES
+
+#############################
+# Data processing
+#############################
 ###Create a new column with total cestode (alive + dead)
 
 all_data$P04_tot<-all_data$P04_alive + all_data$P04_dead
@@ -146,7 +151,10 @@ all_data$fulton3
 all_data$fulton4<-(all_data$adj_mass4/(all_data$SL_4*0.1)^3)
 all_data$fulton4
 
-#############################DATA DISTRIBUTION & NORMALITY
+
+#############################
+# Data distribution and normality
+#############################
 ###Let's look at the data distribution for our response variables (boldness, exploration and activity) for both treatment group
 
 ### Distribution for all fish
@@ -175,7 +183,7 @@ ggplot(all_data, aes(x = boldness)) +
   scale_color_manual(values = c("#00AFBB", "#E7B800")) +
   scale_fill_manual(values = c("#00AFBB", "#E7B800"))
 
-#############################NORMALITY AND TRANSFORMATION
+#NORMALITY AND TRANSFORMATION
 # Exploration
 qqnorm(all_data$exploration)
 qqline(all_data$exploration) #looks normal
@@ -196,46 +204,35 @@ qqline(log(all_data$boldness))
 # Test normality
 shapiro.test(log(all_data$boldness)) ## we are visually CLOSE to normality with log
 
-#############################EXPLORATION OF CORRELATION BETWEEN TRAITS
 
-# Exploration and activity
-cor.test(all_data$exploration, log(all_data$activity), method = c("pearson")) #positive relationship
+#############################
+# MODELS STEP 1
+#############################
 
-# Visualize the relationship 
-ggplot(all_data, aes(exploration, log(activity)))+
-  geom_smooth()+
-  geom_point()
-
-# Exploration and boldness
-cor.test(all_data$exploration, log(all_data$boldness), method = c("pearson")) #negative, meaning more bold, more explorative
-
-# Visualize the relationship 
-ggplot(all_data, aes(exploration, log(boldness)))+
-  geom_smooth()+
-  geom_point()
-
-# Activity and boldness
-cor.test(log(all_data$activity), log(all_data$boldness), method = c("pearson"))
-
-# Visualize the relationship 
-ggplot(all_data, aes(log(activity), log(boldness)))+
-  geom_smooth()+
-  geom_point()
-
-############################# MODELS ############ FIRST TRY
-# install.packages('pacman') Load Libraries and relevant data
+# install.packages('pacman')
 install.packages('pacman')
 pacman::p_load(lme4,rstan, rstantools, brms, Rcpp, dplyr, here, flextable, pander, StanHeaders)
 
-example(stan_model, package = "rstan", run.dontrun = TRUE)
+#trying to solve the problem with stan
+Sys.getenv("BINPREF")
+Sys.which("make")
+writeLines('PATH="${RTOOLS40_HOME}\\usr\\bin;${PATH}"', con = "~/.Renviron")
+install.packages("jsonlite", type = "source")
+library(jsonlite)
+?.Rprofile
 
+remove.packages("rstan")
+if (file.exists(".RData")) file.remove(".RData")
+Sys.setenv(MAKEFLAGS = "-j4") # four cores used
+install.packages("rstan", type = "source")
 
-install.packages("StanHeaders", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))
-install.packages("rstan", repos = c("https://mc-stan.org/r-packages/", getOption("repos")))
+remove.packages("rstan")
+install.packages("rstan",dependencies = FALSE)
+library(rstan)
+set_cppo("fast")
 
 # Get the raw data. We need this for back transformation from z-scale making
-# sure fish_ID is coded as a factor (done automatically before R v4+)
-# square-root transforming novel and predator response variables z-scaling all
+# sure fish_ID is coded as a factor
 
 dat <- all_data
 dat
@@ -244,7 +241,6 @@ dat <- dat %>%
                 log_activity = scale(log(activity)), log_boldness = scale(log(boldness)),
                 exploration = scale(exploration), tank1 = as.factor(bassin_bold), tank2 = as.factor(bassin_exp),
                 (id = ID_fish))
-dat
 
 
 ##################### STEP 1 :
@@ -254,6 +250,7 @@ dat
 ###Above models allow us to 
 ###1) estimate repeatability for ALL traits; 2) estimate the behavioural trait correlations; 3) estimate these within EACH treatment group (C vs E).
 
+Sys.setenv(USE_CXX14 = 1)
 ### Model 1: with tank effect
 
   boldness_1 <- bf(log_boldness ~ 1 + treatment + tank1 + (-1 + treatment |q| ID_fish) + (1 | cage)) + gaussian()
@@ -264,9 +261,14 @@ dat
                       data = dat, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
                       save_pars = save_pars(), file = "./output/models/model1", file_refit = "on_change",
                       control = list(adapt_delta = 0.98))
-    model1 <- add_criterion(model1, c("loo", "waic"))
     
-    # Look at the MCMC chains.
+    # Compare models  
+  model1 <- add_criterion(model1, c("loo", "waic"))
+    
+  model1 <- readRDS(file = "./output/models/model1.rds")
+  model1  
+  
+  # Look at the MCMC chains.
     plot(model1)
     
     # Look at the model
@@ -294,15 +296,21 @@ if(rerun){
 }
     model2 <- add_criterion(model2, c("loo", "waic"))
     
-    # Calculate repeatability
+    # Look at the MCMC chains.
+    plot(model2)
+    
+    # Look at the model
+    summary(model2)
+    
+# Calculate repeatability
     post_sd <- as_draws_df(model2, variable = "^sd", regex = TRUE)
     
-       post_sd_C <- post_sd[,grepl("C", colnames(post_sd))]
-       post_sd_E <- post_sd[,grepl("E", colnames(post_sd))]
+    post_sd_C <- post_sd[,grepl("C", colnames(post_sd))]
+    post_sd_E <- post_sd[,grepl("E", colnames(post_sd))]
     post_sd_cage <- post_sd[,grepl("cage", colnames(post_sd))]
     post_sd_sig <- as_draws_df(model2, variable = "^sigma", regex = TRUE)
     
-    # Repeatbility for boldness across treatment
+# Repeatability for the traits across treatment
     source("./R/func.R")
       
       R_boldness <- repeatability(post_sd_C, post_sd_E, post_sd_cage, post_sd_sig, trait = "logboldness")
@@ -311,13 +319,11 @@ if(rerun){
       
       R_contrast <- R_explore - R_boldness
       
-    # Look at the MCMC chains.
-    plot(model2)
+
+#############################
+# MODELS STEP 2
+#############################
     
-    # Look at the model
-    summary(model2)
-
-
 ##################### STEP 2 :
 ###Subset the experimental and control fish into two datasets (60 fish and 4 measurements for each C and E group) then fit the following models:
 ###Model 1 (Experimental Group): [B, E, A] = u + z_body_condition + z_parasite_load + tank + (1 | ID) + + (1|Cage)
@@ -412,3 +418,9 @@ plot(model_BC)
 
 # Look at the model
 summary(model_BC)
+
+
+#############################
+# MODELS STEP 3
+#############################
+#looking at different parasites that could possibly be in competition
