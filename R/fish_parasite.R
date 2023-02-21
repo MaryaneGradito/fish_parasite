@@ -231,6 +231,11 @@ install.packages("rstan",dependencies = FALSE)
 library(rstan)
 set_cppo("fast")
 
+install.packages("StanHeaders", repos = c("https://mc-stan.org/r-packages/"), getOption("repos"))
+
+install.packages("rstan", repos = c("https://mc-stan.org/r-packages/"), getOption("repos"))
+
+
 # Get the raw data. We need this for back transformation from z-scale making
 # sure fish_ID is coded as a factor
 
