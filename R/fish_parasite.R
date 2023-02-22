@@ -113,6 +113,7 @@ if(rerun){
     post_sd_cage <- post_sd[,grepl("cage", colnames(post_sd))]
     post_sd_sig <- as_draws_df(model2, variable = "^sigma", regex = TRUE)
     
+    
 # Repeatability for the traits across treatment
     source("./R/func.R")
       
@@ -122,6 +123,19 @@ if(rerun){
       
        #I don't remember what this is ? 
       R_contrast <- R_explore - R_boldness
+      
+      # Calculate repeatability for each group
+      source("./R/reap_each.R")
+     
+      #for group C
+      R_boldness <- repeatability(post_sd_C, post_sd_cage, post_sd_sig, trait = "logboldness")
+      R_explore <- repeatability(post_sd_C, post_sd_cage, post_sd_sig, trait = "exploration")
+      R_activity <- repeatability(post_sd_C, post_sd_cage, post_sd_sig, trait = "logactivity")
+      
+      #For group E
+      R_boldness <- repeatability(post_sd_E, post_sd_cage, post_sd_sig, trait = "logboldness")
+      R_explore <- repeatability(post_sd_E, post_sd_cage, post_sd_sig, trait = "exploration")
+      R_activity <- repeatability(post_sd_E, post_sd_cage, post_sd_sig, trait = "logactivity")
       
 
 #############################
