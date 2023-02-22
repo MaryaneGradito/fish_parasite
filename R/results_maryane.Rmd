@@ -1,0 +1,21 @@
+---
+title: "results_maryane"
+output: html_document
+author: Maryane Gradito
+date: '2023-02-16'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# RESULTS
+all_data <- read.table("./data_raw/all_data.csv",header=T, sep=";")
+
+min_BS<-min(all_data$BS_post_tot)
+max_BS<-max(all_data$BS_post_tot)
+median(all_data$BS_post_tot)
+
+### Internal parasites
+
+The caging experiment successfully infected our treatment fish. Control fish that stayed in the laboratory had no alive parasite, which indicate that the praziquantel treatment was effective. The two most abundant species found in the experimentally infected fish were trematodes causing the blackspot disease (Trematoda: *Apophallus sp.* and *Uvulifer sp.*; min-max: `r min_BS`- `r max_BS`; median = 9) and the bass tapeworm (Cestoda: *Proteocephalus ambloplites*; min-max: 0-36; median = 4). The most abundant species of trematode causing blackspots was *Apophallus sp*. (Binning, Lanthier, unpublished data), but *Uvulifer sp.* was found more frequently inside the muscles (MG, personal observations).Experimentally fish gained in mean 8 blackspots, and were found on the fines, body, gills and inside the muscles. Bass tapeworm were mostly found in the liver, stomach and digestive tract, occasionally around the spleen (parasite count: 9), and rarely on the gills (parasite count: 3) or the heart (parasite count: 2). Unknown nematode species were found rarely in the body cavity (alive parasite count: 4).
+
