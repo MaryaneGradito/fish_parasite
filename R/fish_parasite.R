@@ -29,18 +29,6 @@ as.factor(all_data$gonade)
 install.packages('pacman')
 pacman::p_load(lme4, rstan, StanHeaders, jsonlite, rstantools, brms, Rcpp, dplyr, here, flextable, pander, cmdstanr)
 
-
-# Get the raw data. We need this for back transformation from z-scale making
-# sure fish_ID is coded as a factor
-
-####I'm leaving this here for now, if we need to adjust for our models
-dat <- all_data
-dat <- dat %>%
-  dplyr::mutate(id = factor(ID_fish, levels = unique(ID_fish)),
-                log_activity = scale(log(activity)), log_boldness = scale(log(boldness)),
-                exploration = scale(exploration), tank1 = as.factor(bassin_bold), tank2 = as.factor(bassin_exp),z_parasite_load = scale(parasite_load),
-                (id = ID_fish))
-
 ##################### STEP 1 :
 ###Using all data (60 fish and 4 measurements / fish), we will fit the following models:
 ###Model 1: [B, E, A] = u + trtment_{E} + tank + (-1 + trtment_{E}| ID) + (1|Cage)
@@ -111,8 +99,7 @@ if(rerun){
     post_sd_C <- post_sd[,grepl("C", colnames(post_sd))]
     post_sd_E <- post_sd[,grepl("E", colnames(post_sd))]
     post_sd_cage <- post_sd[,grepl("cage", colnames(post_sd))]
-    post_sd_sig <- as_draws_df(model2, variable = "^sigma", regex = TRUE)
-    
+    post_sd_sig <- as_draws_df(model2, variable = "^b_sigma", regex = TRUE)
     
 # Repeatability for the traits across treatment
     source("./R/func.R")
