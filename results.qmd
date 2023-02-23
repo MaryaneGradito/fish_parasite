@@ -1,18 +1,18 @@
 ---
 format:
- docx: 
+  docx: 
     reference-doc: "./bib/template.docx"
 execute:
   echo: false
   error: false
-  cache: true
+  cache: false
   warning: false
-crossref: 
-  fig-title: Fig.     # (default is "Figure")
-  tbl-title: Table     # (default is "Table")
+crossref:  
+  fig-title: Fig.    # (default is "Figure")
+  tbl-title: Table   # (default is "Table")
   title-delim: —     # (default is ":")
   fig-prefix: Fig.   # (default is "Figure")
-  tbl-prefix: Tab.    # (default is "Table")
+  tbl-prefix: Tab.   # (default is "Table")
 editor_options: 
   chunk_output_type: console
 ---
@@ -65,7 +65,7 @@ editor_options:
       R_contrast <- R_explore - R_boldness
 ```
 
-The repeatbility of boldness was `r round(mean(R_boldness[,1]), 2)` (95% CI: `r R_Blb` to `r R_Bub`) (@fig-fig1).
+The repeatbility of boldness was `r round(mean(R_boldness[,1]), 2)` (95% CI: `r R_Blb` to `r R_Bub`) (@fig-fig1). @tbl-tab1
 
 #### *Boldness*
 
@@ -76,10 +76,12 @@ The repeatbility of boldness was `r round(mean(R_boldness[,1]), 2)` (95% CI: `r 
 hist(R_boldness[,1])
 ```
 
-```{r}
+
+```{r, tbl-tab1}
+#| label: tbl-tab1
+#| tbl-cap: Repeatbility estimates for traits
 tab1 <- data.frame(Repeatability = c(mean(R_boldness[,1]), mean(R_explore[,1]), mean(R_activity[,1])),
                     `95% CI` = c(round(quantile(R_boldness[,1], c(0.025, 0.975))[1], 2), round(quantile(R_explore[,1], c(0.025, 0.975))[1], 2), round(quantile(R_activity[,1], c(0.025, 0.975))[1], 2)), check.names = FALSE)
 
 flextable(tab1) %>% flextable::bold(part = "header") %>% flextable::autofit()
-
 ```
