@@ -150,10 +150,6 @@ all_data$fulton3
 all_data$fulton4<-(all_data$adj_mass4/(all_data$SL_4*0.1)^3)
 all_data$fulton4
 
-###Save the new dataset with processed data
-write.table(all_data, file = "all_data_p.csv",
-            sep = ",", row.names = F)
-
 #############################
 # Data distribution and normality
 #############################
@@ -206,3 +202,19 @@ qqline(log(all_data$boldness))
 # Test normality
 shapiro.test(log(all_data$boldness)) ## we are visually CLOSE to normality with log
 
+
+#############################
+# Last processing + save the new dataset
+#############################
+# Get the raw data. We need this for back transformation from z-scale making
+# sure fish_ID is coded as a factor
+
+dat <- all_data
+dat <- dat %>%
+  dplyr::mutate(id = factor(ID_fish, levels = unique(ID_fish)),
+                log_activity = scale(log(activity)), log_boldness = scale(log(boldness)),
+                exploration = scale(exploration), tank1 = as.factor(bassin_bold), tank2 = as.factor(bassin_exp),z_parasite_load = scale(parasite_load), z_bc_1 = scale(fulton1), z_bc_2 = scale(fulton2), z_bc_3 = scale(fulton3), z_bc_4 = scale(fulton4),(id = ID_fish))
+
+###Save the new dataset with processed data
+write.table(dat, file = "all_data_p.csv",
+            sep = ",", row.names = F)
