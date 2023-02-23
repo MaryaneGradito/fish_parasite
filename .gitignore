@@ -4,3 +4,7 @@ models/
 .DS_Store
 *.pper
 .Rproj.user/
+*.docx
+*_cache/
+*_files/
+*html
