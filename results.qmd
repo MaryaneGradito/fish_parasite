@@ -2,7 +2,7 @@
 format:
  docx: 
     reference-doc: "./bib/template.docx"
-execute: 
+execute:
   echo: false
   error: false
   cache: true
@@ -25,7 +25,8 @@ editor_options:
 #| warning: false
 #| include: false
     source("./R/func.R")
-    pacman::p_load(tidyverse, brms, glmmTMB, flextable, officer, officedown, update = TRUE)
+    pacman::p_load(tidyverse, brms, glmmTMB, flextable)
+    options(digits = 3)
 ```
 
 ```{r}
@@ -64,7 +65,7 @@ editor_options:
       R_contrast <- R_explore - R_boldness
 ```
 
-The repeatbility of boldness was `r round(mean(R_boldness[,1]), 2)` (95% CI: `r R_Blb` to `r R_Bub`) (@fig-fig1). See  @tbl-tab1
+The repeatbility of boldness was `r round(mean(R_boldness[,1]), 2)` (95% CI: `r R_Blb` to `r R_Bub`) (@fig-fig1). @tbl-tab1
 
 #### *Boldness*
 
@@ -77,7 +78,7 @@ hist(R_boldness[,1])
 
 ```{r}
 #| label: tbl-tab1
-#| tbl-cap: Repeatbility of traits
+#| tbl-cap: Repeatbility across trait
 
 tab1 <- data.frame(Repeatability = c(mean(R_boldness[,1]), mean(R_explore[,1]), mean(R_activity[,1])),
                     `95% CI` = c(round(quantile(R_boldness[,1], c(0.025, 0.975))[1], 2), round(quantile(R_explore[,1], c(0.025, 0.975))[1], 2), round(quantile(R_activity[,1], c(0.025, 0.975))[1], 2)), check.names = FALSE)
