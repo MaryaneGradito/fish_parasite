@@ -1,0 +1,35 @@
+---
+title: "Results"
+author: "Maryane and Dan"
+date: "`r Sys.Date()`"
+format:
+  docx:
+    toc: false
+    theme: simplex
+    number-sections: false
+    reference-doc: template.docx
+execute: 
+  echo: false
+  error: false
+  cache: true
+  warning: false
+crossref: 
+  fig-title: Figure     # (default is "Figure")
+  tbl-title: Table     # (default is "Table")
+  title-delim: —     # (default is ":")
+  fig-prefix: Fig.   # (default is "Figure")
+  tbl-prefix: Tab.    # (default is "Table")
+editor_options: 
+  chunk_output_type: console
+---
+
+# Setup your session
+
+```{r}
+#| output: false
+#| warning: false
+#| label: packages
+#| code-overflow: wrap
+
+pacman::p_load(here, MCMCglmm, metafor, phytools, brms, lme4,lmerTest, nlme, glmmTMB, phylolm, ape, MASS, tidyverse)
+```
