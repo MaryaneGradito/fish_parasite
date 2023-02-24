@@ -227,3 +227,5 @@ summary(model_BC)
 # MODELS STEP 3
 #############################
 #looking at different parasites that could possibly be in competition
+
+
