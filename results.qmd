@@ -136,7 +136,8 @@ R_C_bolness <-  post_sd_C[,grep("logboldness", colnames(post_sd_C))]^2  / (post_
                      post_sd_C[,grep("logboldness", colnames(post_sd_C))]^2 + 
                      post_sd_cage[ ,grep("logboldness", colnames(post_sd_cage))]^2)
 0.38^2 / (exp(-0.19)^2 + 0.38^2 + 0.19^2)
-hist(R_C_bolness[,1])
+ggplot(data = R_C_bolness[,1])  + geom_histogram(after_stat("density"))
+p = pmcmc(R_C_bolness[,1], null = 0)
 # Group E
 #Boldness 
 R_boldness_2 <- rep_each(post_sd_E_exp, post_sd_cage, post_sd_sig, trait = "logboldness")
