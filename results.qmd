@@ -29,6 +29,7 @@ editor_options:
     options(digits = 3)
 ```
 
+
 ```{r}
 #| label: load_data
 #| output: false
@@ -125,15 +126,17 @@ source("./R/func.R")
 # Repeatability for the traits between treatment
 source("./R/reap_each.R")
 
-post_sd <- as_draws_df(model1, variable = "^sd", regex = TRUE)
+post_sd <- as_draws_df(model2, variable = "^sd", regex = TRUE)
 post_sd_C <- post_sd[,grepl("C", colnames(post_sd))]
 post_sd_E <- post_sd[,grepl("E", colnames(post_sd))]
 post_sd_cage <- post_sd[,grepl("cage", colnames(post_sd))]
-post_sd_sig <- as_draws_df(model2, variable = "^b_sigma", regex = TRUE)
+post_sd_sig <- exp(as_draws_df(model2, variable = "^b_sigma", regex = TRUE))
 
-post_sd_C_exp<-exp(post_sd_C)
-post_sd_E_exp<-exp(post_sd_E)
-
+R_C_bolness <-  post_sd_C[,grep("logboldness", colnames(post_sd_C))]^2  / (post_sd_sig[,grep("b_sigma_logboldness_treatmentC", colnames(post_sd_sig))]^2 +
+                     post_sd_C[,grep("logboldness", colnames(post_sd_C))]^2 + 
+                     post_sd_cage[ ,grep("logboldness", colnames(post_sd_cage))]^2)
+0.38^2 / (exp(-0.19)^2 + 0.38^2 + 0.19^2)
+hist(R_C_bolness[,1])
 # Group E
 #Boldness 
 R_boldness_2 <- rep_each(post_sd_E_exp, post_sd_cage, post_sd_sig, trait = "logboldness")
