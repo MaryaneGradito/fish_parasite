@@ -19,15 +19,13 @@ editor_options:
 
 # Results
 
-```{r}
-#| label: packages
-#| output: false
-#| warning: false
-#| include: false
+```{r, packages, warning=FALSE, include=FALSE}
+
     source("./R/func.R")
     pacman::p_load(tidyverse, brms, glmmTMB, flextable)
     options(digits = 3)
 ```
+
 
 ```{r}
 #| label: load_data
@@ -39,6 +37,47 @@ editor_options:
 #############################
   all_data <- read.table("./output/all_data_p.csv",header=T, sep=",")
   all_data
+
+  
+############################
+# Parasite count
+#############################
+### Blackspots distribution
+hist(all_data$BS_post_tot)
+
+# Blackspots info
+BS_min<-min(all_data$BS_post_tot)
+BS_max<-max(all_data$BS_post_tot)
+BS_median<-median(all_data$BS_post_tot)
+
+### Cestodes distribution
+hist(all_data$P04_alive)
+
+# Cestodes info
+cestode_min<-min(all_data$P04_alive)
+cestode_max<-max(all_data$P04_alive)
+cestode_median<-median(all_data$P04_alive)
+mean(all_data$P04_alive)
+
+### Nematodes distribution
+hist(all_data$P013_alive)
+
+# Nematodes info
+nematode_min<-min(all_data$P013_alive)
+nematode_max<-max(all_data$P013_alive)
+
+### Looking at BS gained after infection
+# Create new columns in the dataset
+all_data$BS_gain<- all_data$BS_post_tot - all_data$BS_pre
+
+# BS gain distribution
+hist(all_data$BS_gain)
+
+# BS gain info
+gain_min<-min(all_data$BS_gain) ### miscount, some fish have less BS after infection
+gain_max<-max(all_data$BS_gain)
+gain_median<-median(all_data$BS_gain)
+gain_mean<-mean(all_data$BS_gain)
 
 ############################
 # Load model
@@ -55,17 +94,92 @@ editor_options:
     
   # Repeatability for the traits across treatment
 
+    #Boldness
        R_boldness <- repeatability(post_sd_C, post_sd_E, post_sd_cage, post_sd_sig, trait = "logboldness")
-       R_Blb <- round(quantile(R_boldness[,1], c(0.025, 0.975))[1], 2)
-       R_Bub <- round(quantile(R_boldness[,1], c(0.025, 0.975))[2], 2)
+       R_Blb_bold <- round(quantile(R_boldness[,1], c(0.025, 0.975))[1], 2)
+       R_Bub_bold <- round(quantile(R_boldness[,1], c(0.025, 0.975))[2], 2)
+      hist(R_boldness[,1])
+      R_bold_mean<-mean(R_boldness[,1])
+      
+      #Exploration
        R_explore <- repeatability(post_sd_C, post_sd_E, post_sd_cage, post_sd_sig, trait = "exploration")
+       R_Blb_exp <- round(quantile(R_explore[,1], c(0.025, 0.975))[1], 2)
+       R_Bub_exp <- round(quantile(R_explore[,1], c(0.025, 0.975))[2], 2)
+       hist(R_explore[,1])
+       R_exp_mean<-mean(R_explore[,1])
+      
+       #Activity
        R_activity <- repeatability(post_sd_C, post_sd_E, post_sd_cage, post_sd_sig, trait = "logactivity")
+       R_Blb_act <- round(quantile(R_activity[,1], c(0.025, 0.975))[1], 2)
+       R_Bub_act <- round(quantile(R_activity[,1], c(0.025, 0.975))[2], 2)
+       hist(R_activity[,1])
+       R_act_mean<-mean(R_activity[,1])
       
   # Compare whether repeatability is different between exploratory and boldness
       R_contrast <- R_explore - R_boldness
+     
+  # Repeatability for the traits between treatment
+    post_sd <- as_draws_df(model1, variable = "^sd", regex = TRUE)
+    post_sd_C <- post_sd[,grepl("C", colnames(post_sd))]
+    post_sd_E <- post_sd[,grepl("E", colnames(post_sd))]
+    post_sd_cage <- post_sd[,grepl("cage", colnames(post_sd))]
+    post_sd_sig <- as_draws_df(model2, variable = "^b_sigma", regex = TRUE)
+    
+    # Group E
+        #Boldness 
+       R_boldness <- repeatability(post_sd_C, post_sd_E, post_sd_cage, post_sd_sig, trait = "logboldness")
+       R_Blb_bold <- round(quantile(R_boldness[,1], c(0.025, 0.975))[1], 2)
+       R_Bub_bold <- round(quantile(R_boldness[,1], c(0.025, 0.975))[2], 2)
+      hist(R_boldness[,1])
+      R_bold_mean<-mean(R_boldness[,1])
+      
+      #Exploration
+       R_explore <- repeatability(post_sd_C, post_sd_E, post_sd_cage, post_sd_sig, trait = "exploration")
+       R_Blb_exp <- round(quantile(R_explore[,1], c(0.025, 0.975))[1], 2)
+       R_Bub_exp <- round(quantile(R_explore[,1], c(0.025, 0.975))[2], 2)
+       hist(R_explore[,1])
+       R_exp_mean<-mean(R_explore[,1])
+      
+       #Activity
+       R_activity <- repeatability(post_sd_C, post_sd_E, post_sd_cage, post_sd_sig, trait = "logactivity")
+       R_Blb_act <- round(quantile(R_activity[,1], c(0.025, 0.975))[1], 2)
+       R_Bub_act <- round(quantile(R_activity[,1], c(0.025, 0.975))[2], 2)
+       hist(R_activity[,1])
+       R_act_mean<-mean(R_activity[,1])
+       
+      #Group C
+       
+           #Boldness
+       R_boldness <- repeatability(post_sd_C, post_sd_E, post_sd_cage, post_sd_sig, trait = "logboldness")
+       R_Blb_bold <- round(quantile(R_boldness[,1], c(0.025, 0.975))[1], 2)
+       R_Bub_bold <- round(quantile(R_boldness[,1], c(0.025, 0.975))[2], 2)
+      hist(R_boldness[,1])
+      R_bold_mean<-mean(R_boldness[,1])
+      
+      #Exploration
+       R_explore <- repeatability(post_sd_C, post_sd_E, post_sd_cage, post_sd_sig, trait = "exploration")
+       R_Blb_exp <- round(quantile(R_explore[,1], c(0.025, 0.975))[1], 2)
+       R_Bub_exp <- round(quantile(R_explore[,1], c(0.025, 0.975))[2], 2)
+       hist(R_explore[,1])
+       R_exp_mean<-mean(R_explore[,1])
+      
+       #Activity
+        R_activity <- repeatability(post_sd_C, post_sd_E, post_sd_cage, post_sd_sig, trait = "logactivity")
+       R_Blb_act <- round(quantile(R_activity[,1], c(0.025, 0.975))[1], 2)
+       R_Bub_act <- round(quantile(R_activity[,1], c(0.025, 0.975))[2], 2)
+       hist(R_activity[,1])
+       R_act_mean<-mean(R_activity[,1])
+       
+    
+    
+    
+    
 ```
 
-The repeatbility of boldness was `r round(mean(R_boldness[,1]), 2)` (95% CI: `r R_Blb` to `r R_Bub`) (@fig-fig1). @tbl-tab1
+
+ The caging experiment successfully infected our treatment fish. Control fish that stayed in the laboratory had no alive parasite, which indicate that the praziquantel treatment was effective. The two most abundant species found in the experimentally infected fish were trematodes causing the blackspot disease (Trematoda: *Apophallus sp.* and *Uvulifer sp.*; min-max: `r BS_min`- `r BS_max`; median: `r BS_median`) and the bass tapeworm (Cestoda: *Proteocephalus ambloplites*; min-max: `r `cestode_min` - `r cestode_max` ; median: `r cestode_median`). The most abundant species of trematode causing blackspots was *Apophallus sp*. (Binning, Lanthier, unpublished data), but *Uvulifer sp.* was found more frequently inside the muscles (MG, personal observations).Experimentally fish gained in mean `r gain_mean` blackspots, and were found on the fines, body, gills and inside the muscles. Bass tapeworm were mostly found in the liver, stomach and digestive tract, occasionally around the spleen (parasite count: 9), and rarely on the gills (parasite count: 3) or the heart (parasite count: 2). Unknown nematode species were found rarely in the body cavity (alive parasite count: 4).
+
+The average repeatbility of each traits across trial were `r round(R_exp_mean), 2)` (95% CI: `r R_Blb_bold` to `r R_Bub_bold`) for boldness;  `r round(R_exp_mean), 2)`(95% CI: `r R_Blb_exp` to `r R_Bub_exp`) for exploration; and  `r round(R_act_mean), 2)`(95% CI: `r R_Blb_act` to `r R_Bub_act`) for activity (tab1). 
 
 #### *Boldness*
 
