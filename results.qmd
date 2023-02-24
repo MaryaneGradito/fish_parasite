@@ -25,7 +25,7 @@ editor_options:
 #| warning: false
 #| include: false
     source("./R/func.R")
-    pacman::p_load(tidyverse, brms, glmmTMB, flextable)
+    pacman::p_load(tidyverse, brms, glmmTMB, gt)
     options(digits = 3)
 ```
 
@@ -83,5 +83,5 @@ hist(R_boldness[,1])
 tab1 <- data.frame(Repeatability = c(mean(R_boldness[,1]), mean(R_explore[,1]), mean(R_activity[,1])),
                     `95% CI` = c(round(quantile(R_boldness[,1], c(0.025, 0.975))[1], 2), round(quantile(R_explore[,1], c(0.025, 0.975))[1], 2), round(quantile(R_activity[,1], c(0.025, 0.975))[1], 2)), check.names = FALSE)
 
-flextable(tab1) %>% flextable::bold(part = "header") %>% flextable::autofit()
+gt(tab1) %>% cols_align(align="center")
 ```
