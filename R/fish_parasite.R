@@ -228,4 +228,3 @@ summary(model_BC)
 #############################
 #looking at different parasites that could possibly be in competition
 
-
