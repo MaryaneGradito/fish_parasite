@@ -9,3 +9,4 @@ models/
 *_files/
 *html
 results.pdf
+results.knit.md
