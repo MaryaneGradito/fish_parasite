@@ -45,41 +45,41 @@ editor_options:
 # Parasite count
 #############################
 ### Blackspots distribution
-hist(all_data$BS_post_tot)
+  hist(all_data$BS_post_tot)
 
 # Blackspots info
-BS_min<-min(all_data$BS_post_tot)
-BS_max<-max(all_data$BS_post_tot)
-BS_median<-median(all_data$BS_post_tot)
+  BS_min<-min(all_data$BS_post_tot)
+  BS_max<-max(all_data$BS_post_tot)
+  BS_median<-median(all_data$BS_post_tot)
 
 ### Cestodes distribution
-hist(all_data$P04_alive)
+  hist(all_data$P04_alive)
 
 # Cestodes info
-cestode_min<-min(all_data$P04_alive)
-cestode_max<-max(all_data$P04_alive)
-cestode_median<-median(all_data$P04_alive)
-mean(all_data$P04_alive)
+  cestode_min<-min(all_data$P04_alive)
+  cestode_max<-max(all_data$P04_alive)
+  cestode_median<-median(all_data$P04_alive)
+  mean(all_data$P04_alive)
 
 ### Nematodes distribution
-hist(all_data$P013_alive)
+  hist(all_data$P013_alive)
 
 # Nematodes info
-nematode_min<-min(all_data$P013_alive)
-nematode_max<-max(all_data$P013_alive)
+  nematode_min<-min(all_data$P013_alive)
+  nematode_max<-max(all_data$P013_alive)
 
 ### Looking at BS gained after infection
 # Create new columns in the dataset
-all_data$BS_gain<- all_data$BS_post_tot - all_data$BS_pre
+  all_data$BS_gain<- all_data$BS_post_tot - all_data$BS_pre
 
 # BS gain distribution
-hist(all_data$BS_gain)
+  hist(all_data$BS_gain)
 
 # BS gain info
-gain_min<-min(all_data$BS_gain) ### miscount, some fish have less BS after infection
-gain_max<-max(all_data$BS_gain)
-gain_median<-median(all_data$BS_gain)
-gain_mean<-mean(all_data$BS_gain)
+  gain_min<-min(all_data$BS_gain) ### miscount, some fish have less BS after infection
+  gain_max<-max(all_data$BS_gain)
+  gain_median<-median(all_data$BS_gain)
+  gain_mean<-mean(all_data$BS_gain)
 
 ############################
 # Load model
@@ -87,120 +87,126 @@ gain_mean<-mean(all_data$BS_gain)
 
   model1 <- readRDS(file = "./output/models/model1.rds")
   model2 <- readRDS(file = "./output/models/model2.rds")
+
   # Calculate repeatability
-    post_sd <- as_draws_df(model1, variable = "^sd", regex = TRUE)
-    post_sd_C <- post_sd[,grepl("C", colnames(post_sd))]
-    post_sd_E <- post_sd[,grepl("E", colnames(post_sd))]
+         post_sd <- as_draws_df(model1, variable = "^sd", regex = TRUE)
+       post_sd_C <- post_sd[,grepl("C", colnames(post_sd))]
+       post_sd_E <- post_sd[,grepl("E", colnames(post_sd))]
     post_sd_cage <- post_sd[,grepl("cage", colnames(post_sd))]
-    post_sd_sig <- as_draws_df(model1, variable = "^sigma", regex = TRUE)
+     post_sd_sig <- as_draws_df(model1, variable = "^sigma", regex = TRUE)
     
   # Repeatability for the traits across treatment
-source("./R/func.R")
     #Boldness
        R_boldness <- repeatability(post_sd_C, post_sd_E, post_sd_cage, post_sd_sig, trait = "logboldness")
-       R_Blb_bold <- round(quantile(R_boldness[,1], c(0.025, 0.975))[1], 2)
-       R_Bub_bold <- round(quantile(R_boldness[,1], c(0.025, 0.975))[2], 2)
-      hist(R_boldness[,1])
-      R_bold_mean<-mean(R_boldness[,1])
       
-      #Exploration
+       R_bold_mean <- mean(R_boldness[,1])
+        R_Blb_bold <- round(quantile(R_boldness[,1], c(0.025, 0.975))[1], 2)
+        R_Bub_bold <- round(quantile(R_boldness[,1], c(0.025, 0.975))[2], 2)
+      
+      hist(R_boldness[,1])
+      
+    #Exploration
        R_explore <- repeatability(post_sd_C, post_sd_E, post_sd_cage, post_sd_sig, trait = "exploration")
+      
+       R_exp_mean<-mean(R_explore[,1])
        R_Blb_exp <- round(quantile(R_explore[,1], c(0.025, 0.975))[1], 2)
        R_Bub_exp <- round(quantile(R_explore[,1], c(0.025, 0.975))[2], 2)
+       
        hist(R_explore[,1])
-       R_exp_mean<-mean(R_explore[,1])
-      
-       #Activity
+           
+    #Activity
        R_activity <- repeatability(post_sd_C, post_sd_E, post_sd_cage, post_sd_sig, trait = "logactivity")
+      
+       R_act_mean<-mean(R_activity[,1])
        R_Blb_act <- round(quantile(R_activity[,1], c(0.025, 0.975))[1], 2)
        R_Bub_act <- round(quantile(R_activity[,1], c(0.025, 0.975))[2], 2)
+       
        hist(R_activity[,1])
-       R_act_mean<-mean(R_activity[,1])
       
   # Compare whether repeatability is different between exploratory and boldness
       R_contrast <- R_explore - R_boldness
-  
-  
-      
+        
 # Repeatability for the traits between treatment
 
-    post_sd <- as_draws_df(model2, variable = "^sd", regex = TRUE)
-    post_sd_C <- post_sd[,grepl("C", colnames(post_sd))] #ID control
-    post_sd_E <- post_sd[,grepl("E", colnames(post_sd))] #ID experimental
+         post_sd <- as_draws_df(model2, variable = "^sd", regex = TRUE)
+       post_sd_C <- post_sd[,grepl("C", colnames(post_sd))] #ID control
+       post_sd_E <- post_sd[,grepl("E", colnames(post_sd))] #ID experimental
     post_sd_cage <- post_sd[,grepl("cage", colnames(post_sd))]
-    post_sd_sig <- exp(as_draws_df(model2, variable = "^b_sigma", regex = TRUE))
-
+     post_sd_sig <- exp(as_draws_df(model2, variable = "^b_sigma", regex = TRUE))
 
     #my function doesn't work
 R_C_bolness<- rep_each(post_sd_C_B, post_sd_cage, post_sig_B, trait = "logboldness")
 R_C_boldness
 
-####CONTROL GROUP
+############################
+##     CONTROL GROUP
+############################
+
 #Boldness for control group
-R_C_boldness <-  post_sd_C[,grep("logboldness", colnames(post_sd_C))]^2  / (post_sd_sig[,grep("b_sigma_logboldness_treatmentC", colnames(post_sd_sig))]^2 +
-                     post_sd_C[,grep("logboldness", colnames(post_sd_C))]^2 + 
-                     post_sd_cage[ ,grep("logboldness", colnames(post_sd_cage))]^2)
+  R_C_boldness <-  post_sd_C[,grep("logboldness", colnames(post_sd_C))]^2  / (post_sd_sig[,grep("b_sigma_logboldness_treatmentC", colnames(post_sd_sig))]^2 +
+                      post_sd_C[,grep("logboldness", colnames(post_sd_C))]^2 + 
+                      post_sd_cage[ ,grep("logboldness", colnames(post_sd_cage))]^2)
 #verification
-0.38^2 / (exp(-0.19)^2 + 0.38^2 + 0.19^2)
+  0.38^2 / (exp(-0.19)^2 + 0.38^2 + 0.19^2)
 
-hist(R_C_boldness[,1])
-R_C_bold<-mean(R_C_boldness[,1], 3)
-
-R_Blb_bold_C <- round(quantile(R_C_boldness[,1], c(0.025, 0.975))[1], 3)
-R_Bub_bold_C <- round(quantile(R_C_boldness[,1], c(0.025, 0.975))[2], 3)
+  hist(R_C_boldness[,1])
+  
+      R_C_bold <- mean(R_C_boldness[,1], 3)
+  R_Blb_bold_C <- round(quantile(R_C_boldness[,1], c(0.025, 0.975))[1], 3)
+  R_Bub_bold_C <- round(quantile(R_C_boldness[,1], c(0.025, 0.975))[2], 3)
 
 #exploration for control group
-R_C_exploration <-  post_sd_C[,grep("exploration", colnames(post_sd_C))]^2  / (post_sd_sig[,grep("b_sigma_exploration_treatmentC", colnames(post_sd_sig))]^2 +
-                     post_sd_C[,grep("exploration", colnames(post_sd_C))]^2 + 
-                     post_sd_cage[ ,grep("exploration", colnames(post_sd_cage))]^2)
+  R_C_exploration <-  post_sd_C[,grep("exploration", colnames(post_sd_C))]^2  / (post_sd_sig[,grep("b_sigma_exploration_treatmentC", colnames(post_sd_sig))]^2 +
+                      post_sd_C[,grep("exploration", colnames(post_sd_C))]^2 + 
+                      post_sd_cage[ ,grep("exploration", colnames(post_sd_cage))]^2)
 #verification
-0.58^2 / (exp(-0.12)^2 + 0.58^2 + 0.15^2) #same number
+  0.58^2 / (exp(-0.12)^2 + 0.58^2 + 0.15^2) #same number
 
-hist(R_C_exploration[,1])
-mean(R_C_exploration[,1])
-R_Blb_exp_C <- round(quantile(R_C_exploration[,1], c(0.025, 0.975))[1], 3)
-R_Bub_exp_C <- round(quantile(R_C_exploration[,1], c(0.025, 0.975))[2], 3)
+  hist(R_C_exploration[,1])
+  mean(R_C_exploration[,1])
+  R_Blb_exp_C <- round(quantile(R_C_exploration[,1], c(0.025, 0.975))[1], 3)
+  R_Bub_exp_C <- round(quantile(R_C_exploration[,1], c(0.025, 0.975))[2], 3)
 
 
 #activity for control group
-R_C_activity <-  post_sd_C[,grep("logactivity", colnames(post_sd_C))]^2  / (post_sd_sig[,grep("b_sigma_logactivity_treatmentC", colnames(post_sd_sig))]^2 +
-                     post_sd_C[,grep("logactivity", colnames(post_sd_C))]^2 + 
-                     post_sd_cage[ ,grep("logactivity", colnames(post_sd_cage))]^2)
+  R_C_activity <-  post_sd_C[,grep("logactivity", colnames(post_sd_C))]^2  / (post_sd_sig[,grep("b_sigma_logactivity_treatmentC", colnames(post_sd_sig))]^2 +
+                      post_sd_C[,grep("logactivity", colnames(post_sd_C))]^2 + 
+                      post_sd_cage[ ,grep("logactivity", colnames(post_sd_cage))]^2)
 #verification
-0.65^2 / (exp(-0.13)^2 + 0.65^2 + 0.10^2) 
+  0.65^2 / (exp(-0.13)^2 + 0.65^2 + 0.10^2) 
 
-hist(R_C_activity[,1])
-mean(R_C_activity[,1])
-R_Blb_act_C <- round(quantile(R_C_activity[,1], c(0.025, 0.975))[1], 3)
-R_Bub_act_C <- round(quantile(R_C_activity[,1], c(0.025, 0.975))[2], 3)
+  hist(R_C_activity[,1])
+  mean(R_C_activity[,1])
+  R_Blb_act_C <- round(quantile(R_C_activity[,1], c(0.025, 0.975))[1], 3)
+  R_Bub_act_C <- round(quantile(R_C_activity[,1], c(0.025, 0.975))[2], 3)
 
+############################
+# EXPERIMENTAL GROUP
+############################
 
-####EXPERIMENTAL GROUP
 #Boldness for experimental group
-R_E_boldness <-  post_sd_E[,grep("logboldness", colnames(post_sd_E))]^2  / (post_sd_sig[,grep("b_sigma_logboldness_treatmentE", colnames(post_sd_sig))]^2 +
-                     post_sd_E[,grep("logboldness", colnames(post_sd_E))]^2 + 
-                     post_sd_cage[ ,grep("logboldness", colnames(post_sd_cage))]^2)
+  R_E_boldness <-  post_sd_E[,grep("logboldness", colnames(post_sd_E))]^2  / (post_sd_sig[,grep("b_sigma_logboldness_treatmentE", colnames(post_sd_sig))]^2 +
+                      post_sd_E[,grep("logboldness", colnames(post_sd_E))]^2 + 
+                      post_sd_cage[ ,grep("logboldness", colnames(post_sd_cage))]^2)
 #verification
-0.40^2 / (exp(-0.11)^2 + 0.40^2 + 0.19^2)
+  0.40^2 / (exp(-0.11)^2 + 0.40^2 + 0.19^2)
 
-hist(R_E_boldness[,1])
-mean(R_E_boldness[,1])
-R_Blb_bold_E <- round(quantile(R_E_boldness[,1], c(0.025, 0.975))[1], 3)
-R_Bub_bold_E <- round(quantile(R_E_boldness[,1], c(0.025, 0.975))[2], 3)
-
+  hist(R_E_boldness[,1])
+  mean(R_E_boldness[,1])
+  R_Blb_bold_E <- round(quantile(R_E_boldness[,1], c(0.025, 0.975))[1], 3)
+  R_Bub_bold_E <- round(quantile(R_E_boldness[,1], c(0.025, 0.975))[2], 3)
 
 #exploration for experimental group
-R_E_exploration <-  post_sd_E[,grep("exploration", colnames(post_sd_E))]^2  / (post_sd_sig[,grep("b_sigma_exploration_treatmentE", colnames(post_sd_sig))]^2 +
-                     post_sd_E[,grep("exploration", colnames(post_sd_E))]^2 + 
-                     post_sd_cage[ ,grep("exploration", colnames(post_sd_cage))]^2)
+  R_E_exploration <-  post_sd_E[,grep("exploration", colnames(post_sd_E))]^2  / (post_sd_sig[,grep("b_sigma_exploration_treatmentE", colnames(post_sd_sig))]^2 +
+                      post_sd_E[,grep("exploration", colnames(post_sd_E))]^2 + 
+                      post_sd_cage[ ,grep("exploration", colnames(post_sd_cage))]^2)
 #verification
-0.36^2 / (exp(-0.26)^2 + 0.36^2 + 0.15^2) 
+  0.36^2 / (exp(-0.26)^2 + 0.36^2 + 0.15^2) 
 
-hist(R_E_exploration[,1])
-mean(R_E_exploration[,1])
-R_Blb_exp_E <- round(quantile(R_E_exploration[,1], c(0.025, 0.975))[1], 3)
-R_Bub_exp_E <- round(quantile(R_E_exploration[,1], c(0.025, 0.975))[2], 3)
-
+  hist(R_E_exploration[,1])
+  mean(R_E_exploration[,1])
+  R_Blb_exp_E <- round(quantile(R_E_exploration[,1], c(0.025, 0.975))[1], 3)
+  R_Bub_exp_E <- round(quantile(R_E_exploration[,1], c(0.025, 0.975))[2], 3)
 
 #activity for experimental group
 R_E_activity <-  post_sd_E[,grep("logactivity", colnames(post_sd_E))]^2  / (post_sd_sig[,grep("b_sigma_logactivity_treatmentE", colnames(post_sd_sig))]^2 +
@@ -208,37 +214,43 @@ R_E_activity <-  post_sd_E[,grep("logactivity", colnames(post_sd_E))]^2  / (post
                      post_sd_cage[ ,grep("logactivity", colnames(post_sd_cage))]^2)
 
 #verification
-0.49^2 / (exp(-0.26)^2 + 0.49^2 + 0.10^2) 
+  0.49^2 / (exp(-0.26)^2 + 0.49^2 + 0.10^2) 
 
-hist(R_E_activity[,1])
-mean(R_E_activity[,1])
-R_Blb_act_E <- round(quantile(R_E_activity[,1], c(0.025, 0.975))[1], 3)
-R_Bub_act_E <- round(quantile(R_E_activity[,1], c(0.025, 0.975))[2], 3)
-    
+  hist(R_E_activity[,1])
+  mean(R_E_activity[,1])
+  R_Blb_act_E <- round(quantile(R_E_activity[,1], c(0.025, 0.975))[1], 3)
+  R_Bub_act_E <- round(quantile(R_E_activity[,1], c(0.025, 0.975))[2], 3)
+
+#################################
+# Compare R in E and C treatments
+#################################
+
 #Is repeatability different before and after treatment ? 
-p_value_bold<-pmcmc((R_C_boldness[,1]) - (R_E_boldness[,1])) # 0.95, meaning it's not different? 
-p_value_exp<-pmcmc((R_C_exploration[,1]) - (R_E_exploration[,1])) #not different
+  p_value_bold<-pmcmc((R_C_boldness[,1]) - (R_E_boldness[,1])) # 0.95, meaning it's not different? Yes, not different
 
-p_value_act<-pmcmc((R_C_activity[,1]) - (R_E_activity[,1])) #not different
+  # That makes sense given:
+  par(mfrow = c(1,2))
+  hist(R_E_boldness[,1])
+  hist(R_C_boldness[,1])
+
+  p_value_exp<-pmcmc((R_C_exploration[,1]) - (R_E_exploration[,1])) #not different
+  p_value_act<-pmcmc((R_C_activity[,1]) - (R_E_activity[,1])) #not different
 
 #Is the repeatability different from 0?
 
-#Boldness control
-p_value_bold_C<-pmcmc(R_C_boldness[,1], null = 5)
+#Boldness control. No, NULL cannot be 5 because your vector is a proportion, so you're comparing diffient scales / units. R_C_bolness is a proportion and your null is set to be 5% which is on the percentage scale. Change as follows.
+  p_value_bold_C<-pmcmc(R_C_boldness[,1]*100, null = 5)
 #Boldness experimental
-p_value_bold_E<-pmcmc(R_E_boldness[,1], null = 5)
-
+  p_value_bold_E<-pmcmc(R_E_boldness[,1]*100, null = 5)
 #Exploration control
-p_value_exp_C<-pmcmc(R_C_exploration[,1], 5)
+  p_value_exp_C<-pmcmc(R_C_exploration[,1]*100, null = 5)
 #Exploration experimental
-p_value_exp_E<-pmcmc(R_E_exploration[,1], 5)
+  p_value_exp_E<-pmcmc(R_E_exploration[,1]*100, null = 5)
 
 #Activity control
-p_value_act_C<-pmcmc(R_C_activity[,1], 5)
+  p_value_act_C<-pmcmc(R_C_activity[,1]*100, null = 5)
 #Activity experimental
-p_value_act_E<-pmcmc(R_E_activity[,1], 5)
-
-
+  p_value_act_E<-pmcmc(R_E_activity[,1]*100, null = 5)
 
 ```
 
