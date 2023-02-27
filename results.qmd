@@ -29,7 +29,6 @@ editor_options:
     options(digits = 3)
 ```
 
-
 ```{r}
 #| label: load_data
 #| output: false
@@ -124,68 +123,123 @@ source("./R/func.R")
   
       
 # Repeatability for the traits between treatment
-source("./R/reap_each.R")
 
-post_sd <- as_draws_df(model2, variable = "^sd", regex = TRUE)
-post_sd_C <- post_sd[,grepl("C", colnames(post_sd))]
-post_sd_E <- post_sd[,grepl("E", colnames(post_sd))]
-post_sd_cage <- post_sd[,grepl("cage", colnames(post_sd))]
-post_sd_sig <- exp(as_draws_df(model2, variable = "^b_sigma", regex = TRUE))
+    post_sd <- as_draws_df(model2, variable = "^sd", regex = TRUE)
+    post_sd_C <- post_sd[,grepl("C", colnames(post_sd))] #ID control
+    post_sd_E <- post_sd[,grepl("E", colnames(post_sd))] #ID experimental
+    post_sd_cage <- post_sd[,grepl("cage", colnames(post_sd))]
+    post_sd_sig <- exp(as_draws_df(model2, variable = "^b_sigma", regex = TRUE))
 
-R_C_bolness <-  post_sd_C[,grep("logboldness", colnames(post_sd_C))]^2  / (post_sd_sig[,grep("b_sigma_logboldness_treatmentC", colnames(post_sd_sig))]^2 +
+
+    #my function doesn't work
+R_C_bolness<- rep_each(post_sd_C_B, post_sd_cage, post_sig_B, trait = "logboldness")
+R_C_boldness
+
+####CONTROL GROUP
+#Boldness for control group
+R_C_boldness <-  post_sd_C[,grep("logboldness", colnames(post_sd_C))]^2  / (post_sd_sig[,grep("b_sigma_logboldness_treatmentC", colnames(post_sd_sig))]^2 +
                      post_sd_C[,grep("logboldness", colnames(post_sd_C))]^2 + 
                      post_sd_cage[ ,grep("logboldness", colnames(post_sd_cage))]^2)
+#verification
 0.38^2 / (exp(-0.19)^2 + 0.38^2 + 0.19^2)
-ggplot(data = R_C_bolness[,1])  + geom_histogram(after_stat("density"))
-p = pmcmc(R_C_bolness[,1], null = 0)
-# Group E
-#Boldness 
-R_boldness_2 <- rep_each(post_sd_E_exp, post_sd_cage, post_sd_sig, trait = "logboldness")
-R_Blb_bold <- round(quantile(R_boldness[,1], c(0.025, 0.975))[1], 2)
-R_Bub_bold <- round(quantile(R_boldness[,1], c(0.025, 0.975))[2], 2)
-hist(R_boldness[,1])
-R_bold_mean<-mean(R_boldness[,1])
 
-#Exploration
-R_explore <- repeatability(post_sd_E, post_sd_cage, post_sd_sig, trait = "exploration")
-R_Blb_exp <- round(quantile(R_explore[,1], c(0.025, 0.975))[1], 2)
-R_Bub_exp <- round(quantile(R_explore[,1], c(0.025, 0.975))[2], 2)
-hist(R_explore[,1])
-R_exp_mean<-mean(R_explore[,1])
+hist(R_C_boldness[,1])
+R_C_bold<-mean(R_C_boldness[,1], 3)
 
-#Activity
-R_activity <- repeatability(post_sd_C, post_sd_E, post_sd_cage, post_sd_sig, trait = "logactivity")
-R_Blb_act <- round(quantile(R_activity[,1], c(0.025, 0.975))[1], 2)
-R_Bub_act <- round(quantile(R_activity[,1], c(0.025, 0.975))[2], 2)
-hist(R_activity[,1])
-R_act_mean<-mean(R_activity[,1])
+R_Blb_bold_C <- round(quantile(R_C_boldness[,1], c(0.025, 0.975))[1], 3)
+R_Bub_bold_C <- round(quantile(R_C_boldness[,1], c(0.025, 0.975))[2], 3)
 
-#Group C
+#exploration for control group
+R_C_exploration <-  post_sd_C[,grep("exploration", colnames(post_sd_C))]^2  / (post_sd_sig[,grep("b_sigma_exploration_treatmentC", colnames(post_sd_sig))]^2 +
+                     post_sd_C[,grep("exploration", colnames(post_sd_C))]^2 + 
+                     post_sd_cage[ ,grep("exploration", colnames(post_sd_cage))]^2)
+#verification
+0.58^2 / (exp(-0.12)^2 + 0.58^2 + 0.15^2) #same number
 
-#Boldness
-R_boldness <- repeatability(post_sd_C, post_sd_E, post_sd_cage, post_sd_sig, trait = "logboldness")
-R_Blb_bold <- round(quantile(R_boldness[,1], c(0.025, 0.975))[1], 2)
-R_Bub_bold <- round(quantile(R_boldness[,1], c(0.025, 0.975))[2], 2)
-hist(R_boldness[,1])
-R_bold_mean<-mean(R_boldness[,1])
+hist(R_C_exploration[,1])
+mean(R_C_exploration[,1])
+R_Blb_exp_C <- round(quantile(R_C_exploration[,1], c(0.025, 0.975))[1], 3)
+R_Bub_exp_C <- round(quantile(R_C_exploration[,1], c(0.025, 0.975))[2], 3)
 
-#Exploration
-R_explore <- repeatability(post_sd_C, post_sd_E, post_sd_cage, post_sd_sig, trait = "exploration")
-R_Blb_exp <- round(quantile(R_explore[,1], c(0.025, 0.975))[1], 2)
-R_Bub_exp <- round(quantile(R_explore[,1], c(0.025, 0.975))[2], 2)
-hist(R_explore[,1])
-R_exp_mean<-mean(R_explore[,1])
 
-#Activity
-R_activity <- repeatability(post_sd_C, post_sd_E, post_sd_cage, post_sd_sig, trait = "logactivity")
-R_Blb_act <- round(quantile(R_activity[,1], c(0.025, 0.975))[1], 2)
-R_Bub_act <- round(quantile(R_activity[,1], c(0.025, 0.975))[2], 2)
-hist(R_activity[,1])
-R_act_mean<-mean(R_activity[,1])
+#activity for control group
+R_C_activity <-  post_sd_C[,grep("logactivity", colnames(post_sd_C))]^2  / (post_sd_sig[,grep("b_sigma_logactivity_treatmentC", colnames(post_sd_sig))]^2 +
+                     post_sd_C[,grep("logactivity", colnames(post_sd_C))]^2 + 
+                     post_sd_cage[ ,grep("logactivity", colnames(post_sd_cage))]^2)
+#verification
+0.65^2 / (exp(-0.13)^2 + 0.65^2 + 0.10^2) 
+
+hist(R_C_activity[,1])
+mean(R_C_activity[,1])
+R_Blb_act_C <- round(quantile(R_C_activity[,1], c(0.025, 0.975))[1], 3)
+R_Bub_act_C <- round(quantile(R_C_activity[,1], c(0.025, 0.975))[2], 3)
+
+
+####EXPERIMENTAL GROUP
+#Boldness for experimental group
+R_E_boldness <-  post_sd_E[,grep("logboldness", colnames(post_sd_E))]^2  / (post_sd_sig[,grep("b_sigma_logboldness_treatmentE", colnames(post_sd_sig))]^2 +
+                     post_sd_E[,grep("logboldness", colnames(post_sd_E))]^2 + 
+                     post_sd_cage[ ,grep("logboldness", colnames(post_sd_cage))]^2)
+#verification
+0.40^2 / (exp(-0.11)^2 + 0.40^2 + 0.19^2)
+
+hist(R_E_boldness[,1])
+mean(R_E_boldness[,1])
+R_Blb_bold_E <- round(quantile(R_E_boldness[,1], c(0.025, 0.975))[1], 3)
+R_Bub_bold_E <- round(quantile(R_E_boldness[,1], c(0.025, 0.975))[2], 3)
+
+
+#exploration for experimental group
+R_E_exploration <-  post_sd_E[,grep("exploration", colnames(post_sd_E))]^2  / (post_sd_sig[,grep("b_sigma_exploration_treatmentE", colnames(post_sd_sig))]^2 +
+                     post_sd_E[,grep("exploration", colnames(post_sd_E))]^2 + 
+                     post_sd_cage[ ,grep("exploration", colnames(post_sd_cage))]^2)
+#verification
+0.36^2 / (exp(-0.26)^2 + 0.36^2 + 0.15^2) 
+
+hist(R_E_exploration[,1])
+mean(R_E_exploration[,1])
+R_Blb_exp_E <- round(quantile(R_E_exploration[,1], c(0.025, 0.975))[1], 3)
+R_Bub_exp_E <- round(quantile(R_E_exploration[,1], c(0.025, 0.975))[2], 3)
+
+
+#activity for experimental group
+R_E_activity <-  post_sd_E[,grep("logactivity", colnames(post_sd_E))]^2  / (post_sd_sig[,grep("b_sigma_logactivity_treatmentE", colnames(post_sd_sig))]^2 +
+                     post_sd_E[,grep("logactivity", colnames(post_sd_E))]^2 + 
+                     post_sd_cage[ ,grep("logactivity", colnames(post_sd_cage))]^2)
+
+#verification
+0.49^2 / (exp(-0.26)^2 + 0.49^2 + 0.10^2) 
+
+hist(R_E_activity[,1])
+mean(R_E_activity[,1])
+R_Blb_act_E <- round(quantile(R_E_activity[,1], c(0.025, 0.975))[1], 3)
+R_Bub_act_E <- round(quantile(R_E_activity[,1], c(0.025, 0.975))[2], 3)
     
-    
-    
-    
+#Is repeatability different before and after treatment ? 
+p_value_bold<-pmcmc((R_C_boldness[,1]) - (R_E_boldness[,1])) # 0.95, meaning it's not different? 
+p_value_exp<-pmcmc((R_C_exploration[,1]) - (R_E_exploration[,1])) #not different
+
+p_value_act<-pmcmc((R_C_activity[,1]) - (R_E_activity[,1])) #not different
+
+#Is the repeatability different from 0?
+
+#Boldness control
+p_value_bold_C<-pmcmc(R_C_boldness[,1], null = 5)
+#Boldness experimental
+p_value_bold_E<-pmcmc(R_E_boldness[,1], null = 5)
+
+#Exploration control
+p_value_exp_C<-pmcmc(R_C_exploration[,1], 5)
+#Exploration experimental
+p_value_exp_E<-pmcmc(R_E_exploration[,1], 5)
+
+#Activity control
+p_value_act_C<-pmcmc(R_C_activity[,1], 5)
+#Activity experimental
+p_value_act_E<-pmcmc(R_E_activity[,1], 5)
+
+
+
 ```
 
 The caging experiment successfully infected our treatment fish. Control fish that stayed in the laboratory had no alive parasite, which indicate that the praziquantel treatment was effective. The two most abundant species found in the experimentally infected fish were trematodes causing the blackspot disease (Trematoda: *Apophallus sp.* and *Uvulifer sp.*; min-max: `r BS_min`- `r BS_max`; median: `r BS_median`) and the bass tapeworm (Cestoda: *Proteocephalus ambloplites*; min-max: `r cestode_min` - `r cestode_max` ; median: `r cestode_median`). The most abundant species of trematode causing blackspots was *Apophallus sp*. (Binning, Lanthier, unpublished data), but *Uvulifer sp.* was found more frequently inside the muscles (MG, personal observations).Experimentally fish gained in mean `r gain_mean` blackspots, and were found on the fines, body, gills and inside the muscles. Bass tapeworm were mostly found in the liver, stomach and digestive tract, occasionally around the spleen (parasite count: 9), and rarely on the gills (parasite count: 3) or the heart (parasite count: 2). Unknown nematode species were found rarely in the body cavity (alive parasite count: 4).
@@ -205,14 +259,18 @@ hist(R_boldness[,1])
 #| label: tbl-tab1
 #| tbl-cap: Repeatbility estimates for traits
 tab1 <- data.frame(Trait = c("log_Boldness", "Exploration","log_Activity"), 
-"Group E" =  c(mean(R_bold_E[,1]), mean(R_exp_E[,1]), mean(R_act_E[,1])), "Group C" = c(mean(R_bold_C[,1]), mean(R_exp_C[,1]), mean(R_act_C[,1])),
-"2.5% CI" = c(round(R_Blb_bold, 2), round(R_Blb_exp, 2), round(R_Blb_act), 2), "97.5% CI" = c(round(R_Bub_bold, 2), round(R_Bub_exp, 2), round(R_Bub_act), 2), check.names = FALSE)
+"Group_C" = c(mean(R_C_bolness[,1]), mean(R_C_exploration[,1]), mean(R_C_activity[,1])), 
+"0.025_(C)" = c((R_Blb_bold_C),(R_Blb_exp_C), (R_Blb_act_C)), "0.975_(C)" = c((R_Bub_bold_C), (R_Bub_exp_C),(R_Bub_act_C)),
+"Group_E" =  c(mean(R_E_bolness[,1]), mean(R_E_exploration[,1]), mean(R_E_activity[,1])),
+"0.025_(E)" = c((R_Blb_bold_E), (R_Blb_exp_E), (R_Blb_act_E)), "0.975_(E)" = c((R_Bub_bold_E), (R_Bub_exp_E), (R_Bub_act_E)), "p_value" = c((p_value_bold), (p_value_exp), (p_value_act)))
+
+
 
 gt(tab1) %>% cols_align(align="center")
 gt(tab1) %>% tab_header(
     title = "Repeatability for each personality trait")
 gt(tab1) %>% tab_spanner(
     label = "Treatment",
-    columns = c("Group E","Group C")
+    columns = c("Group_C","X0.025_.C.","X0.975_.C.","Group_E","X0.025_.E.","X0.975_.E.")
   )
 ```
