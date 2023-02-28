@@ -26,7 +26,7 @@ editor_options:
 
     source("./R/func.R")
     pacman::p_load(tidyverse, brms, glmmTMB, gt, posterior, gt, glue, dplyr,magrittr)
-    options(digits = 3)
+    options(digits = 3, scipen = 2)
 ```
 
 ```{r}
@@ -280,10 +280,30 @@ summary(model2)
   p_value_act_a<-pmcmc(R_activity[,1]*100, null = 5,twotail = FALSE) #still get 0 for this one
   
   
-  
-  
+## Behavioural Syndromes
+
+# Extract correlations from model
+  post_cor  <- as_draws_df(model2, variable = "^cor", regex= TRUE)
+  head(post_cor)
+
+# Extract the C and E groups seperately
+  cor_bold_treatC <-   post_cor[,grep("treatmentC__[a-z]*_treatmentC", colnames(post_cor))]
+  cor_bold_treatE <-   post_cor[,grep("treatmentE__[a-z]*_treatmentE", colnames(post_cor))]
+
+# See if syndroms differ in C and E
+  bsyn_b_act_C <- data.frame(cor_bold_treatC[,1]); mean(bsyn_b_act_C[,1]); quantile(bsyn_b_act_C[,1], c(0.025, 0.975))
+  bsyn_b_act_E <- data.frame(cor_bold_treatE[,1]); mean(bsyn_b_act_E[,1]); quantile(bsyn_b_act_E[,1], c(0.025, 0.975))
+
+# Overall syndrome
+  # Take average of the two treatments
+    bsyn_b_act   <- cbind(bsyn_b_act_C[,1], bsyn_b_act_E[,1]); mean(rowMeans(bsyn_b_act)); quantile(rowMeans(bsyn_b_act), c(0.025, 0.975))
+
+  # Pool the two MCMC chains from the treatements into a giant vector 32,000 rows (2*16,000)
+    bsyn_b_act2  <- rbind(c(bsyn_b_act_C[,1], bsyn_b_act_E[,1])); mean(bsyn_b_act2); quantile(bsyn_b_act2, c(0.025, 0.975))
 
 ```
+## Methods
+To estimate if repeatability was different from 0, we choose 0.05 as a thresold since the values can't be 0 in the distribution. 
 
 #### *Experimental infection*
 
@@ -291,11 +311,19 @@ The caging experiment successfully infected our treatment fish. Control fish tha
 
 #### *Repeatability*
 
-The average repeatability across trial was `r mean(R_boldness[,1])` (95% CI: `r R_Blb_bold` to `r R_Bub_bold`) for boldness; `r mean(R_explore[,1])`(95% CI: `r R_Blb_exp` to `r R_Bub_exp`) for exploration; and `r mean(R_activity[,1])`(95% CI: `r R_Blb_act` to `r R_Bub_act`) for activity. Repeatability did not differ between treatment for boldness (p-value = `r p_value_bold`), exploration (p-value: `r p_value_exp`) and activity (p-value:`r p_value_act`).To estimate if repeatability was different from 0, we choose 0.05 as a thresold since the values can't be 0 in the distribution. Average repeatability was not significantly different from 0.05 for boldness (p-value = `r p_value_bold_a`), exploration (p-value = `r p_value_exp_a`) and activity (p-value = `r p_value_act_a`)).
+Boldness, exploration and activity were all repeatable (Boldness: `r mean(R_boldness[,1])`, 95% CI: `r R_Blb_bold` to `r R_Bub_bold`, $pMCMC_{\alpha = 0.05}$ = `r p_value_bold_a`; Exploration: `r mean(R_explore[,1])`, 95% CI: `r R_Blb_exp` to `r R_Bub_exp`, $pMCMC_{\alpha = 0.05}$ = `r p_value_exp_a`; Activity: `r mean(R_activity[,1])`, 95% CI: `r R_Blb_act` to `r R_Bub_act`, $pMCMC_{\alpha = 0.05}$ = `r p_value_act_a`). 
+We did not observe among-indiviudal variaion to be higher in the control vs experimentally infected groups (@tbl-tab1).Repeatability did not differ between treatment for boldness (p-value = `r p_value_bold`), exploration (p-value: `r p_value_exp`) and activity (p-value:`r p_value_act`). 
 
 #### *Behavioural syndrome*
 
+
+
+```{r}
+#| echo: false
+#| include: false
 summary(model2)
+summary(model1)
+```
 
 #### *Effect of parasite*
 
@@ -308,29 +336,24 @@ summary(model2)
 hist(R_boldness[,1])
 ```
 
-```{r, tbl-tab1}
+
+
+```{r}
 #| label: tbl-tab1
 #| tbl-cap: Repeatbility estimates for traits
+#| 
 tab1 <- data.frame(Trait = c("log_Boldness", "Exploration","log_Activity"), 
-"Group_C" = c(mean(R_C_boldness[,1]), mean(R_C_exploration[,1]), mean(R_C_activity[,1])), 
-"95_CI" = c((R_Blb_bold_C),(R_Blb_exp_C), (R_Blb_act_C)),
-"0.975_(C)" = c((R_Bub_bold_C), (R_Bub_exp_C),(R_Bub_act_C)),
-"Group_E" =  c(mean(R_E_boldness[,1]), mean(R_E_exploration[,1]), mean(R_E_activity[,1])),
-"0.025_(E)" = c((R_Blb_bold_E), (R_Blb_exp_E), (R_Blb_act_E)), "0.975_(E)" = c((R_Bub_bold_E), (R_Bub_exp_E), (R_Bub_act_E)), "p_value" = c((p_value_bold), (p_value_exp), (p_value_act)))
+                "Group_C" = c(mean(R_C_boldness[,1]), mean(R_C_exploration[,1]), mean(R_C_activity[,1])), 
+                  "95_CI" = c((R_Blb_bold_C),(R_Blb_exp_C), (R_Blb_act_C)),
+              "0.975_(C)" = c((R_Bub_bold_C), (R_Bub_exp_C),(R_Bub_act_C)),
+                "Group_E" = c(mean(R_E_boldness[,1]), mean(R_E_exploration[,1]), mean(R_E_activity[,1])),
+              "0.025_(E)" = c((R_Blb_bold_E), (R_Blb_exp_E), (R_Blb_act_E)), "0.975_(E)" = c((R_Bub_bold_E), (R_Bub_exp_E), (R_Bub_act_E)),           
+                "p_value" = c((p_value_bold), (p_value_exp), (p_value_act)), check.names = FALSE)
 
-gt_tbl <- gt(tab1)
-
-gt(tab1) %>% cols_align(align="center") %>% 
-tab_header(
-    title = "Repeatability for each personality trait") %>%
-  tab_spanner(label = "**Treatment**") %>%
-  columns = c("Group_C","X0.025_.C.","X0.975_.C.","Group_E","X0.025_.E.","X0.975_.E.")
-
-
-gt_tbl <- gt_tbl %>%
+gt_tbl <- gt(tab1) %>%
   tab_header(
     title = "Repeatability") %>%
-  tab_spanner(label = "**Treatment**") %>%
-  colums = c("Group_C","X0.025_.C.","X0.975_.C.","Group_E","X0.025_.E.","X0.975_.E.")
-
+  tab_spanner(label = "**Treatment**")#%>%
+  #colums = c("Group_C","X0.025_.C.","X0.975_.C.","Group_E","X0.025_.E.","X0.975_.E.")
+gt_tbl
 ```
