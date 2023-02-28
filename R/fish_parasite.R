@@ -238,3 +238,43 @@ summary(model_BC)
 #############################
 #looking at different parasites that could possibly be in competition
 
+
+#############################
+# Random slopes exploration
+#############################
+
+library(ggplot2)
+
+#Graph for exploration
+ggplot(data = all_data,
+       aes(x =treatment,
+           y =exploration,
+           group = ID_fish,
+           color = factor(ID_fish))) +
+  geom_line() +
+  geom_point(size = 3) +
+  labs(x= "Treatment",
+       y= "Exploratory behaviour")
+
+#Graph for boldness
+ggplot(data = all_data,
+       aes(x =treatment,
+           y =boldness,
+           group = ID_fish,
+           color = factor(ID_fish))) +
+  geom_line() +
+  geom_point(size = 3) +
+  labs(x= "Treatment",
+       y= "Boldness")
+
+#Graph for activity
+ggplot(data = all_data,
+       aes(x =treatment,
+           y =activity,
+           group = ID_fish,
+           color = factor(ID_fish))) +
+  geom_line() +
+  geom_point(size = 3) +
+  labs(x= "Treatment",
+       y= "activity")
+
