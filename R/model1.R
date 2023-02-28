@@ -1,4 +1,4 @@
-### Script for MODEL 1
+# Script for MODEL 1
 
 ###This model is part of step 1 of the analysis plan
 ###Using all data (60 fish and 4 measurements / fish)
@@ -16,7 +16,7 @@
 #############################
 
 # Load.packages
-  pacman::p_load(lme4, rstan, StanHeaders, jsonlite, rstantools, brms, Rcpp, dplyr, here, flextable, pander, cmdstanr)
+  pacman::p_load(lme4, rstan, StanHeaders, jsonlite, rstantools, brms, Rcpp, dplyr, here, flextable, pander)
 
 ### Model 1: with tank effect
 
@@ -34,7 +34,6 @@
 
   saveRDS(model1, file = "./output/models/model1.rds")
   
-
 ### Model 1.2: looking at the correlation between traits
 
   boldness_1.2 <- bf(log_boldness ~ 1 + treatment + (1|q| ID_fish) + (1 | cage)) + gaussian()
@@ -43,7 +42,7 @@
 
   model1.2 <- brms::brm(boldness_1.2 + activity_1.2 + explore_1.2 + set_rescor(TRUE), 
                       data = all_data, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
-                      save_pars = save_pars(), file = "./output/models/model1.2", file_refit = "on_change",
+                      save_pars = save_pars(), file = "./output/models/model1.2", file_refit = "on_change", # nolint: line_length_linter.
                       control = list(adapt_delta = 0.98))
 
  # Compare models  
