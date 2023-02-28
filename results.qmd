@@ -39,8 +39,6 @@ editor_options:
 #############################
   all_data <- read.table("./output/all_data_p.csv",header=T, sep=",")
   all_data
-
-
 ############################
 # Parasite count
 #############################
