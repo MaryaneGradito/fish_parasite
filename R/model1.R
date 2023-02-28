@@ -33,6 +33,7 @@
   model1 <- add_criterion(model1, c("loo", "waic"))
 
   saveRDS(model1, file = "./output/models/model1.rds")
+  
 
 ### Model 1.2: looking at the correlation between traits
 
@@ -50,4 +51,4 @@
 
   saveRDS(model1.2, file = "./output/models/model1.2.rds")
 
-
+  
