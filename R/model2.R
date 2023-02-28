@@ -28,14 +28,14 @@ explore_2 <- bf(exploration ~ 1 + treatment + (-1 + treatment |q| ID_fish) + (1 
                 sigma ~ -1 + treatment) + gaussian()
 
 model2 <- brms::brm(boldness_2 + activity_2 + explore_2 + set_rescor(TRUE), 
-                    data = dat, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
+                    data = all_data, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
                     save_pars = save_pars(), file = "./output/models/model2", file_refit = "on_change",
                     control = list(adapt_delta = 0.98))
 
 #rerun doesn't work
 if(rerun){
   model2 <- brms::brm(boldness_2 + activity_2 + explore_2 + set_rescor(TRUE), 
-                      data = dat, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
+                      data = all_data, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
                       save_pars = save_pars(),
                       control = list(adapt_delta = 0.98))
   
@@ -45,7 +45,17 @@ if(rerun){
   model2 <- readRDS(file = "./output/models/model2.rds")
 }
 
-model2 <- add_criterion(model2, c("loo", "waic"))
+# Compare models  
+model2 <- add_criterion(model2 , c("loo", "waic"))
+
+saveRDS(model2, file = "./output/models/model2.rds")
+
+# Compare model 1 and 2: should we keep tank effect ? 
+
+model1 <- readRDS(file = "./output/models/model1.rds")
+model2 <- readRDS(file = "./output/models/model2.rds")
+
+loo(model1, model2)
 
 # Look at the MCMC chains.
 plot(model2)
