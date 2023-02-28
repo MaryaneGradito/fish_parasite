@@ -25,9 +25,14 @@
   explore_1 <- bf(exploration ~ 1 + treatment + tank2 + (-1 + treatment|q| ID_fish) + (1 | cage)) + gaussian()
 
   model1 <- brms::brm(boldness_1 + activity_1 + explore_1 + set_rescor(TRUE), 
-                    data = dat, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
+                    data = all_data, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
                     save_pars = save_pars(), file = "./output/models/model1", file_refit = "on_change",
                     control = list(adapt_delta = 0.98))
+
+  # Compare models  
+  model1 <- add_criterion(model1, c("loo", "waic"))
+
+  saveRDS(model1, file = "./output/models/model1.rds")
 
 ### Model 1.2: looking at the correlation between traits
 
@@ -36,20 +41,13 @@
   explore_1.2 <- bf(exploration ~ 1 + treatment + (1|q| ID_fish) + (1 | cage)) + gaussian()
 
   model1.2 <- brms::brm(boldness_1.2 + activity_1.2 + explore_1.2 + set_rescor(TRUE), 
-                      data = dat, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
+                      data = all_data, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
                       save_pars = save_pars(), file = "./output/models/model1.2", file_refit = "on_change",
                       control = list(adapt_delta = 0.98))
 
-# Compare models  
-  model1 <- add_criterion(model1, c("loo", "waic"))
+ # Compare models  
+  model1.2 <- add_criterion(model1.2 , c("loo", "waic"))
 
-#To look at the model already runned
-  model1 <- readRDS(file = "./output/models/model1.rds")
-  model1  
+  saveRDS(model1.2, file = "./output/models/model1.2.rds")
 
-# Look at the MCMC chains.
-  plot(model1)
-
-# Look at the model
-  summary(model1)
 
