@@ -86,8 +86,8 @@ editor_options:
 ############################
 
   model1 <- readRDS(file = "./output/models/model1.rds")
+  model1.2 <- readRDS(file = "./output/models/model1.2.rds")
   model2 <- readRDS(file = "./output/models/model2.rds")
-
   
 ############################
 # Average repeatability across trials
@@ -280,42 +280,81 @@ summary(model2)
   p_value_act_a<-pmcmc(R_activity[,1]*100, null = 5,twotail = FALSE) #still get 0 for this one
   
   
-## Behavioural Syndromes
-
+#################################
+# Behavioural Syndromes
+#################################
+  
 # Extract correlations from model
   post_cor  <- as_draws_df(model2, variable = "^cor", regex= TRUE)
   head(post_cor)
 
-# Extract the C and E groups seperately
+  
+# Extract the C and E groups separately
   cor_bold_treatC <-   post_cor[,grep("treatmentC__[a-z]*_treatmentC", colnames(post_cor))]
   cor_bold_treatE <-   post_cor[,grep("treatmentE__[a-z]*_treatmentE", colnames(post_cor))]
 
-# See if syndroms differ in C and E
+# See if syndromes differ in C and E
+  #how to you know if they are different? CI overlap?
+  
+  #Boldness and activity
   bsyn_b_act_C <- data.frame(cor_bold_treatC[,1]); mean(bsyn_b_act_C[,1]); quantile(bsyn_b_act_C[,1], c(0.025, 0.975))
+  
   bsyn_b_act_E <- data.frame(cor_bold_treatE[,1]); mean(bsyn_b_act_E[,1]); quantile(bsyn_b_act_E[,1], c(0.025, 0.975))
+  
+  #Boldness and exploration
+  bsyn_b_exp_C <- data.frame(cor_bold_treatC[,2]); mean(bsyn_b_exp_C[,1]); quantile(bsyn_b_exp_C[,1], c(0.025, 0.975))
+  
+  bsyn_b_exp_E <- data.frame(cor_bold_treatE[,2]); mean(bsyn_b_exp_E[,1]); quantile(bsyn_b_exp_E[,1], c(0.025, 0.975))
+  
+  #Activity and exploration
+  bsyn_act_exp_C <- data.frame(cor_bold_treatC[,3]); mean(bsyn_act_exp_C[,1]); quantile(bsyn_act_exp_C[,1], c(0.025, 0.975))
+  
+  bsyn_act_exp_E <- data.frame(cor_bold_treatE[,3]); mean(bsyn_act_exp_E[,1]); quantile(bsyn_act_exp_E[,1], c(0.025, 0.975)) ####This one is weird!!
 
 # Overall syndrome
   # Take average of the two treatments
     bsyn_b_act   <- cbind(bsyn_b_act_C[,1], bsyn_b_act_E[,1]); mean(rowMeans(bsyn_b_act)); quantile(rowMeans(bsyn_b_act), c(0.025, 0.975))
 
-  # Pool the two MCMC chains from the treatements into a giant vector 32,000 rows (2*16,000)
+  # Pool the two MCMC chains from the treatments into a giant vector 32,000 rows (2*16,000)
+    #Boldness and activity
     bsyn_b_act2  <- rbind(c(bsyn_b_act_C[,1], bsyn_b_act_E[,1])); mean(bsyn_b_act2); quantile(bsyn_b_act2, c(0.025, 0.975))
+    
+    #Boldness and exploration
+    bsyn_b_exp  <- rbind(c(bsyn_b_exp_C[,1], bsyn_b_exp_E[,1])); mean(bsyn_b_exp); quantile(bsyn_b_exp, c(0.025, 0.975))
+    
+    #Activity and exploration
+    bsyn_act_exp  <- rbind(c(bsyn_act_exp_C[,1], bsyn_act_exp_E[,1])); mean(bsyn_act_exp); quantile(bsyn_act_exp, c(0.025, 0.975))
+    
+#Values in model 1.2 for logactivity-boldness
+    #estimate = -0.48
+    #CI = -0.93, 0.18 ##pool is closest to model 1.2
 
 ```
 ## Methods
-To estimate if repeatability was different from 0, we choose 0.05 as a thresold since the values can't be 0 in the distribution. 
+## *Statistical anylysis*
 
+All statistical analyses were performed with the software R. Adjusted fish mass was calculated as the fish mass minus parasite mass (Lagrue and Poulin, 2015). Parasite mass was estimated with the mean mass of 20 parasites (Vic, in prep). For bass tapeworm, adult average was 0.003g and larval form was 0.0008g. We decided to exclude nematodes since the mass varies grandly between individuals and is found rarely in our fish. Blackspots mass was considered too small to be subtracted from total mass (10^-7g). Body condition was calculated with the Fulton index (mass/standard length3 in cm) (Jakob, 1996) using the adjusted fish mass for the 2 measures of body condition after the experimental infection (we assume there is no parasite before the experimental infection). 
+
+Exploration was distributed normally. Activity and boldness were log-transformed to impose normality. We used a Bayesian statistical inference with MCMC sampling to build our models. All variables were z-scaled. Three steps were required to analyze the data: 
+Step 1: we build two similar models with the personality traits as response variables, treatment as a fixed effect, and fish ID and cage number as random effects. Model 1 also add tank effect as a fixed factor compared to Model 2.
+Step 2: we subset the dataset into two groups : “E” for experimental fish and “C” for control fish. Model 3 and 4 were using the group “E” for each personality trait. Parasite load was included as a fixed factor; fish ID and cage were random factors. Model 4 was similar, except we added a exponent 2 for parasite load as another fixed factor. Model 5 used the control dataset with ID and cage as random effects. Finally, Model 6 used body condition as the response variable … 
+
+Repeatability (R) was calculated using the squared standard deviation for fish ID divided by the squared standard deviation for fish ID, cage and sigma from model 2 for each treatment group and for the average across groups. 
+To estimate if repeatability was different from 0, we choose 0.05 as a threshold since the values can't be 0 in the distribution. Correlation between traits were extracted from model 2 to determine if there was a behavioural syndrome between traits. To measure the average correlation for each group, we pooled the two MCMC chains from the treatments into a giant vector 32,000 rows. 
+
+### Results
 #### *Experimental infection*
 
 The caging experiment successfully infected our treatment fish. Control fish that stayed in the laboratory had no alive parasite, which indicate that the praziquantel treatment was effective. The two most abundant species found in the experimentally infected fish were trematodes causing the blackspot disease (Trematoda: *Apophallus sp.* and *Uvulifer sp.*; min-max: `r BS_min`- `r BS_max`; median: `r BS_median`) and the bass tapeworm (Cestoda: *Proteocephalus ambloplites*; min-max: `r cestode_min` - `r cestode_max` ; median: `r cestode_median`). The most abundant species of trematode causing blackspots was *Apophallus sp*. (Binning, Lanthier, unpublished data), but *Uvulifer sp.* was found more frequently inside the muscles (MG, personal observations).Experimentally fish gained in mean `r gain_mean` blackspots, and were found on the fines, body, gills and inside the muscles. Bass tapeworm were mostly found in the liver, stomach and digestive tract, occasionally around the spleen (parasite count: 9), and rarely on the gills (parasite count: 3) or the heart (parasite count: 2). Unknown nematode species were found rarely in the body cavity (alive parasite count: 4).
 
-#### *Repeatability*
+#### *Evidence of personality and behavioural syndrome*
 
 Boldness, exploration and activity were all repeatable accross trials (Boldness: `r mean(R_boldness[,1])`, 95% CI: `r R_Blb_bold` to `r R_Bub_bold`, $pMCMC_{\alpha = 0.05}$ = `r p_value_bold_a`; Exploration: `r mean(R_explore[,1])`, 95% CI: `r R_Blb_exp` to `r R_Bub_exp`, $pMCMC_{\alpha = 0.05}$ = `r p_value_exp_a`; Activity: `r mean(R_activity[,1])`, 95% CI: `r R_Blb_act` to `r R_Bub_act`, $pMCMC_{\alpha = 0.05}$ = `r p_value_act_a`). 
 We did not observe among-individual variation to be higher in the control vs experimentally infected groups (@tbl-tab1). Repeatability did not differ between treatment for boldness (p-value = `r p_value_bold`), exploration (p-value: `r p_value_exp`) and activity (p-value:`r p_value_act`). 
 
 #### *Behavioural syndrome*
 
+summary(model1.2)
 
 
 ```{r}
@@ -343,11 +382,11 @@ hist(R_boldness[,1])
 #| tbl-cap: Repeatbility estimates for traits
 #| 
 tab1 <- data.frame(Trait = c("log_Boldness", "Exploration","log_Activity"), 
-                "Group_C" = c(mean(R_C_boldness[,1]), mean(R_C_exploration[,1]), mean(R_C_activity[,1])), 
-                  "95_CI" = c((R_Blb_bold_C),(R_Blb_exp_C), (R_Blb_act_C)),
-              "0.975_(C)" = c((R_Bub_bold_C), (R_Bub_exp_C),(R_Bub_act_C)),
-                "Group_E" = c(mean(R_E_boldness[,1]), mean(R_E_exploration[,1]), mean(R_E_activity[,1])),
-              "0.025_(E)" = c((R_Blb_bold_E), (R_Blb_exp_E), (R_Blb_act_E)), "0.975_(E)" = c((R_Bub_bold_E), (R_Bub_exp_E), (R_Bub_act_E)),           
+                "Group C" = c(mean(R_C_boldness[,1]), mean(R_C_exploration[,1]), mean(R_C_activity[,1])), 
+                  "2.5% CI (C)" = c((R_Blb_bold_C),(R_Blb_exp_C), (R_Blb_act_C)),
+              "9.75% CI (C)" = c((R_Bub_bold_C), (R_Bub_exp_C),(R_Bub_act_C)),
+                "Group E" = c(mean(R_E_boldness[,1]), mean(R_E_exploration[,1]), mean(R_E_activity[,1])),
+              "2.5% CI (E)" = c((R_Blb_bold_E), (R_Blb_exp_E), (R_Blb_act_E)), "9.75% CI (E)" = c((R_Bub_bold_E), (R_Bub_exp_E), (R_Bub_act_E)),           
                 "p_value" = c((p_value_bold), (p_value_exp), (p_value_act)), check.names = FALSE)
 
 gt_tbl <- gt(tab1) %>%
