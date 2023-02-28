@@ -8,7 +8,7 @@ execute:
   cache: false
   warning: false
 crossref:  
-  fig-title: Fig.    # (default is "Figure")
+  fig-title: Figure    # (default is "Figure")
   tbl-title: Table   # (default is "Table")
   title-delim: —     # (default is ":")
   fig-prefix: Fig.   # (default is "Figure")
@@ -387,10 +387,6 @@ tab1 <- data.frame(Trait = c("log_Boldness", "Exploration","log_Activity"),
               "2.5% CI (E)" = c((R_Blb_bold_E), (R_Blb_exp_E), (R_Blb_act_E)), "9.75% CI (E)" = c((R_Bub_bold_E), (R_Bub_exp_E), (R_Bub_act_E)),           
                 "p_value" = c((p_value_bold), (p_value_exp), (p_value_act)), check.names = FALSE)
 
-gt_tbl <- gt(tab1) %>%
-  tab_header(
-    title = "Repeatability") %>%
-  tab_spanner(label = "**Treatment**")#%>%
-  #colums = c("Group_C","X0.025_.C.","X0.975_.C.","Group_E","X0.025_.E.","X0.975_.E.")
-gt_tbl
+gt(tab1) 
+
 ```
