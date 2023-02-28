@@ -379,7 +379,7 @@ hist(R_boldness[,1])
 #| label: tbl-tab1
 #| tbl-cap: Repeatbility estimates for traits
 #| 
-tab1 <- data.frame(Trait = c("log_Boldness", "Exploration","log_Activity"), 
+tab1 <- data.frame(Trait = c("Boldness (log)", "Exploration","Activity (log)"), 
                 "Group C" = c(mean(R_C_boldness[,1]), mean(R_C_exploration[,1]), mean(R_C_activity[,1])), 
                   "2.5% CI (C)" = c((R_Blb_bold_C),(R_Blb_exp_C), (R_Blb_act_C)),
               "9.75% CI (C)" = c((R_Bub_bold_C), (R_Bub_exp_C),(R_Bub_act_C)),
