@@ -1,5 +1,5 @@
 #' @title repeatability
-#' @description Will take the posterior distributions from a multi-response model and calculate the posterior distribution of repeatbility
+#' @description Will take the posterior distributions from a multi-response model and calculate the posterior distribution of repeatability
 #' @param C These are the SD estimates for control group at the between fish ID
 #' @param E These are the SD estimates for experimental group at the between fish ID
 #' @param cage These are the SD estimates for between cage
@@ -50,6 +50,15 @@ pmcmc <- function(x, null = 0, twotail = TRUE){
 }
 
 
+#' @title overall_repeatability
+#' @description Will take the posterior distributions from a multi-response model and calculate the posterior distribution of repeatability
+#' @param C_t These are the SD estimates for control group at the between fish ID
+#' @param E_t These are the SD estimates for experimental group at the between fish ID
+#' @param cage These are the SD estimates for between cage
+#' @param logsigmaC These are the SD estimates for within individual / residual for group C
+#' @param logsigmaE These are the SD estimates for within individual / residual for group E
+#' @param trait A character string with the name of the trait in the data set
+#' 
 overall_repeatability <- function(C_t, E_t, cage, logsigmaC, logsigmaE, trait) {
     C_t  <- data.frame(C_t)
     E_t  <- data.frame(E_t)
