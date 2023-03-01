@@ -38,7 +38,7 @@ editor_options:
 # Import processed data
 #############################
   all_data <- read.table("./output/all_data_p.csv",header=T, sep=",")
-  all_data
+  
 ############################
 # Parasite count
 #############################
@@ -299,16 +299,32 @@ summary(model2)
   
   bsyn_b_act_E <- data.frame(cor_bold_treatE[,1]); mean(bsyn_b_act_E[,1]); quantile(bsyn_b_act_E[,1], c(0.025, 0.975))
   
+  pmcmc_b_act_E<-pmcmc(bsyn_b_act_E[,1], twotail = TRUE)
+  pmcmc_b_act_C<-pmcmc(bsyn_b_act_C[,1], twotail = TRUE)
+  
+  #is the difference significant
+   pmcmc_b_act<-pmcmc(bsyn_b_act_C[,1] - bsyn_b_act_E[,1], twotail = TRUE) #no
+  
   #Boldness and exploration
   bsyn_b_exp_C <- data.frame(cor_bold_treatC[,2]); mean(bsyn_b_exp_C[,1]); quantile(bsyn_b_exp_C[,1], c(0.025, 0.975))
   
   bsyn_b_exp_E <- data.frame(cor_bold_treatE[,2]); mean(bsyn_b_exp_E[,1]); quantile(bsyn_b_exp_E[,1], c(0.025, 0.975))
   
+  #is the difference significant
+  pmcmc_b_exp<-pmcmc(bsyn_b_exp_C[,1] - bsyn_b_exp_E[,1], twotail = TRUE) #no
+  
   #Activity and exploration
   bsyn_act_exp_C <- data.frame(cor_bold_treatC[,3]); mean(bsyn_act_exp_C[,1]); quantile(bsyn_act_exp_C[,1], c(0.025, 0.975))
   
-  bsyn_act_exp_E <- data.frame(cor_bold_treatE[,3]); mean(bsyn_act_exp_E[,1]); quantile(bsyn_act_exp_E[,1], c(0.025, 0.975)) ####This one is weird!!
+  pmcmc_act_exp_C<- pmcmc(bsyn_act_exp_C[,1], twotail = TRUE) #significant
+  
+  bsyn_act_exp_E <- data.frame(cor_bold_treatE[,3]); mean(bsyn_act_exp_E[,1]); quantile(bsyn_act_exp_E[,1], c(0.025, 0.975))  ####This one is weird!!
+  ## in model 2, I see that the correlation between ##logactivity_treatmentE and exploration_treatmentE is really 0.05
+   pmcmc_act_exp_E<- pmcmc(bsyn_act_exp_E[,1], twotail = TRUE) #not significant
 
+  #is the difference significant
+ pmcmc_act_exp<- pmcmc(bsyn_act_exp_C[,1] - bsyn_act_exp_E[,1], twotail = TRUE) #yes
+  
 # Overall syndrome
   # Take average of the two treatments
     bsyn_b_act   <- cbind(bsyn_b_act_C[,1], bsyn_b_act_E[,1]); mean(rowMeans(bsyn_b_act)); quantile(rowMeans(bsyn_b_act), c(0.025, 0.975))
@@ -326,6 +342,29 @@ summary(model2)
 #Values in model 1.2 for logactivity-boldness
     #estimate = -0.48
     #CI = -0.93, 0.18 ##pool is closest to model 1.2
+    
+    #plot correlation between traits
+    
+    #Boldness and activity average between trials
+    plot(all_data$log_boldness, all_data$log_activity)
+    abline(lm(all_data$log_activity ~ all_data$log_boldness), col = "red", lwd = 3)
+    
+    #Boldness and exploration average between trials
+    plot(all_data$log_boldness, all_data$exploration)
+    abline(lm(all_data$exploration ~ all_data$log_boldness), col = "red", lwd = 3)
+   
+    #Activity and exploration
+  dat_E <-subset(dat, treatment == "E")
+  dat_C <-subset(dat, treatment == "C")
+  
+  #Control
+  plot(dat_C$log_activity, dat_C$exploration)
+    abline(lm(dat_C$exploration ~ dat_C$log_activity), col = "red", lwd = 3)
+   
+  #Experimental
+  plot(dat_E$log_activity, dat_E$exploration)
+    abline(lm(dat_E$exploration ~ dat_E$log_activity), col = "red", lwd = 3)
+   
 
 ```
 ## Methods
@@ -335,9 +374,12 @@ All statistical analyses were performed with the software R (version 4.2.2). Adj
 
 Exploration was distributed normally. Activity and boldness were log-transformed to impose normality. All variable were z-scaled. We fitted our models with a Bayesian statistical inference using 4 chains with an iteration of 6000 and a warm up of 2000. We visually inspected the MCMC sampling to see if the sampling ...(?) 
 
-To test if we find evidence of personality and behavioural syndromes between traits, we built a model with the personality traits as response variables, treatment as a fixed effect, and fish ID and cage number as random effects. Model 1 had tank effect as a fixed factor compared to Model 2. We compared the models using the loo package. Model 2 was better fitted and we decided not to include tank effect in our models. 
+To test if we find evidence of personality and behavioural syndromes between traits, we built a model with the personality traits as response variables, treatment as a fixed effect, and fish ID and cage number as random effects. Model 1 had tank effect as a fixed factor compared to Model 2. We compared the models using the loo package. Model 2 was better fitted and we decided not to include tank effect in our models (should I write a result here as proof?).
+       elpd_diff se_diff
+model2  0.0       0.0   
+model1 -1.4       2.1 
 
-To test if the experimental infection had an effect on personality, we sublet the dataset according to treatment. We used our dataset for the experimental group in model 3 and 4 to see if parasite load had a significative effect on the traits responses. Parasite load was included as a fixed factor; fish ID and cage were random factors. Model 3 assume than parasite load effect is linear, so we included parasite load^2 as a fixed factor in model 4. We compared model 3 and 4 using the loo method (should we do that?). We fitted model 5 with ID and cage as random effects for our control group. Finally, Model 6 used body condition as the response variable … 
+To test if the experimental infection had an effect on personality, we sublet the data set according to treatment. We used our data set for the experimental group in model 3 and 4 to see if parasite load had a significant effect on the traits responses. Parasite load was included as a fixed factor; fish ID and cage were random factors. Model 3 assume than parasite load effect is linear, so we included parasite load^2 as a fixed factor in model 4. We compared model 3 and 4 using the loo method (should we do that?). We fitted model 5 with ID and cage as random effects for our control group. Finally, Model 6 used body condition as the response variable … 
 
 #this could go with the paragraph about model 1? 
 Repeatability (R) was calculated using the squared standard deviation for fish ID divided by the squared standard deviation for fish ID, cage and sigma from model 2 for each treatment group and for the average across groups. 
@@ -350,12 +392,9 @@ The caging experiment successfully infected our treatment fish. Control fish tha
 
 #### *Evidence of personality and behavioural syndrome*
 
-Boldness, exploration and activity were all repeatable across trials (Boldness: `r mean(R_boldness[,1])`, 95% CI: `r R_Blb_bold` to `r R_Bub_bold`, $pMCMC_{\alpha = 0.05}$ = `r p_value_bold_a`; Exploration: `r mean(R_explore[,1])`, 95% CI: `r R_Blb_exp` to `r R_Bub_exp`, $pMCMC_{\alpha = 0.05}$ = `r p_value_exp_a`; Activity: `r mean(R_activity[,1])`, 95% CI: `r R_Blb_act` to `r R_Bub_act`, $pMCMC_{\alpha = 0.05}$ = `r p_value_act_a`). 
-We did not observe among-individual variation to be higher in the control vs experimentally infected groups (@tbl-tab1). Repeatability did not differ between treatment for boldness (p-value = `r p_value_bold`), exploration (p-value: `r p_value_exp`) and activity (p-value:`r p_value_act`). 
+Boldness, exploration and activity were all repeatable across trials (Boldness: `r mean(R_boldness[,1])`, 95% CI: `r R_Blb_bold` to `r R_Bub_bold`, $pMCMC_{\alpha = 0.05}$ = `r p_value_bold_a`; Exploration: `r mean(R_explore[,1])`, 95% CI: `r R_Blb_exp` to `r R_Bub_exp`, $pMCMC_{\alpha = 0.05}$ = `r p_value_exp_a`; Activity: `r mean(R_activity[,1])`, 95% CI: `r R_Blb_act` to `r R_Bub_act`, $pMCMC_{\alpha = 0.05}$ = `r p_value_act_a`). We did not observe among-individual variation to be higher in the control vs experimentally infected group (@tbl-tab1). Repeatability did not differ between treatment for boldness (p-value = `r p_value_bold`), exploration ($pMCMC_{\alpha = 0.05}$ = `r p_value_exp`) and activity ($pMCMC_{\alpha = 0.05}$ = `r p_value_act`).We found evidence of behavioural syndromes between boldness and activity (cor: `r mean(bsyn_b_act2)`, 95% CI:`r quantile(bsyn_b_act2, c(0.025, 0.975)`); and between boldness and exploration (cor: `r mean(bsyn_b_exp)`, 95% CI:`r quantile(bsyn_b_exp, c(0.025, 0.975)`). The correlation did not differ between the control and experimental group for these syndromes (Boldness-Activity: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_b_act`; Boldness-exploration: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_b_exp`). Correlation between activity and exploration varies in the control vs experimentally infected group ($pMCMC_{\alpha = 0.05}$ = `r pmcmc_act_exp`). We found a high correlation between activity and exploration in the control group (cor: `r mean(bsyn_act_exp_C[,1])`; 95% CI: `r quantile(bsyn_act_exp_C[,1], c(0.025, 0.975))` ), but not in the experimentally infected group (cor: `r mean(bsyn_act_exp_E[,1])`; 95% CI: `r quantile(bsyn_act_exp_E[,1], c(0.025, 0.975))`). 
 
-#### *Behavioural syndrome*
 
-summary(model1.2)
 
 
 ```{r}
