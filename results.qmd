@@ -87,47 +87,8 @@ editor_options:
   model1 <- readRDS(file = "./output/models/model1.rds")
   model1.2 <- readRDS(file = "./output/models/model1.2.rds")
   model2 <- readRDS(file = "./output/models/model2.rds")
-  
-############################
-# Average repeatability across trials
-############################
-post_sd <- as_draws_df(model1, variable = "^sd", regex = TRUE)
-post_sd_C <- post_sd[,grepl("C", colnames(post_sd))]
-post_sd_E <- post_sd[,grepl("E", colnames(post_sd))]
-post_sd_cage <- post_sd[,grepl("cage", colnames(post_sd))]
-post_sd_sig <- as_draws_df(model1, variable = "^sigma", regex = TRUE)
+
     
-    #Boldness
-       R_boldness <- repeatability(post_sd_C, post_sd_E, post_sd_cage, post_sd_sig, trait = "logboldness")
-      
-       R_bold_mean <- mean(R_boldness[,1])
-        R_Blb_bold <- round(quantile(R_boldness[,1], c(0.025, 0.975))[1], 2)
-        R_Bub_bold <- round(quantile(R_boldness[,1], c(0.025, 0.975))[2], 2)
-      
-      hist(R_boldness[,1])
-      
-    #Exploration
-       R_explore <- repeatability(post_sd_C, post_sd_E, post_sd_cage, post_sd_sig, trait = "exploration")
-      
-       R_exp_mean<-mean(R_explore[,1])
-       R_Blb_exp <- round(quantile(R_explore[,1], c(0.025, 0.975))[1], 2)
-       R_Bub_exp <- round(quantile(R_explore[,1], c(0.025, 0.975))[2], 2)
-       
-       hist(R_explore[,1])
-           
-    #Activity
-       R_activity <- repeatability(post_sd_C, post_sd_E, post_sd_cage, post_sd_sig, trait = "logactivity")
-      
-       R_act_mean<-mean(R_activity[,1])
-       R_Blb_act <- round(quantile(R_activity[,1], c(0.025, 0.975))[1], 2)
-       R_Bub_act <- round(quantile(R_activity[,1], c(0.025, 0.975))[2], 2)
-       
-       hist(R_activity[,1])
-      
-  # Compare whether repeatability is different between exploratory and boldness
-      R_contrast <- R_explore - R_boldness
-      hist(R_contrast[,1])
-      
 ############################
 # Repeatability C vs E
 ############################
@@ -230,7 +191,25 @@ summary(model2)
 #############################
 
   # Boldness
-   R_bold  <-  overall_repeatability(post_sd_C_2, post_sd_E_2, post_sd_cage_2, post_sd_sig_C_2, post_sd_sig_E_2, trait = "boldness")
+   R_bold  <-  overall_repeatability(post_sd_C_2, post_sd_E_2, post_sd_cage_2, post_sd_sig_C_2, post_sd_sig_E_2, trait = "logboldness")
+  
+        R_bold_mean <- mean(R_bold)
+        R_Blb_bold <- round(quantile(R_bold, c(0.025, 0.975))[1], 2)
+        R_Bub_bold <- round(quantile(R_bold, c(0.025, 0.975))[2], 2)
+        
+  #Exploration
+  R_exp  <-  overall_repeatability(post_sd_C_2, post_sd_E_2, post_sd_cage_2, post_sd_sig_C_2, post_sd_sig_E_2, trait = "exploration")
+  
+      R_exp_mean<-mean(R_exp)
+       R_Blb_exp <- round(quantile(R_exp, c(0.025, 0.975))[1], 2)
+       R_Bub_exp <- round(quantile(R_exp, c(0.025, 0.975))[2], 2)
+       
+  #Activity
+  R_act  <-  overall_repeatability(post_sd_C_2, post_sd_E_2, post_sd_cage_2, post_sd_sig_C_2, post_sd_sig_E_2, trait = "logactivity")
+  
+  R_act_mean<-mean(R_act)
+       R_Blb_act <- round(quantile(R_act, c(0.025, 0.975))[1], 2)
+       R_Bub_act <- round(quantile(R_act, c(0.025, 0.975))[2], 2)
 
 #################################
 # Compare R in E and C treatments
@@ -296,7 +275,6 @@ summary(model2)
   post_cor  <- as_draws_df(model2, variable = "^cor", regex= TRUE)
   head(post_cor)
 
-  
 # Extract the C and E groups separately
   cor_bold_treatC <-   post_cor[,grep("treatmentC__[a-z]*_treatmentC", colnames(post_cor))]
   cor_bold_treatE <-   post_cor[,grep("treatmentE__[a-z]*_treatmentE", colnames(post_cor))]
@@ -349,13 +327,13 @@ summary(model2)
     quantile(bsyn_b_exp, c(0.025, 0.975))
     
     #Activity and exploration
-    bsyn_act_exp  <- rbind(c(bsyn_act_exp_C[,1], bsyn_act_exp_E[,1])); mean(bsyn_act_exp) quantile(bsyn_act_exp, c(0.025, 0.975))
+    bsyn_act_exp  <- rbind(c(bsyn_act_exp_C[,1], bsyn_act_exp_E[,1])); mean(bsyn_act_exp)
+    quantile(bsyn_act_exp, c(0.025, 0.975))
     
 #Values in model 1.2 for logactivity-boldness
     #estimate = -0.48
     #CI = -0.93, 0.18 ##pool is closest to model 1.2
 
-    
     
 ```
 ## Methods
