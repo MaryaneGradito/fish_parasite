@@ -25,8 +25,9 @@ editor_options:
 #| warning: false
 
     source("./R/func.R")
-    pacman::p_load(tidyverse, brms, glmmTMB, gt, posterior, gt, glue, dplyr,magrittr)
+    pacman::p_load(tidyverse, brms, glmmTMB, gt, posterior, gt, glue, dplyr,magrittr, ggplot2, cowplot)
     options(digits = 3, scipen = 2)
+    
 ```
 
 ```{r}
@@ -353,44 +354,9 @@ summary(model2)
 #Values in model 1.2 for logactivity-boldness
     #estimate = -0.48
     #CI = -0.93, 0.18 ##pool is closest to model 1.2
-    
-    #plot correlation between traits
-    library(ggplot2)
-    library(dplyr)
-    library(tidyr)
-    install.packages("cowplot")
-    library(cowplot)
-    
-    #Boldness and activity average between trials
-    
-  p1<- ggplot(data = all_data) + 
-  geom_point(mapping = aes(x = log_boldness, y = log_activity)) + 
-  geom_smooth(mapping = aes(x = log_boldness, y = log_activity))
-    
-    #Boldness and exploration average between trials
-  p2<- ggplot(data = all_data) + 
-  geom_point(mapping = aes(x = log_boldness, y = exploration)) + 
-  geom_smooth(mapping = aes(x = log_boldness, y = exploration))
-   
-    #Activity and exploration
-  dat_E <-subset(all_data, treatment == "E")
-  dat_C <-subset(all_data, treatment == "C")
-  
-  #Control
-  p3<- ggplot(data = dat_C) + 
-  geom_smooth(mapping = aes(x = log_activity, y = exploration)) +
-  geom_point(mapping = aes(x = log_activity, y = exploration)) 
-  
-   
-  #Experimental
-  p4 <- ggplot(data = dat_E) + 
-  geom_point(mapping = aes(x = log_activity, y = exploration)) + 
-  geom_smooth(mapping = aes(x = log_activity, y = exploration))
-  
-  plot_grid(
-  p1, p2, p3, p4,
-  labels = "AUTO", ncol = 2)
 
+    
+    
 ```
 ## Methods
 ## *Statistical analysis*
@@ -435,9 +401,38 @@ summary(model1)
 
 ```{r}
 #| label: fig-fig1
-#| fig-cap: Repeatbility of behavioural traits
+#| fig-cap: Correlation between traits
 #| 
-hist(R_boldness[,1])
+#Boldness and activity average between trials
+    
+  p1<- ggplot(data = all_data) + 
+  geom_point(mapping = aes(x = log_boldness, y = log_activity)) + 
+  geom_smooth(mapping = aes(x = log_boldness, y = log_activity))
+    
+    #Boldness and exploration average between trials
+  p2<- ggplot(data = all_data) + 
+  geom_point(mapping = aes(x = log_boldness, y = exploration)) + 
+  geom_smooth(mapping = aes(x = log_boldness, y = exploration))
+   
+    #Activity and exploration
+  dat_E <-subset(all_data, treatment == "E")
+  dat_C <-subset(all_data, treatment == "C")
+  
+  #Control
+  p3<- ggplot(data = dat_C) + 
+  geom_smooth(mapping = aes(x = log_activity, y = exploration)) +
+  geom_point(mapping = aes(x = log_activity, y = exploration)) 
+  
+   
+  #Experimental
+  p4 <- ggplot(data = dat_E) + 
+  geom_point(mapping = aes(x = log_activity, y = exploration)) + 
+  geom_smooth(mapping = aes(x = log_activity, y = exploration))
+  
+  plot_grid(
+  p1, p2, p3, p4,
+  labels = "AUTO", ncol = 2)
+
 ```
 
 
