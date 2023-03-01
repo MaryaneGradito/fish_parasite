@@ -19,6 +19,7 @@
     pacman::p_load(lme4, rstan, StanHeaders, jsonlite, rstantools, brms, Rcpp, dplyr, here, flextable, pander)
 
   ### Model 1: with tank effect
+    #prior <- prior(lkj_corr_cholesky(3), class = "L")
 
     boldness_1 <- bf(log_boldness ~ 1 + treatment + tank1 + (-1 + treatment|q| ID_fish) + (1 | cage),  sigma ~ -1 + treatment) + gaussian()
     activity_1 <- bf(log_activity ~ 1 + treatment + tank2 + (-1 + treatment|q| ID_fish) + (1 | cage),  sigma ~ -1 + treatment) + gaussian()
@@ -28,6 +29,7 @@
                       data = all_data, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
                       save_pars = save_pars(), file = "./output/models/model1", file_refit = "on_change",
                       control = list(adapt_delta = 0.98))
+    prior_summary(model1)
 
     # Compare models  
     model1 <- add_criterion(model1, c("loo", "waic"))

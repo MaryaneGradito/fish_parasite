@@ -135,7 +135,9 @@ post_sd_sig <- as_draws_df(model1, variable = "^sigma", regex = TRUE)
        post_sd_C_2 <- post_sd_2[,grepl("C", colnames(post_sd_2))] #ID control
        post_sd_E_2 <- post_sd_2[,grepl("E", colnames(post_sd_2))] #ID experimental
     post_sd_cage_2 <- post_sd_2[,grepl("cage", colnames(post_sd_2))]
-     post_sd_sig_2 <- exp(as_draws_df(model2, variable = "^b_sigma", regex = TRUE))
+     post_sd_sig_2 <- as_draws_df(model2, variable = "^b_sigma", regex = TRUE)
+     post_sd_sig_C_2 <- post_sd_sig_2[,grepl("C", colnames(post_sd_sig_2))] #ID control
+       post_sd_sig_E_2 <- post_sd_sig_2[,grepl("E", colnames(post_sd_sig_2))] #ID experimental
 
 ############################
 ##     CONTROL GROUP
@@ -221,6 +223,13 @@ summary(model2)
   mean(R_E_activity[,1])
   R_Blb_act_E <- round(quantile(R_E_activity[,1], c(0.025, 0.975))[1], 3)
   R_Bub_act_E <- round(quantile(R_E_activity[,1], c(0.025, 0.975))[2], 3)
+
+#############################
+# Overall Repeatability
+#############################
+
+  # Boldness
+   R_bold  <-  overall_repeatability(post_sd_C_2, post_sd_E_2, post_sd_cage_2, post_sd_sig_C_2, post_sd_sig_E_2, trait = "boldness")
 
 #################################
 # Compare R in E and C treatments
@@ -331,13 +340,15 @@ summary(model2)
 
   # Pool the two MCMC chains from the treatments into a giant vector 32,000 rows (2*16,000)
     #Boldness and activity
-    bsyn_b_act2  <- rbind(c(bsyn_b_act_C[,1], bsyn_b_act_E[,1])); mean(bsyn_b_act2); quantile(bsyn_b_act2, c(0.025, 0.975))
+    bsyn_b_act2  <- rbind(c(bsyn_b_act_C[,1], bsyn_b_act_E[,1])); mean(bsyn_b_act2) 
+    quantile(bsyn_b_act2, c(0.025, 0.975))
     
     #Boldness and exploration
-    bsyn_b_exp  <- rbind(c(bsyn_b_exp_C[,1], bsyn_b_exp_E[,1])); mean(bsyn_b_exp); quantile(bsyn_b_exp, c(0.025, 0.975))
+    bsyn_b_exp  <- rbind(c(bsyn_b_exp_C[,1], bsyn_b_exp_E[,1])); mean(bsyn_b_exp) 
+    quantile(bsyn_b_exp, c(0.025, 0.975))
     
     #Activity and exploration
-    bsyn_act_exp  <- rbind(c(bsyn_act_exp_C[,1], bsyn_act_exp_E[,1])); mean(bsyn_act_exp); quantile(bsyn_act_exp, c(0.025, 0.975))
+    bsyn_act_exp  <- rbind(c(bsyn_act_exp_C[,1], bsyn_act_exp_E[,1])); mean(bsyn_act_exp) quantile(bsyn_act_exp, c(0.025, 0.975))
     
 #Values in model 1.2 for logactivity-boldness
     #estimate = -0.48
@@ -345,7 +356,7 @@ summary(model2)
     
     #plot correlation between traits
     library(ggplot2)
-    library(dplyr)`
+    library(dplyr)
     library(tidyr)
     install.packages("cowplot")
     library(cowplot)
@@ -362,12 +373,12 @@ summary(model2)
   geom_smooth(mapping = aes(x = log_boldness, y = exploration))
    
     #Activity and exploration
-  dat_E <-subset(dat, treatment == "E")
-  dat_C <-subset(dat, treatment == "C")
+  dat_E <-subset(all_data, treatment == "E")
+  dat_C <-subset(all_data, treatment == "C")
   
   #Control
   p3<- ggplot(data = dat_C) + 
-  geom_smooth(mapping = aes(x = log_activity, y = exploration) +
+  geom_smooth(mapping = aes(x = log_activity, y = exploration)) +
   geom_point(mapping = aes(x = log_activity, y = exploration)) 
   
    
@@ -378,12 +389,11 @@ summary(model2)
   
   plot_grid(
   p1, p2, p3, p4,
-  labels = "AUTO", ncol = 2
-)
+  labels = "AUTO", ncol = 2)
 
 ```
 ## Methods
-## *Statistical anylysis*
+## *Statistical analysis*
 
 All statistical analyses were performed with the software R (version 4.2.2). Adjusted fish mass was calculated as the fish mass minus parasite mass (Lagrue and Poulin, 2015). Parasite mass was estimated with the mean mass of 20 parasites (Vic, in prep). For bass tapeworm, adult average was 0.003g and larval form was 0.0008g. We decided to exclude nematodes since the mass varies grandly between individuals and is found rarely in our fish. Blackspots mass was considered too small to be subtracted from total mass (10^-7g). Body condition was calculated with the Fulton index (mass/standard length3 in cm) (Jakob, 1996) using the adjusted fish mass for the 2 measures of body condition after the experimental infection (we assume there is no parasite before the experimental infection). 
 

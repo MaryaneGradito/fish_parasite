@@ -49,3 +49,31 @@ pmcmc <- function(x, null = 0, twotail = TRUE){
   }
 }
 
+
+overall_repeatability <- function(C_t, E_t, cage, logsigmaC, logsigmaE, trait) {
+    C_t  <- data.frame(C_t)
+    E_t  <- data.frame(E_t)
+    cage  <- data.frame(cage)
+    logsigmaC <- data.frame(logsigmaC)
+    logsigmaE <- data.frame(logsigmaE)
+
+    # Extract 8000 from posterior of ID for C adn E
+    Ct_v <- C_t[, grep(trait, colnames(C_t))][sample(1:(dim(C_t)[1]), size = (dim(C_t)[1])/ 2)]
+    Et_v <- E_t[, grep(trait, colnames(E_t))][sample(1:dim(E_t)[1], size = dim(E_t)[1]/ 2)]
+    
+    # Extract 8000 from posterior for sigma C and E
+   sigmaC <- exp(logsigmaC[,grep(trait, colnames(logsigmaC))])[sample(1:dim(logsigmaC)[1], size = dim(logsigmaC)[1]/ 2)]
+   sigmaE <- exp(logsigmaE[,grep(trait, colnames(logsigmaE))])[sample(1:dim(logsigmaE)[1], size = dim(logsigmaE)[1]/ 2)]
+
+    # Get cage variance
+    cage <- cage[,grep(trait, colnames(cage))]
+   
+    # Pool C and E posteriors for e and ID
+      sigma_e_p <- c(sigmaC, sigmaE)
+    sigma_ID_p  <- c(Ct_v, Et_v)
+
+    # Calculate R
+    R  <- sigma_ID_p^2 / (sigma_ID_p^2 + cage^2 + sigma_e_p^2)
+
+    return(R)
+}
