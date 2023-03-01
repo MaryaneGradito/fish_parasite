@@ -344,27 +344,42 @@ summary(model2)
     #CI = -0.93, 0.18 ##pool is closest to model 1.2
     
     #plot correlation between traits
+    library(ggplot2)
+    library(dplyr)`
+    library(tidyr)
+    install.packages("cowplot")
+    library(cowplot)
     
     #Boldness and activity average between trials
-    plot(all_data$log_boldness, all_data$log_activity)
-    abline(lm(all_data$log_activity ~ all_data$log_boldness), col = "red", lwd = 3)
+    
+  p1<- ggplot(data = all_data) + 
+  geom_point(mapping = aes(x = log_boldness, y = log_activity)) + 
+  geom_smooth(mapping = aes(x = log_boldness, y = log_activity))
     
     #Boldness and exploration average between trials
-    plot(all_data$log_boldness, all_data$exploration)
-    abline(lm(all_data$exploration ~ all_data$log_boldness), col = "red", lwd = 3)
+  p2<- ggplot(data = all_data) + 
+  geom_point(mapping = aes(x = log_boldness, y = exploration)) + 
+  geom_smooth(mapping = aes(x = log_boldness, y = exploration))
    
     #Activity and exploration
   dat_E <-subset(dat, treatment == "E")
   dat_C <-subset(dat, treatment == "C")
   
   #Control
-  plot(dat_C$log_activity, dat_C$exploration)
-    abline(lm(dat_C$exploration ~ dat_C$log_activity), col = "red", lwd = 3)
+  p3<- ggplot(data = dat_C) + 
+  geom_smooth(mapping = aes(x = log_activity, y = exploration) +
+  geom_point(mapping = aes(x = log_activity, y = exploration)) 
+  
    
   #Experimental
-  plot(dat_E$log_activity, dat_E$exploration)
-    abline(lm(dat_E$exploration ~ dat_E$log_activity), col = "red", lwd = 3)
-   
+  p4<- ggplot(data = dat_E) + 
+  geom_point(mapping = aes(x = log_activity, y = exploration)) + 
+  geom_smooth(mapping = aes(x = log_activity, y = exploration))
+  
+  plot_grid(
+  p1, p2, p3, p4,
+  labels = "AUTO", ncol = 2
+)
 
 ```
 ## Methods
