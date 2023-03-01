@@ -383,7 +383,7 @@ summary(model2)
   
    
   #Experimental
-  p4<- ggplot(data = dat_E) + 
+  p4 <- ggplot(data = dat_E) + 
   geom_point(mapping = aes(x = log_activity, y = exploration)) + 
   geom_smooth(mapping = aes(x = log_activity, y = exploration))
   
@@ -399,7 +399,7 @@ All statistical analyses were performed with the software R (version 4.2.2). Adj
 
 Exploration was distributed normally. Activity and boldness were log-transformed to impose normality. All variable were z-scaled. We fitted our models with a Bayesian statistical inference using 4 chains with an iteration of 6000 and a warm up of 2000. We visually inspected the MCMC sampling to see if the sampling ...(?) 
 
-To test if we find evidence of personality and behavioural syndromes between traits, we built a model with the personality traits as response variables, treatment as a fixed effect, and fish ID and cage number as random effects. Model 1 had tank effect as a fixed factor compared to Model 2. We compared the models using the loo package. Model 2 was better fitted and we decided not to include tank effect in our models (should I write a result here as proof?).
+To test if we find evidence of personality and behavioural syndromes between traits, we built a model with the personality traits as response variables, treatment as a fixed effect, and fish ID and cage number as random effects. Model 1 had tank effect as a fixed factor compared to Model 2. We compared the models using the loo package. Model 2 was better fitted and we decided not to include tank effect in our models ().
        elpd_diff se_diff
 model2  0.0       0.0   
 model1 -1.4       2.1 
