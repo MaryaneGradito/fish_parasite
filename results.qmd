@@ -350,7 +350,7 @@ The caging experiment successfully infected our treatment fish. Control fish tha
 
 #### *Evidence of personality and behavioural syndrome*
 
-Boldness, exploration and activity were all repeatable accross trials (Boldness: `r mean(R_boldness[,1])`, 95% CI: `r R_Blb_bold` to `r R_Bub_bold`, $pMCMC_{\alpha = 0.05}$ = `r p_value_bold_a`; Exploration: `r mean(R_explore[,1])`, 95% CI: `r R_Blb_exp` to `r R_Bub_exp`, $pMCMC_{\alpha = 0.05}$ = `r p_value_exp_a`; Activity: `r mean(R_activity[,1])`, 95% CI: `r R_Blb_act` to `r R_Bub_act`, $pMCMC_{\alpha = 0.05}$ = `r p_value_act_a`). 
+Boldness, exploration and activity were all repeatable across trials (Boldness: `r mean(R_boldness[,1])`, 95% CI: `r R_Blb_bold` to `r R_Bub_bold`, $pMCMC_{\alpha = 0.05}$ = `r p_value_bold_a`; Exploration: `r mean(R_explore[,1])`, 95% CI: `r R_Blb_exp` to `r R_Bub_exp`, $pMCMC_{\alpha = 0.05}$ = `r p_value_exp_a`; Activity: `r mean(R_activity[,1])`, 95% CI: `r R_Blb_act` to `r R_Bub_act`, $pMCMC_{\alpha = 0.05}$ = `r p_value_act_a`). 
 We did not observe among-individual variation to be higher in the control vs experimentally infected groups (@tbl-tab1). Repeatability did not differ between treatment for boldness (p-value = `r p_value_bold`), exploration (p-value: `r p_value_exp`) and activity (p-value:`r p_value_act`). 
 
 #### *Behavioural syndrome*
