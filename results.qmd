@@ -2,6 +2,8 @@
 format:
   docx: 
     reference-doc: "./bib/template.docx"
+    fig-width: 7
+    fig-height: 8
 execute:
   echo: false
   error: false
@@ -342,11 +344,11 @@ q_act_exp<-quantile(bsyn_act_exp, c(0.025, 0.975))
 ## Methods
 ## *Statistical analysis*
 
-All statistical analyses were performed with the software R (version 4.2.2). Adjusted fish mass was calculated as the fish mass minus parasite mass (Lagrue and Poulin, 2015). Parasite mass was estimated with the mean mass of 20 parasites (Vic, in prep). For bass tapeworm, adult average was 0.003g and larval form was 0.0008g. We decided to exclude nematodes since the mass varies grandly between individuals and is found rarely in our fish. Blackspots mass was considered too small to be subtracted from total mass (10^-7g). Body condition was calculated with the Fulton index (mass/standard length3 in cm) (Jakob, 1996) using the adjusted fish mass for the 2 measures of body condition after the experimental infection (we assume there is no parasite before the experimental infection). 
+All statistical analyses were performed with the software R (version 4.2.2). Adjusted fish mass was calculated as the fish mass minus parasite mass (Lagrue and Poulin, 2015). Parasite mass was estimated with the mean mass of 20 parasites (Vic, in prep). For bass tapeworm, adult average was 0.003g and larval form was 0.0008g. We decided to exclude nematodes since the mass varies grandly between individuals and is found rarely in our fish. Blackspots mass was considered too small to be subtracted from total mass (10^-7g). Body condition was calculated with the Fulton index (mass/standard length^3 in cm) (Jakob, 1996) using the adjusted fish mass for the 2 measures of body condition after the experimental infection (we assume there is no parasite before the experimental infection). 
 
 Exploration was distributed normally. Activity and boldness were log-transformed to impose normality. All variable were z-scaled. We fitted our models with a Bayesian statistical inference using 4 chains with an iteration of 6000 and a warm up of 2000. We visually inspected the MCMC sampling to see if the sampling ...(?) 
 
-To test if we find evidence of personality and behavioural syndromes between traits, we built a model with the personality traits as response variables, treatment as a fixed effect, and fish ID and cage number as random effects. Model 1 had tank effect as a fixed factor compared to Model 2. We compared the models using the loo package. Model 2 was better fitted (elpd_diff: -1.4; se_diff: 2.1) and we decided not to include tank effect in our models.
+To test if we find evidence of personality and behavioural syndromes between traits, we built a model with the personality traits as response variables, treatment as a fixed effect, and fish ID and cage number as random effects. Model 1 had tank effect as a fixed factor compared to Model 2. We compared the models using the loo package. Model 2 was better fitted (elpd_diff: -1.4; se_diff: 2.1) than model 1 and we decided not to include tank effect in our models.
 
 To test if the experimental infection had an effect on personality, we sublet the data set according to treatment. We used our data set for the experimental group in model 3 and 4 to see if parasite load had a significant effect on the traits responses. Parasite load was included as a fixed factor; fish ID and cage were random factors. Model 3 assume than parasite load effect is linear, so we included parasite load^2 as a fixed factor in model 4. We compared model 3 and 4 using the loo method (should we do that?). We fitted model 5 with ID and cage as random effects for our control group. Finally, Model 6 used body condition as the response variable … 
 
@@ -369,6 +371,7 @@ Boldness, exploration and activity were all repeatable across trials (Boldness: 
 ```{r}
 #| echo: false
 #| include: false
+
 summary(model2)
 summary(model1)
 ```
@@ -380,44 +383,45 @@ summary(model1)
 ```{r}
 #| label: fig-fig1
 #| fig-cap: Correlation between traits
+#| out-width: 100%
 
-
-dat_E <-subset(all_data, treatment == "E")
-dat_C <-subset(all_data, treatment == "C")
 #Boldness and activity average between trials
-    
-  p1<- ggplot(data = dat_C) + 
-  geom_point(mapping = aes(x = log_boldness, y = log_activity, color = factor(ID_fish))) + 
-  geom_smooth(mapping = aes(x = log_boldness, y = log_activity, color = "pink4")) + theme(legend.position="none") + ggtitle ("Control group")
-  
-  p2<- ggplot(data = dat_E) + 
-  geom_point(mapping = aes(x = log_boldness, y = log_activity, color = factor(ID_fish))) + 
-  geom_smooth(mapping = aes(x = log_boldness, y = log_activity, color = "red"))+ theme(legend.position="none") + ggtitle ("Experimental group")
+      
+plot_names <- c('C' = "Control",
+                'E' = "Experimental")
 
-    
+
+p1<-all_data %>%
+   filter(!is.na(treatment)) %>%
+      ggplot()+
+  geom_point(mapping = aes(x = log_boldness, y = log_activity, color = factor(ID_fish)))+ scale_color_viridis_d(option = "mako") +
+  geom_smooth(mapping = aes(x = log_boldness, y = log_activity, color = "green")) + 
+    facet_wrap(~ treatment, labeller = as_labeller(plot_names)) + theme_minimal() + theme(legend.position="none")
+
+
     #Boldness and exploration average between trials
-  p3<- ggplot(data = dat_C) + 
-  geom_point(mapping = aes(x = log_boldness, y = exploration, color = factor(ID_fish))) + 
-  geom_smooth(mapping = aes(x = log_boldness, y = exploration, color = "pink4")) + theme(legend.position="none")
-  
-  p4<- ggplot(data = dat_E) + 
-  geom_point(mapping = aes(x = log_boldness, y = exploration, color = factor(ID_fish))) + 
-  geom_smooth(mapping = aes(x = log_boldness, y = exploration, color = "red")) + theme(legend.position="none")
+                
+  p2<-all_data %>%
+   filter(!is.na(treatment)) %>%
+    ggplot()+
+  geom_point(mapping = aes(x = log_boldness, y = exploration, color = factor(ID_fish))) +
+    scale_color_viridis_d(option = "mako") +
+  geom_smooth(mapping = aes(x = log_boldness, y = exploration, color = "green")) + 
+    facet_wrap(~ treatment, labeller = as_labeller(plot_names))+ theme_minimal() + theme(legend.position="none")
    
     #Activity and exploration average between trials
-  
-  p5<- ggplot(data = dat_C) + 
+
+  p3 <-all_data %>%
+   filter(!is.na(treatment)) %>%
+    ggplot()+
   geom_point(mapping = aes(x = log_activity, y = exploration, color = factor(ID_fish))) +
-  geom_smooth(mapping = aes(x = log_activity, y = exploration, color = "pink4")) + theme(legend.position="none")
-  
-  p6<- ggplot(data = dat_E) + 
-  geom_point(mapping = aes(x = log_activity, y = exploration, color = factor(ID_fish))) +
-  geom_smooth(mapping = aes(x = log_activity, y = exploration, color = "red")) + theme(legend.position="none")
-  
- 
-  plot_grid(
-  p1, p2, p3, p4, p5, p6,
-  labels = "AUTO", ncol = 2)
+  scale_color_viridis_d(option = "mako") +
+  geom_line(mapping = aes(x = log_activity, y = exploration, color = factor(ID_fish) )) +
+    facet_wrap(~ treatment, labeller = as_labeller(plot_names)) + theme_minimal() + theme(legend.position="none")
+
+plot_grid(
+  p1, p2, p3,
+  labels = "AUTO", ncol = 1)
 
 ```
 
