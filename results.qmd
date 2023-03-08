@@ -321,17 +321,17 @@ summary(model2)
     #Boldness and activity
 bsyn_b_act2  <- rbind(c(bsyn_b_act_C[,1], bsyn_b_act_E[,1]))
 mean(bsyn_b_act2)
-quantile(bsyn_b_act2, c(0.025, 0.975))
+q_b_act<-quantile(bsyn_b_act2, c(0.025, 0.975))
     
     #Boldness and exploration
 bsyn_b_exp  <- rbind(c(bsyn_b_exp_C[,1], bsyn_b_exp_E[,1]))
 mean(bsyn_b_exp)
-quantile(bsyn_b_exp, c(0.025, 0.975))
+q_b_exp<-quantile(bsyn_b_exp, c(0.025, 0.975))
     
     #Activity and exploration
 bsyn_act_exp  <- rbind(c(bsyn_act_exp_C[,1], bsyn_act_exp_E[,1]))
 mean(bsyn_act_exp)
-quantile(bsyn_act_exp, c(0.025, 0.975))
+q_act_exp<-quantile(bsyn_act_exp, c(0.025, 0.975))
     
 #Values in model 1.2 for logactivity-boldness
     #estimate = -0.48
@@ -361,7 +361,7 @@ The caging experiment successfully infected our treatment fish. Control fish tha
 
 #### *Evidence of personality and behavioural syndrome*
 
-Boldness, exploration and activity were all repeatable across trials (Boldness: `r mean(R_bold)`, 95% CI: `r R_Blb_bold` to `r R_Bub_bold`, $pMCMC_{\alpha = 0.05}$ = `r p_value_bold_a`; Exploration: `r mean(R_exp)`, 95% CI: `r R_Blb_exp` to `r R_Bub_exp`, $pMCMC_{\alpha = 0.05}$ = `r p_value_exp_a`; Activity: `r mean(R_act)`, 95% CI: `r R_Blb_act` to `r R_Bub_act`, $pMCMC_{\alpha = 0.05}$ = `r p_value_act_a`). We did not observe among-individual variation to be higher in the control vs experimentally infected group (@tbl-tab1). Repeatability did not differ between treatment for boldness (p-value = `r p_value_bold`), exploration ($pMCMC_{\alpha = 0.05}$ = `r p_value_exp`) and activity ($pMCMC_{\alpha = 0.05}$ = `r p_value_act`).We found evidence of behavioural syndromes between boldness and activity (cor: `r mean(bsyn_b_act2)`, 95% CI:`r quantile(bsyn_b_act2, c(0.025, 0.975)`); and between boldness and exploration (cor: `r mean(bsyn_b_exp)`, 95% CI:`r quantile(bsyn_b_exp, c(0.025, 0.975)`). The correlation did not differ between the control and experimental group for these syndromes (Boldness-Activity: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_b_act`; Boldness-exploration: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_b_exp`). Correlation between activity and exploration varies in the control vs experimentally infected group ($pMCMC_{\alpha = 0.05}$ = `r pmcmc_act_exp`). We found a high correlation between activity and exploration in the control group (cor: `r mean(bsyn_act_exp_C[,1])`; 95% CI: `r quantile(bsyn_act_exp_C[,1], c(0.025, 0.975))` ), but not in the experimentally infected group (cor: `r mean(bsyn_act_exp_E[,1])`; 95% CI: `r quantile(bsyn_act_exp_E[,1], c(0.025, 0.975))`). 
+Boldness, exploration and activity were all repeatable across trials (Boldness: `r mean(R_bold)`, 95% CI: `r R_Blb_bold` to `r R_Bub_bold`, $pMCMC_{\alpha = 0.05}$ = `r p_value_bold_a`; Exploration: `r mean(R_exp)`, 95% CI: `r R_Blb_exp` to `r R_Bub_exp`, $pMCMC_{\alpha = 0.05}$ = `r p_value_exp_a`; Activity: `r mean(R_act)`, 95% CI: `r R_Blb_act` to `r R_Bub_act`, $pMCMC_{\alpha = 0.05}$ = `r p_value_act_a`). We did not observe among-individual variation to be higher in the control vs experimentally infected group (@tbl-tab1). Repeatability did not differ between treatment for boldness (p-value = `r p_value_bold`), exploration ($pMCMC_{\alpha = 0.05}$ = `r p_value_exp`) and activity ($pMCMC_{\alpha = 0.05}$ = `r p_value_act`).We found evidence of behavioural syndromes between boldness and activity (cor: `r mean(bsyn_b_act2)`, 95% CI:`r q_b_act`); and between boldness and exploration (cor: `r mean(bsyn_b_exp)`, 95% CI:`r q_act_exp`). The correlation did not differ between the control and experimental group for these syndromes (Boldness-Activity: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_b_act`; Boldness-exploration: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_b_exp`). Correlation between activity and exploration varies in the control vs experimentally infected group ($pMCMC_{\alpha = 0.05}$ = `r pmcmc_act_exp`). We found a high correlation between activity and exploration in the control group (cor: `r mean(bsyn_act_exp_C[,1])`; 95% CI: `r quantile(bsyn_act_exp_C[,1], c(0.025, 0.975))` ), but not in the experimentally infected group (cor: `r mean(bsyn_act_exp_E[,1])`; 95% CI: `r quantile(bsyn_act_exp_E[,1], c(0.025, 0.975))`). 
 
 
 
@@ -375,40 +375,48 @@ summary(model1)
 
 #### *Effect of parasite*
 
-#### *Boldness*
+#### *Behavioural syndromes*
 
 ```{r}
 #| label: fig-fig1
 #| fig-cap: Correlation between traits
-#| 
+
+
+dat_E <-subset(all_data, treatment == "E")
+dat_C <-subset(all_data, treatment == "C")
 #Boldness and activity average between trials
     
-  p1<- ggplot(data = all_data) + 
-  geom_point(mapping = aes(x = log_boldness, y = log_activity)) + 
-  geom_smooth(mapping = aes(x = log_boldness, y = log_activity))
+  p1<- ggplot(data = dat_C) + 
+  geom_point(mapping = aes(x = log_boldness, y = log_activity, color = factor(ID_fish))) + 
+  geom_smooth(mapping = aes(x = log_boldness, y = log_activity, color = "pink4")) + theme(legend.position="none") + ggtitle ("Control group")
+  
+  p2<- ggplot(data = dat_E) + 
+  geom_point(mapping = aes(x = log_boldness, y = log_activity, color = factor(ID_fish))) + 
+  geom_smooth(mapping = aes(x = log_boldness, y = log_activity, color = "red"))+ theme(legend.position="none") + ggtitle ("Experimental group")
+
     
     #Boldness and exploration average between trials
-  p2<- ggplot(data = all_data) + 
-  geom_point(mapping = aes(x = log_boldness, y = exploration)) + 
-  geom_smooth(mapping = aes(x = log_boldness, y = exploration))
-   
-    #Activity and exploration
-  dat_E <-subset(all_data, treatment == "E")
-  dat_C <-subset(all_data, treatment == "C")
-  
-  #Control
   p3<- ggplot(data = dat_C) + 
-  geom_smooth(mapping = aes(x = log_activity, y = exploration)) +
-  geom_point(mapping = aes(x = log_activity, y = exploration)) 
+  geom_point(mapping = aes(x = log_boldness, y = exploration, color = factor(ID_fish))) + 
+  geom_smooth(mapping = aes(x = log_boldness, y = exploration, color = "pink4")) + theme(legend.position="none")
   
+  p4<- ggplot(data = dat_E) + 
+  geom_point(mapping = aes(x = log_boldness, y = exploration, color = factor(ID_fish))) + 
+  geom_smooth(mapping = aes(x = log_boldness, y = exploration, color = "red")) + theme(legend.position="none")
    
-  #Experimental
-  p4 <- ggplot(data = dat_E) + 
-  geom_point(mapping = aes(x = log_activity, y = exploration)) + 
-  geom_smooth(mapping = aes(x = log_activity, y = exploration))
+    #Activity and exploration average between trials
   
+  p5<- ggplot(data = dat_C) + 
+  geom_point(mapping = aes(x = log_activity, y = exploration, color = factor(ID_fish))) +
+  geom_smooth(mapping = aes(x = log_activity, y = exploration, color = "pink4")) + theme(legend.position="none")
+  
+  p6<- ggplot(data = dat_E) + 
+  geom_point(mapping = aes(x = log_activity, y = exploration, color = factor(ID_fish))) +
+  geom_smooth(mapping = aes(x = log_activity, y = exploration, color = "red")) + theme(legend.position="none")
+  
+ 
   plot_grid(
-  p1, p2, p3, p4,
+  p1, p2, p3, p4, p5, p6,
   labels = "AUTO", ncol = 2)
 
 ```
