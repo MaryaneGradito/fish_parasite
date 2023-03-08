@@ -125,7 +125,7 @@ editor_options:
                       post_sd_C_2[,grep("exploration", colnames(post_sd_C_2))]^2 + 
                       post_sd_cage_2[ ,grep("exploration", colnames(post_sd_cage_2))]^2)
 #verification
-  0.58^2 / (exp(-0.12)^2 + 0.58^2 + 0.15^2) #same number
+  0.54^2 / (exp(-0.20)^2 + 0.54^2 + 0.17^2) #same number
 
   hist(R_C_exploration[,1])
   mean(R_C_exploration[,1])
@@ -138,7 +138,7 @@ editor_options:
                       post_sd_C_2[,grep("logactivity", colnames(post_sd_C_2))]^2 + 
                       post_sd_cage_2[ ,grep("logactivity", colnames(post_sd_cage_2))]^2)
 #verification
-  0.65^2 / (exp(-0.13)^2 + 0.65^2 + 0.10^2) 
+  0.64^2 / (exp(-0.14)^2 + 0.64^2 + 0.13^2) 
 
   hist(R_C_activity[,1])
   mean(R_C_activity[,1])
@@ -154,7 +154,7 @@ editor_options:
                       post_sd_E_2[,grep("logboldness", colnames(post_sd_E_2))]^2 + 
                       post_sd_cage_2[ ,grep("logboldness", colnames(post_sd_cage_2))]^2)
 #verification
-  0.40^2 / (exp(-0.11)^2 + 0.40^2 + 0.19^2)
+  0.39^2 / (exp(-0.15)^2 + 0.39^2 + 0.15^2)
 
   hist(R_E_boldness[,1])
   mean(R_E_boldness[,1])
@@ -166,7 +166,7 @@ editor_options:
                       post_sd_E_2[,grep("exploration", colnames(post_sd_E_2))]^2 + 
                       post_sd_cage_2[ ,grep("exploration", colnames(post_sd_cage_2))]^2)
 #verification
-  0.36^2 / (exp(-0.26)^2 + 0.36^2 + 0.15^2) 
+  0.36^2 / (exp(-0.29)^2 + 0.36^2 + 0.17^2) 
   summary(model2)
 
   hist(R_E_exploration[,1])
@@ -180,7 +180,7 @@ R_E_activity <-  post_sd_E_2[,grep("logactivity", colnames(post_sd_E_2))]^2  / (
                      post_sd_cage_2[ ,grep("logactivity", colnames(post_sd_cage_2))]^2)
 
 #verification
-  0.49^2 / (exp(-0.26)^2 + 0.49^2 + 0.10^2) 
+  0.51^2 / (exp(-0.23)^2 + 0.51^2 + 0.13^2) 
 summary(model2)
   
   hist(R_E_activity[,1])
@@ -389,6 +389,8 @@ summary(model1)
       
 plot_names <- c('C' = "Control",
                 'E' = "Experimental")
+plot_names2 <- c('C' = "",
+                'E' = "")
 
 
 p1<-all_data %>%
@@ -407,7 +409,7 @@ p1<-all_data %>%
   geom_point(mapping = aes(x = log_boldness, y = exploration, color = factor(ID_fish))) +
     scale_color_viridis_d(option = "mako") +
   geom_smooth(mapping = aes(x = log_boldness, y = exploration, color = "green")) + 
-    facet_wrap(~ treatment, labeller = as_labeller(plot_names))+ theme_minimal() + theme(legend.position="none")
+    facet_wrap(~ treatment, labeller = as_labeller(plot_names2))+ theme_minimal() + theme(legend.position="none")
    
     #Activity and exploration average between trials
 
@@ -417,7 +419,7 @@ p1<-all_data %>%
   geom_point(mapping = aes(x = log_activity, y = exploration, color = factor(ID_fish))) +
   scale_color_viridis_d(option = "mako") +
   geom_line(mapping = aes(x = log_activity, y = exploration, color = factor(ID_fish) )) +
-    facet_wrap(~ treatment, labeller = as_labeller(plot_names)) + theme_minimal() + theme(legend.position="none")
+    facet_wrap(~ treatment, labeller = as_labeller(plot_names2)) + theme_minimal() + theme(legend.position="none")
 
 plot_grid(
   p1, p2, p3,
