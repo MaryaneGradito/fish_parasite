@@ -180,7 +180,7 @@ R_E_activity <-  post_sd_E_2[,grep("logactivity", colnames(post_sd_E_2))]^2  / (
                      post_sd_cage_2[ ,grep("logactivity", colnames(post_sd_cage_2))]^2)
 
 #verification
-  0.51^2 / (exp(-0.23)^2 + 0.51^2 + 0.13^2) 
+  0.51^2 / (exp(-0.23)^2 + 0.51^2 + 0.1^2) 
 summary(model2)
   
   hist(R_E_activity[,1])
