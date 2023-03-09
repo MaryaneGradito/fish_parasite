@@ -32,7 +32,7 @@
     prior_summary(model1)
 
     # Compare models  
-    model1 <- add_criterion(model1, c("loo", "waic"))
+    model1 <- add_criterion(model1, c("loo", "waic"),  moment_match = TRUE)
 
     saveRDS(model1, file = "./output/models/model1.rds")
     
@@ -48,7 +48,7 @@
                         control = list(adapt_delta = 0.98))
 
   # Compare models  
-    model1.2 <- add_criterion(model1.2 , c("loo", "waic"))
+    model1.2 <- add_criterion(model1.2 , c("loo", "waic"),  moment_match = TRUE)
 
     saveRDS(model1.2, file = "./output/models/model1.2.rds")
 

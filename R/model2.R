@@ -33,7 +33,7 @@
                       control = list(adapt_delta = 0.98))
   
 # Compare models  
-  model2 <- add_criterion(model2 , c("loo", "waic"))
+  model2 <- add_criterion(model2 , c("loo", "waic"), moment_match = TRUE)
 
   saveRDS(model2, file = "./output/models/model2.rds")
 
