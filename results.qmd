@@ -27,7 +27,7 @@ editor_options:
 #| warning: false
 
     source("./R/func.R")
-    pacman::p_load(tidyverse, brms, glmmTMB, gt, posterior, gt, glue, dplyr,magrittr, ggplot2, cowplot)
+    pacman::p_load(tidyverse, brms, glmmTMB, gt, latex2exp, posterior, gt, glue, dplyr,magrittr, ggplot2, cowplot)
     options(digits = 3, scipen = 2)
     
 ```
@@ -420,10 +420,11 @@ p1<-all_data %>%
    filter(!is.na(treatment)) %>%
     ggplot()+
   geom_point(mapping = aes(x = log_activity, y = exploration, color = factor(ID_fish))) +
-  scale_color_viridis_d(option = "mako") +
+  scale_color_viridis_d(option = "mako") + theme_classic() +
   geom_line(mapping = aes(x = log_activity, y = exploration, color = factor(ID_fish) )) +
-    facet_wrap(~ treatment, labeller = as_labeller(plot_names2)) + theme_minimal() + theme(legend.position="none")
-
+    facet_wrap(~ treatment, labeller = as_labeller(plot_names2)) + theme_minimal() + theme(legend.position="none") + labs(x = TeX("$Activity_{log_{2}}$"), y = "Exploration") +
+    annotate("text", x = -2, y = 2.5, label = TeX(paste0("$r_{b}$ = ", " 2 ", " 95%CI: ")), size =13) + 
+    annotate("text", x = -2, y = 2.2, label = TeX(paste0("$r_{w}$ = ", " 2 ", " 95%CI: ")))
 plot_grid(
   p1, p2, p3,
   labels = "AUTO", ncol = 1)
