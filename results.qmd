@@ -108,40 +108,44 @@ editor_options:
 ############################
 
 #Boldness for control group
-  fish_c <- post_sd_C_2[,grep("logboldness", colnames(post_sd_C_2))]^2
-  cage_c <- post_sd_cage_2[ ,grep("logboldness", colnames(post_sd_cage_2))]^2
-   res_c <- post_sd_sig_C_2[,grep("b_sigma_logboldness_treatmentC", colnames(post_sd_sig_C_2))]^2
+  fish_c_b <- post_sd_C_2[,grep("logboldness", colnames(post_sd_C_2))]^2
+  cage_c_b <- post_sd_cage_2[ ,grep("logboldness", colnames(post_sd_cage_2))]^2
+   res_c_b <- post_sd_sig_C_2[,grep("b_sigma_logboldness_treatmentC", colnames(post_sd_sig_C_2))]^2
 
-  R_C_boldness <-   fish_c / (fish_c + cage_c + res_c)
+  R_C_boldness <-   fish_c_b / (fish_c_b + cage_c_b + res_c_b)
 
 #verification
-  0.38^2 / (exp(-0.19)^2 + 0.38^2 + 0.19^2)
- 0.38^2 / (0.15^2 + 0.38^2 + exp(-0.17)^2)
+ 0.40^2 / (0.15^2 + 0.40^2 + exp(-0.14)^2)
+ 
   hist(R_C_boldness[,1])
-  
   R_C_bold <- mean(R_C_boldness[,1])
   R_Blb_bold_C <- round(quantile(R_C_boldness[,1], c(0.025, 0.975))[1], 3)
   R_Bub_bold_C <- round(quantile(R_C_boldness[,1], c(0.025, 0.975))[2], 3)
 
 #exploration for control group
-  R_C_exploration <-  post_sd_C_2[,grep("exploration", colnames(post_sd_C_2))]^2  / (post_sd_sig_2[,grep("b_sigma_exploration_treatmentC", colnames(post_sd_sig_2))]^2 +
-                      post_sd_C_2[,grep("exploration", colnames(post_sd_C_2))]^2 + 
-                      post_sd_cage_2[ ,grep("exploration", colnames(post_sd_cage_2))]^2)
+  fish_c_ex <- post_sd_C_2[,grep("exploration", colnames(post_sd_C_2))]^2
+  cage_c_ex <- post_sd_cage_2[ ,grep("exploration", colnames(post_sd_cage_2))]^2
+   res_c_ex <- post_sd_sig_C_2[,grep("b_sigma_exploration_treatmentC", colnames(post_sd_sig_C_2))]^2
+
+  R_C_exploration <-   fish_c_ex / (fish_c_ex + cage_c_ex + res_c_ex)
+  
 #verification
-  0.54^2 / (exp(-0.20)^2 + 0.54^2 + 0.17^2) #same number
+  0.57^2 / (exp(-0.11)^2 + 0.57^2 + 0.16^2) #same number
 
   hist(R_C_exploration[,1])
   mean(R_C_exploration[,1])
   R_Blb_exp_C <- round(quantile(R_C_exploration[,1], c(0.025, 0.975))[1], 3)
   R_Bub_exp_C <- round(quantile(R_C_exploration[,1], c(0.025, 0.975))[2], 3)
 
-
 #activity for control group
-  R_C_activity <-  post_sd_C_2[,grep("logactivity", colnames(post_sd_C_2))]^2  / (post_sd_sig_2[,grep("b_sigma_logactivity_treatmentC", colnames(post_sd_sig_2))]^2 +
-                      post_sd_C_2[,grep("logactivity", colnames(post_sd_C_2))]^2 + 
-                      post_sd_cage_2[ ,grep("logactivity", colnames(post_sd_cage_2))]^2)
+  fish_c_ac <- post_sd_C_2[,grep("logactivity", colnames(post_sd_C_2))]^2
+  cage_c_ac <- post_sd_cage_2[ ,grep("logactivity", colnames(post_sd_cage_2))]^2
+  res_c_ac <- post_sd_sig_C_2[,grep("b_sigma_logactivity_treatmentC", colnames(post_sd_sig_C_2))]^2
+
+  R_C_activity <-   fish_c_ac / (fish_c_ac + cage_c_ac + res_c_ac)
+  
 #verification
-  0.64^2 / (exp(-0.14)^2 + 0.64^2 + 0.13^2) 
+  0.64^2 / (exp(-0.15)^2 + 0.64^2 + 0.11^2) 
 
   hist(R_C_activity[,1])
   mean(R_C_activity[,1])
@@ -153,11 +157,14 @@ editor_options:
 ############################
 
 #Boldness for experimental group
-  R_E_boldness <-  post_sd_E_2[,grep("logboldness", colnames(post_sd_E_2))]^2  / (post_sd_sig_2[,grep("b_sigma_logboldness_treatmentE", colnames(post_sd_sig_2))]^2 +
-                      post_sd_E_2[,grep("logboldness", colnames(post_sd_E_2))]^2 + 
-                      post_sd_cage_2[ ,grep("logboldness", colnames(post_sd_cage_2))]^2)
+  fish_e_b <- post_sd_E_2[,grep("logboldness", colnames(post_sd_E_2))]^2
+  cage_e_b <- post_sd_cage_2[ ,grep("logboldness", colnames(post_sd_cage_2))]^2
+  res_e_b <- post_sd_sig_E_2[,grep("b_sigma_logboldness_treatmentE", colnames(post_sd_sig_E_2))]^2
+
+  R_E_boldness <-   fish_e_b / (fish_e_b + cage_e_b + res_e_b)
+  
 #verification
-  0.39^2 / (exp(-0.15)^2 + 0.39^2 + 0.15^2)
+  0.42^2 / (exp(-0.11)^2 + 0.42^2 + 0.15^2)
 
   hist(R_E_boldness[,1])
   mean(R_E_boldness[,1])
@@ -165,12 +172,14 @@ editor_options:
   R_Bub_bold_E <- round(quantile(R_E_boldness[,1], c(0.025, 0.975))[2], 3)
 
 #exploration for experimental group
-  R_E_exploration <-  post_sd_E_2[,grep("exploration", colnames(post_sd_E_2))]^2  / (post_sd_sig_2[,grep("b_sigma_exploration_treatmentE", colnames(post_sd_sig_2))]^2 +
-                      post_sd_E_2[,grep("exploration", colnames(post_sd_E_2))]^2 + 
-                      post_sd_cage_2[ ,grep("exploration", colnames(post_sd_cage_2))]^2)
+   fish_e_ex <- post_sd_E_2[,grep("exploration", colnames(post_sd_E_2))]^2
+  cage_e_ex <- post_sd_cage_2[ ,grep("exploration", colnames(post_sd_cage_2))]^2
+  res_e_ex <- post_sd_sig_E_2[,grep("b_sigma_exploration_treatmentE", colnames(post_sd_sig_E_2))]^2
+
+  R_E_exploration <-   fish_e_ex / (fish_e_ex + cage_e_ex + res_e_ex)
+  
 #verification
-  0.36^2 / (exp(-0.29)^2 + 0.36^2 + 0.17^2) 
-  summary(model2)
+  0.38^2 / (exp(-0.28)^2 + 0.38^2 + 0.16^2) 
 
   hist(R_E_exploration[,1])
   mean(R_E_exploration[,1])
@@ -178,13 +187,14 @@ editor_options:
   R_Bub_exp_E <- round(quantile(R_E_exploration[,1], c(0.025, 0.975))[2], 3)
 
 #activity for experimental group
-R_E_activity <-  post_sd_E_2[,grep("logactivity", colnames(post_sd_E_2))]^2  / (post_sd_sig_2[,grep("b_sigma_logactivity_treatmentE", colnames(post_sd_sig_2))]^2 +
-                     post_sd_E_2[,grep("logactivity", colnames(post_sd_E_2))]^2 + 
-                     post_sd_cage_2[ ,grep("logactivity", colnames(post_sd_cage_2))]^2)
+  fish_e_ac <- post_sd_E_2[,grep("logactivity", colnames(post_sd_E_2))]^2
+  cage_e_ac <- post_sd_cage_2[ ,grep("logactivity", colnames(post_sd_cage_2))]^2
+  res_e_ac <- post_sd_sig_E_2[,grep("b_sigma_logactivity_treatmentE", colnames(post_sd_sig_E_2))]^2
+
+  R_E_activity <-   fish_e_ac / (fish_e_ac + cage_e_ac + res_e_ac)
 
 #verification
-  0.51^2 / (exp(-0.23)^2 + 0.51^2 + 0.1^2) 
-summary(model2)
+  0.51^2 / (exp(-0.26)^2 + 0.51^2 + 0.11^2) 
   
   hist(R_E_activity[,1])
   mean(R_E_activity[,1])
@@ -251,7 +261,7 @@ summary(model2)
 #Boldness experimental
   p_value_bold_E<-pmcmc(R_E_boldness[,1]*100, null = 5, twotail = FALSE)#not significative
 #Average boldness
-  p_value_bold_a<-pmcmc(R_bold*100, null = 5, twotail = FALSE)#not significative
+  p_value_bold_a<-pmcmc(R_bold*100, null = 5, twotail = FALSE)#not significative but really close
   
 #Exploration control
   p_value_exp_C<-pmcmc(R_C_exploration[,1]*100, null = 5, twotail = FALSE)#significative
@@ -311,12 +321,12 @@ summary(model2)
   
   pmcmc_act_exp_C<- pmcmc(bsyn_act_exp_C[,1], twotail = TRUE) #significant
   
-  bsyn_act_exp_E <- data.frame(cor_bold_treatE[,3]); mean(bsyn_act_exp_E[,1]); quantile(bsyn_act_exp_E[,1], c(0.025, 0.975))  ####This one is weird!!
-  ## in model 2, I see that the correlation between ##logactivity_treatmentE and exploration_treatmentE is really 0.05
+  bsyn_act_exp_E <- data.frame(cor_bold_treatE[,3]); mean(bsyn_act_exp_E[,1]); quantile(bsyn_act_exp_E[,1], c(0.025, 0.975))  
+  
    pmcmc_act_exp_E<- pmcmc(bsyn_act_exp_E[,1], twotail = TRUE) #not significant
 
   #is the difference significant
- pmcmc_act_exp<- pmcmc(bsyn_act_exp_C[,1] - bsyn_act_exp_E[,1], twotail = TRUE) #yes
+ pmcmc_act_exp<- pmcmc(bsyn_act_exp_C[,1] - bsyn_act_exp_E[,1], twotail = TRUE) #no
   
 # Overall syndrome
   # Take average of the two treatments
@@ -344,30 +354,25 @@ q_act_exp<-quantile(bsyn_act_exp, c(0.025, 0.975))
 
     
 ```
-## Methods
-## *Statistical analysis*
+### Methods
+#### *Statistical analysis*
 
-All statistical analyses were performed with the software R (version 4.2.2). Adjusted fish mass was calculated as the fish mass minus parasite mass (Lagrue and Poulin, 2015). Parasite mass was estimated with the mean mass of 20 parasites (Vic, in prep). For bass tapeworm, adult average was 0.003g and larval form was 0.0008g. We decided to exclude nematodes since the mass varies grandly between individuals and is found rarely in our fish. Blackspots mass was considered too small to be subtracted from total mass (10^-7g). Body condition was calculated with the Fulton index (mass/standard length^3 in cm) (Jakob, 1996) using the adjusted fish mass for the 2 measures of body condition after the experimental infection (we assume there is no parasite before the experimental infection). 
+All statistical analyses were performed with the software R (version 4.2.2). Adjusted fish mass was calculated as the fish mass minus parasite mass (Lagrue and Poulin, 2015). Parasite mass was estimated with the mean mass of 20 parasites (Vic, in prep). For bass tapeworm, adult average mass was 0.003g and larval form was 0.0008g. We decided to exclude nematodes since the mass varies grandly between individuals and is found rarely in our fish. Blackspots mass was considered too small to be subtracted from total mass ($10^{-7}g$). Body condition was calculated with the Fulton index ($mass/length^3$) (Jakob, 1996) using the adjusted fish mass for the 2 measures of body condition after the experimental infection (we assume there is no parasite before the experimental infection). We used standard length of the fish in centimeters.
 
 Exploration was distributed normally. Activity and boldness were log-transformed to impose normality. All variable were z-scaled. We fitted our models with a Bayesian statistical inference using 4 chains with an iteration of 6000 and a warm up of 2000. We visually inspected the MCMC sampling to see if the sampling ...(?) 
 
-To test if we find evidence of personality and behavioural syndromes between traits, we built a model with the personality traits as response variables, treatment as a fixed effect, and fish ID and cage number as random effects. Model 1 had tank effect as a fixed factor compared to Model 2. We compared the models using the loo package. Model 2 was better fitted (elpd_diff: -1.4; se_diff: 2.1) than model 1 and we decided not to include tank effect in our models.
+To test if we find evidence of personality and behavioural syndromes between traits, we built a model with the personality traits as response variables, treatment (uninfected vs infected) as a fixed effect, fish ID and cage number as random effects. Model 1 had tank effect as a fixed factor compared to Model 2. We compared the models using the loo package. Model 2 was better fitted (elpd_diff:-3.6 ; se_diff: 1.7) than model 1 and we decided not to include tank effect in our models. Repeatability (R) was calculated using the squared standard deviation for fish ID divided by the squared standard deviation for fish ID, cage and sigma from model 2 for each treatment group and for the average across groups. To estimate if repeatability was different from 0, we choose 0.05 as a threshold since the values can't be 0 in the distribution. Correlation between traits were extracted from model 2 to determine if there was a behavioural syndrome between traits. To measure the average correlation for each group, we pooled the two MCMC chains for both group together.
 
-To test if the experimental infection had an effect on personality, we sublet the data set according to treatment. We used our data set for the experimental group in model 3 and 4 to see if parasite load had a significant effect on the traits responses. Parasite load was included as a fixed factor; fish ID and cage were random factors. Model 3 assume than parasite load effect is linear, so we included parasite load^2 as a fixed factor in model 4. We compared model 3 and 4 using the loo method (should we do that?). We fitted model 5 with ID and cage as random effects for our control group. Finally, Model 6 used body condition as the response variable … 
-
-#this could go with the paragraph about model 1? 
-Repeatability (R) was calculated using the squared standard deviation for fish ID divided by the squared standard deviation for fish ID, cage and sigma from model 2 for each treatment group and for the average across groups. 
-To estimate if repeatability was different from 0, we choose 0.05 as a threshold since the values can't be 0 in the distribution. Correlation between traits were extracted from model 2 to determine if there was a behavioural syndrome between traits. To measure the average correlation for each group, we pooled the two MCMC chains from the treatments into a giant vector 32,000 rows. 
+To test if the experimental infection had an effect on personality, we sublet the data set according to treatment. We used our data set for the experimentally infected group in model 3 and 4 to see if parasite load had a significant effect on the traits responses. Parasite load was included as a fixed factor; fish ID and cage were random factors. Model 3 assume than parasite load effect is linear, so we included parasite $load^2$ as a fixed factor in model 4. We compared model 3 and 4 using the loo method (should we do that?). We fitted model 5 with ID and cage as random effects for our uninfected group. Finally, Model 6 used body condition as the response variable … 
 
 ### Results
 #### *Experimental infection*
 
-The caging experiment successfully infected our treatment fish. Control fish that stayed in the laboratory had no alive parasite, which indicate that the praziquantel treatment was effective. The two most abundant species found in the experimentally infected fish were trematodes causing the blackspot disease (Trematoda: *Apophallus sp.* and *Uvulifer sp.*; min-max: `r BS_min`- `r BS_max`; median: `r BS_median`) and the bass tapeworm (Cestoda: *Proteocephalus ambloplites*; min-max: `r cestode_min` - `r cestode_max` ; median: `r cestode_median`). The most abundant species of trematode causing blackspots was *Apophallus sp*. (Binning, Lanthier, unpublished data), but *Uvulifer sp.* was found more frequently inside the muscles (MG, personal observations).Experimentally fish gained in mean `r gain_mean` blackspots, and were found on the fines, body, gills and inside the muscles. Bass tapeworm were mostly found in the liver, stomach and digestive tract, occasionally around the spleen (parasite count: 9), and rarely on the gills (parasite count: 3) or the heart (parasite count: 2). Unknown nematode species were found rarely in the body cavity (alive parasite count: 4).
+The caging experiment successfully infected our fish. Control fish that stayed in the laboratory had no alive parasite, which indicate that the praziquantel treatment was effective. The two most abundant species found in the experimentally infected fish were trematodes causing the blackspot disease (Trematoda: *Apophallus sp.* and *Uvulifer sp.*; min-max: `r BS_min`- `r BS_max`; median: `r BS_median`) and the bass tapeworm (Cestoda: *Proteocephalus ambloplites*; min-max: `r cestode_min` - `r cestode_max` ; median: `r cestode_median`). The most abundant species of trematode causing blackspots was *Apophallus sp*. (Binning, Lanthier, unpublished data), but *Uvulifer sp.* was found more frequently inside the muscles (MG, personal observations).Experimentally fish gained in mean `r gain_mean` blackspots, and were found on the fines, body, gills and inside the muscles. Bass tapeworm were mostly found in the liver, stomach and digestive tract, occasionally around the spleen (parasite count: 9), and rarely on the gills (parasite count: 3) or the heart (parasite count: 2). Unknown nematode species were found rarely in the body cavity (alive parasite count: 4).
 
-#### *Evidence of personality and behavioural syndrome*
+#### *Evidence of personality and behavioural syndromes*
 
-Boldness, exploration and activity were all repeatable across trials (Boldness: `r mean(R_bold)`, 95% CI: `r R_Blb_bold` to `r R_Bub_bold`, $pMCMC_{\alpha = 0.05}$ = `r p_value_bold_a`; Exploration: `r mean(R_exp)`, 95% CI: `r R_Blb_exp` to `r R_Bub_exp`, $pMCMC_{\alpha = 0.05}$ = `r p_value_exp_a`; Activity: `r mean(R_act)`, 95% CI: `r R_Blb_act` to `r R_Bub_act`, $pMCMC_{\alpha = 0.05}$ = `r p_value_act_a`). We did not observe among-individual variation to be higher in the control vs experimentally infected group (@tbl-tab1). Repeatability did not differ between treatment for boldness ($pMCMC_{\alpha = 0.05}$ = `r p_value_bold`), exploration ($pMCMC_{\alpha = 0.05}$ = `r p_value_exp`) and activity ($pMCMC_{\alpha = 0.05}$ = `r p_value_act`).We found evidence of behavioural syndromes between boldness and activity (cor: `r mean(bsyn_b_act2)`, 95% CI:`r q_b_act`); and between boldness and exploration (cor: `r mean(bsyn_b_exp)`, 95% CI:`r q_act_exp`). The correlation did not differ between the control and experimental group for these syndromes (Boldness-Activity: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_b_act`; Boldness-exploration: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_b_exp`). Correlation between activity and exploration varies in the control vs experimentally infected group ($pMCMC_{\alpha = 0.05}$ = `r pmcmc_act_exp`). We found a high correlation between activity and exploration in the control group (cor: `r mean(bsyn_act_exp_C[,1])`; 95% CI: `r quantile(bsyn_act_exp_C[,1], c(0.025, 0.975))` ), but not in the experimentally infected group (cor: `r mean(bsyn_act_exp_E[,1])`; 95% CI: `r quantile(bsyn_act_exp_E[,1], c(0.025, 0.975))`). 
-
+Boldness, exploration and activity were all repeatable across trials (Boldness: R = `r mean(R_bold)`, 95% CI = `r R_Blb_bold`, `r R_Bub_bold`, $pMCMC_{\alpha = 0.05}$ = `r p_value_bold_a`; Exploration: R = `r mean(R_exp)`, 95% CI = `r R_Blb_exp`, `r R_Bub_exp`, $pMCMC_{\alpha = 0.05}$ = `r p_value_exp_a`; Activity: R = `r mean(R_act)`, 95% CI = `r R_Blb_act`, `r R_Bub_act`, $pMCMC_{\alpha = 0.05}$ = `r p_value_act_a`). We did not observe among-individual variation to be higher in the control vs experimentally infected group (@tbl-tab1). Repeatability did not differ between treatment for boldness ($pMCMC_{\alpha = 0.05}$ = `r p_value_bold`), exploration ($pMCMC_{\alpha = 0.05}$ = `r p_value_exp`) and activity ($pMCMC_{\alpha = 0.05}$ = `r p_value_act`).We found evidence of behavioural syndromes between boldness and activity (cor = `r mean(bsyn_b_act2)`, 95% CI = `r q_b_act`); boldness and exploration (cor = `r mean(bsyn_b_exp)`, 95% CI = `r q_b_exp`), and between activity and exploration (cor = `r mean(bsyn_act_exp)`, 95% CI = `r q_act_exp`)  The correlation did not differ between the control and experimental group for these syndromes (Boldness-Activity: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_b_act`; Boldness-Exploration: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_b_exp`; Activity-Exploration: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_act_exp`).
 
 
 
@@ -390,42 +395,52 @@ summary(model1)
 
 #Boldness and activity average between trials
       
-plot_names <- c('C' = "Control",
-                'E' = "Experimental")
+plot_names <- c('C' = "Uninfected",
+                'E' = "Infected")
 plot_names2 <- c('C' = "",
                 'E' = "")
 
 
-p1<-all_data %>%
-   filter(!is.na(treatment)) %>%
-      ggplot()+
+p1<-
+  ggplot(data=all_data)+
   geom_point(mapping = aes(x = log_boldness, y = log_activity, color = factor(ID_fish)))+ scale_color_viridis_d(option = "mako") +
-  geom_smooth(mapping = aes(x = log_boldness, y = log_activity, color = "green")) + 
-    facet_wrap(~ treatment, labeller = as_labeller(plot_names)) + theme_minimal() + theme(legend.position="none")
+  geom_line(mapping = aes(x = log_boldness, y = log_activity, color = factor(ID_fish))) + 
+    facet_wrap(~ treatment, labeller = as_labeller(plot_names)) + theme_classic() +
+    theme(strip.background = element_rect(fill = "white", colour = "white")) +
+    theme(legend.position="none") + labs(x = TeX("$Boldness_{log_{2}}$"), y = TeX("$Activity_{log_{2}}$")) +
+    annotate("text", x = -1.5, y = 2.6, label = TeX(paste0("$r_{b}$ = ", " -0.48 ", " 95%CI: -0.86, 0.07 ")), size =2.5, color = "darkblue") + 
+    annotate("text", x = -1.5, y = 2.2, label = TeX(paste0("$r_{w}$ = ", " 0.22 ", " 95%CI: 0.06, 0.36")), size=2.5, color = "darkgreen")
 
 
     #Boldness and exploration average between trials
                 
-  p2<-all_data %>%
-   filter(!is.na(treatment)) %>%
-    ggplot()+
+  p2<-
+  ggplot(data=all_data)+
   geom_point(mapping = aes(x = log_boldness, y = exploration, color = factor(ID_fish))) +
     scale_color_viridis_d(option = "mako") +
-  geom_smooth(mapping = aes(x = log_boldness, y = exploration, color = "green")) + 
-    facet_wrap(~ treatment, labeller = as_labeller(plot_names2))+ theme_minimal() + theme(legend.position="none")
+  geom_line(mapping = aes(x = log_boldness, y = exploration, color = factor(ID_fish))) + 
+    facet_wrap(~ treatment, labeller = as_labeller(plot_names))+ theme_classic() + 
+    theme(strip.background = element_rect(fill = "white", colour = "white"))+
+    theme(legend.position="none") + labs(x = TeX("$Boldness_{log_{2}}$"), y = "Exploration") +
+    annotate("text", x = 1, y = 2.6, label = TeX(paste0("$r_{b}$ = ", " -0.42 ", " 95%CI: -0.84, 0.18 ")), size =2.5, color="darkblue") + 
+    annotate("text", x = 1, y = 2.2, label = TeX(paste0("$r_{w}$ = ", " -0.06 ", " 95%CI: -0.21, 0.09")), size=2.5, color="darkgreen")
+
    
     #Activity and exploration average between trials
 
-  p3 <-all_data %>%
-   filter(!is.na(treatment)) %>%
-    ggplot()+
+  p3 <- 
+  ggplot(data=all_data)+
   geom_point(mapping = aes(x = log_activity, y = exploration, color = factor(ID_fish))) +
   scale_color_viridis_d(option = "mako") + theme_classic() +
   geom_line(mapping = aes(x = log_activity, y = exploration, color = factor(ID_fish) )) +
-    facet_wrap(~ treatment, labeller = as_labeller(plot_names2)) + theme_minimal() + theme(legend.position="none") + labs(x = TeX("$Activity_{log_{2}}$"), y = "Exploration") +
-    annotate("text", x = -2, y = 2.5, label = TeX(paste0("$r_{b}$ = ", " 2 ", " 95%CI: ")), size =13) + 
-    annotate("text", x = -2, y = 2.2, label = TeX(paste0("$r_{w}$ = ", " 2 ", " 95%CI: ")))
-plot_grid(
+    facet_wrap(~ treatment, labeller = as_labeller(plot_names)) + theme_classic() +
+    theme(strip.background = element_rect(fill = "white", colour = "white")) +
+    theme(axis.title = element_text(face = "bold"),
+         legend.position="none" ) + labs(x = TeX("$Activity_{log_{2}}$"), y = "Exploration") +
+    annotate("text", x = -1.5, y = 2.6, label = TeX(paste0("$r_{b}$ = ", " 0.42 ", " 95%CI: -0.34, 0.91")), size =2.5, color = "darkblue") + 
+    annotate("text", x = -1.5, y = 2.2, label = TeX(paste0("$r_{w}$ = ", " -0.02 ", " 95%CI: -0.17, 0.13")), size=2.5, color = "darkgreen")
+
+  plot_grid(
   p1, p2, p3,
   labels = "AUTO", ncol = 1)
 
