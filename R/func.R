@@ -71,8 +71,8 @@ overall_repeatability <- function(C_t, E_t, cage, logsigmaC, logsigmaE, trait) {
     Et_v <- E_t[, grep(trait, colnames(E_t))][sample(1:dim(E_t)[1], size = dim(E_t)[1]/ 2)]
     
     # Extract 8000 from posterior for sigma C and E
-   sigmaC <- exp(logsigmaC[,grep(trait, colnames(logsigmaC))])[sample(1:dim(logsigmaC)[1], size = dim(logsigmaC)[1]/ 2)]
-   sigmaE <- exp(logsigmaE[,grep(trait, colnames(logsigmaE))])[sample(1:dim(logsigmaE)[1], size = dim(logsigmaE)[1]/ 2)]
+   sigmaC <- (logsigmaC[,grep(trait, colnames(logsigmaC))])[sample(1:dim(logsigmaC)[1], size = dim(logsigmaC)[1]/ 2)]
+   sigmaE <- (logsigmaE[,grep(trait, colnames(logsigmaE))])[sample(1:dim(logsigmaE)[1], size = dim(logsigmaE)[1]/ 2)]
 
     # Get cage variance
     cage <- cage[,grep(trait, colnames(cage))]
