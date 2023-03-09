@@ -5,6 +5,11 @@ all_data <- read.table("./data_raw/all_data.csv",header=T, sep=";")
 all_data
 
 #############################
+# Packages
+#############################
+library(ggplot2)
+library(dplyr)
+#############################
 # Checking out the data
 #############################
 
