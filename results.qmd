@@ -100,20 +100,23 @@ editor_options:
        post_sd_E_2 <- post_sd_2[,grepl("E", colnames(post_sd_2))] #ID experimental
     post_sd_cage_2 <- post_sd_2[,grepl("cage", colnames(post_sd_2))]
      post_sd_sig_2 <- as_draws_df(model2, variable = "^b_sigma", regex = TRUE)
-     post_sd_sig_C_2 <- post_sd_sig_2[,grepl("C", colnames(post_sd_sig_2))] #ID control
-       post_sd_sig_E_2 <- post_sd_sig_2[,grepl("E", colnames(post_sd_sig_2))] #ID experimental
+     post_sd_sig_C_2 <- exp(post_sd_sig_2[,grepl("C", colnames(post_sd_sig_2))]) #ID control
+       post_sd_sig_E_2 <- exp(post_sd_sig_2[,grepl("E", colnames(post_sd_sig_2))]) #ID experimental
 
 ############################
 ##     CONTROL GROUP
 ############################
 
 #Boldness for control group
-  R_C_boldness <-  post_sd_C_2[,grep("logboldness", colnames(post_sd_C_2))]^2  / (post_sd_sig_2[,grep("b_sigma_logboldness_treatmentC", colnames(post_sd_sig_2))]^2 +
-                      post_sd_C_2[,grep("logboldness", colnames(post_sd_C_2))]^2 + 
-                      post_sd_cage_2[ ,grep("logboldness", colnames(post_sd_cage_2))]^2)
+  fish_c <- post_sd_C_2[,grep("logboldness", colnames(post_sd_C_2))]^2
+  cage_c <- post_sd_cage_2[ ,grep("logboldness", colnames(post_sd_cage_2))]^2
+   res_c <- post_sd_sig_C_2[,grep("b_sigma_logboldness_treatmentC", colnames(post_sd_sig_C_2))]^2
+
+  R_C_boldness <-   fish_c / (fish_c + cage_c + res_c)
+
 #verification
   0.38^2 / (exp(-0.19)^2 + 0.38^2 + 0.19^2)
-
+ 0.38^2 / (0.15^2 + 0.38^2 + exp(-0.17)^2)
   hist(R_C_boldness[,1])
   
   R_C_bold <- mean(R_C_boldness[,1])
