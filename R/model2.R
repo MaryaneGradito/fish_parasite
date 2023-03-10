@@ -54,7 +54,11 @@ summary(model2)
 #Model 2.2 - looking at the distribution of E and C
 
 #Slipt treatment into two colums so we can use both in the model
-dat<-pivot_wider(data=all_data, values_from = c(log_activity, log_boldness, exploration), names_from = treatment)
+dat<-  all_data  %>%  
+        select(ID_fish, trial, cage, treatment, log_boldness, log_activity, exploration)   %>% 
+        mutate(trial = if_else(trial == 3, 1, if_else(trial == 4, 2, trial))) %>% 
+        pivot_wider(values_from = c(log_activity, log_boldness, exploration), names_from = treatment)  %>% 
+        arrange(ID_fish) %>%  data.frame()
 summary(dat)
 
 
