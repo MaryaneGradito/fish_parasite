@@ -481,13 +481,91 @@ dat_text3 <- data.frame(
 #Create dataframe with estimates and CI
 
 #Extract post sd from model 2 for each traits and treatment
-post_sd_2 <- as_draws_df(model2, variable = "^sd", regex = TRUE)
+int_b <- as_draws_df(model2, variable = "^b", regex = TRUE)
 
+#intercept for control
+int_b_c<-int_b[,grep("logboldness_Intercept", colnames(int_b))]
+int_exp_c<-int_b[,grep("exploration_Intercept", colnames(int_b))]
+int_act_c<-int_b[,grep("logactivity_Intercept", colnames(int_b))]
+
+#mean estimates for control
+int_b_c_num<- as.numeric(unlist(int_b_c))
+mean_int_b_c<-mean(int_b_c_num)
+
+int_exp_c_num<- as.numeric(unlist(int_exp_c))
+mean_int_exp_c<-mean(int_exp_c_num)
+
+int_act_c_num<- as.numeric(unlist(int_act_c))
+mean_int_act_c<-mean(int_act_c_num)
+
+#contrast between intercept C and E
+int_b_con<-int_b[,grep("b_logboldness_treatmentE", colnames(int_b))]
+int_exp_con<-int_b[,grep("b_exploration_treatmentE", colnames(int_b))]
+int_act_con<-int_b[,grep("b_logactivity_treatmentE", colnames(int_b))]
+
+#mean estimates for contrast
+int_b_con_num<- as.numeric(unlist(int_b_con))
+mean(int_b_con_num)
+
+int_exp_con_num<- as.numeric(unlist(int_exp_con))
+mean(int_exp_con_num)
+
+int_act_con_num<- as.numeric(unlist(int_act_con))
+mean(int_act_con_num)
+
+#subtract intercept for C - contrast to get intercept for E
+inter_b_e<-(int_b_con_num + int_b_c_num)
+mean_int_b_e<-mean(inter_b_e)
+
+inter_exp_e<-(int_exp_con_num + int_exp_c_num)
+mean_int_exp_e<-mean(inter_exp_e)
+
+inter_act_e<-(int_act_con_num + int_act_c_num)
+mean_int_act_e<-mean(inter_act_e)
+
+#95% IC
+#Boldness
+  #Control
+blb_b_c <- round(quantile(int_b_c_num, c(0.025, 0.975))[1], 3)
+bub_b_c <- round(quantile(int_b_c_num, c(0.025, 0.975))[2], 3)
+  #Experimental
+blb_b_e<- round(quantile(int_b_e_num, c(0.025, 0.975))[1], 3)
+bub_b_e<- round(quantile(int_b_e_num, c(0.025, 0.975))[2], 3)
+
+#Exploration
+  #Control
+blb_exp_c <- round(quantile(int_exp_c_num, c(0.025, 0.975))[1], 3)
+bub_exp_c <- round(quantile(int_exp_c_num, c(0.025, 0.975))[2], 3)
+  #Experimental
+blb_exp_e <- round(quantile(int_exp_e_num, c(0.025, 0.975))[1], 3)
+bub_exp_e <- round(quantile(int_exp_e_num, c(0.025, 0.975))[2], 3)
+
+#Activity
+  #Control
+blb_act_c <- round(quantile(int_act_c_num, c(0.025, 0.975))[1], 3)
+bub_act_c <- round(quantile(int_act_c_num, c(0.025, 0.975))[2], 3)
+  #Experimental
+blb_act_e <- round(quantile(int_act_e_num, c(0.025, 0.975))[1], 3)
+bub_act_e <- round(quantile(int_act_e_num, c(0.025, 0.975))[2], 3)
+
+#Create data frame
+dat_model<-data.frame(
+  trait=c("logboldness","logboldness","exploration","exploration","logactivity","logactivity"),
+  treatment=c("uninfected","infected","uninfected","infected","uninfected","infected"), 
+  estimate = c(mean_int_b_c,mean_int_b_e,mean_int_exp_c,mean_int_exp_e, mean_act_exp_c, mean_int_act_e), 
+  Lower_CI = c(blb_b_c, blb_b_e, blb_exp_c, blb_exp_e, blb_act_c, blb_act_e),
+  Higher_CI = c(bub_b_c,bub_b_e,bub_exp_c,bub_exp_e,bub_act_c,bub_act_e))
+
+w1<-ggplot(data = dat_model) +
+geom_point(mapping = aes(x = treatment, y = estimate, color = trait))
+
+#Extract post sd from model 2 for each traits and treatment
+# AT ID LEVEL HERE
+post_sd_2 <- as_draws_df(model2, variable = "^sd", regex = TRUE)
 #Control
 post_b_c<-post_sd_C_2[,grep("logboldness", colnames(post_sd_C_2))]
 post_exp_c<-post_sd_C_2[,grep("exploration", colnames(post_sd_C_2))]
 post_act_c<-post_sd_C_2[,grep("logactivity", colnames(post_sd_C_2))]
-
 
 #Experimental
 post_b_e<-post_sd_E_2[,grep("logboldness", colnames(post_sd_E_2))]
@@ -541,8 +619,6 @@ bub_act_c <- round(quantile(post_act_c_num, c(0.025, 0.975))[2], 3)
 blb_act_e <- round(quantile(post_act_e_num, c(0.025, 0.975))[1], 3)
 bub_act_e <- round(quantile(post_act_e_num, c(0.025, 0.975))[2], 3)
 
-
-
 #create data frame with metrics from posterior distribution from model2
 dat_model2<-data.frame(
   trait=c("logboldness","logboldness","exploration","exploration","logactivity","logactivity"),
@@ -550,29 +626,11 @@ dat_model2<-data.frame(
   estimate = c(mean_b_c,mean_b_e,mean_exp_c,mean_exp_e, mean_act_c,mean_act_e), 
   Lower_CI = c(blb_b_c, blb_b_e, blb_exp_c, blb_exp_e, blb_act_c, blb_act_e),
   Higher_CI = c(bub_b_c,bub_b_e,bub_exp_c,bub_exp_e,bub_act_c,bub_act_e))
-     
-
-dat_model2.2<-data.frame(
-  trait=c("logboldness","logboldness","exploration","exploration","logactivity","logactivity"),
-  treatment=c("uninfected","infected","uninfected","infected","uninfected","infected"), 
-  estimate = c(0.22,mean_b_e,mean_exp_c,mean_exp_e, mean_act_c,mean_act_e), 
-  Lower_CI = c(blb_b_c, blb_b_e, blb_exp_c, blb_exp_e, blb_act_c, blb_act_e),
-  Higher_CI = c(bub_b_c,bub_b_e,bub_exp_c,bub_exp_e,bub_act_c,bub_act_e))
-     
 
       
 #plot model2      
 w1<-ggplot(data = dat_model2) +
 geom_point(mapping = aes(x = treatment, y = estimate, color = trait))
-  
-install.packages("sjPlot")
-install.packages("sjlabelled")
-install.packages("sjmisc")
-library(sjPlot)
-library(sjlabelled)
-library(sjmisc)
-  plot_model(model2)
-  
   
 w2<-ggplot(data = all_data) + 
 geom_point(mapping = aes(x = treatment, y = log_activity))
