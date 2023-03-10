@@ -60,6 +60,7 @@ dat<-  all_data  %>%
         pivot_wider(values_from = c(log_activity, log_boldness, exploration), names_from = treatment)  %>% 
         arrange(ID_fish) %>%  data.frame()
 summary(dat)
+head(dat)
 
 
 boldness_C_2.2 <- bf(log_boldness_C ~  1 + (1 |q| ID_fish) + (1 | cage)) + gaussian()
