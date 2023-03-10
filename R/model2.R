@@ -49,3 +49,23 @@
 
 # Look at the model
 summary(model2)
+
+###############
+#Model 2.2 - looking at the distribution of E and C
+
+#Slipt treatment into two colums so we can use both in the model
+dat<-pivot_wider(data=all_data,names_from = treatment, values_from = treatment)
+summary(dat)
+
+
+boldness_2.2 <- bf(log_boldness ~ 1 + (-1 + treatment |q| ID_fish) + (1 | cage) + gaussian())
+activity_2.2 <- bf(log_activity ~ 1 + (-1 + treatment |q| ID_fish) + (1 | cage) + gaussian())
+explore_2.2 <- bf(exploration ~ 1 + (-1 + treatment |q| ID_fish) + (1 | cage) + gaussian())
+E_2.2 <- bf(E ~ 1 + (-1 + treatment |q| ID_fish) + (1 | cage) + gaussian())
+C_2.2 <-bf(C ~ 1 + (-1 + treatment |q| ID_fish) + (1 | cage) + gaussian())
+
+model2.2 <- brms::brm(boldness_2.2 + activity_2.2 + explore_2.2 + E_2.2 + C_2.2, set_rescor(TRUE), 
+                    data = dat, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
+                    save_pars = save_pars(), file = "./output/models/model2", file_refit = "on_change",
+                    control = list(adapt_delta = 0.98))
+
