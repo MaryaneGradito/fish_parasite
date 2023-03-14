@@ -373,7 +373,7 @@ The caging experiment successfully infected our fish. Control fish that stayed i
 
 #### *Evidence of personality and behavioural syndromes*
 
-Boldness, exploration and activity were all repeatable across trials (Boldness: R = `r mean(R_bold)`, 95% CI = `r R_Blb_bold`, `r R_Bub_bold`, $pMCMC_{\alpha = 0.05}$ = `r p_value_bold_a`; Exploration: R = `r mean(R_exp)`, 95% CI = `r R_Blb_exp`, `r R_Bub_exp`, $pMCMC_{\alpha = 0.05}$ = `r p_value_exp_a`; Activity: R = `r mean(R_act)`, 95% CI = `r R_Blb_act`, `r R_Bub_act`, $pMCMC_{\alpha = 0.05}$ = `r p_value_act_a`). We did not observe among-individual variation to be higher in the control vs experimentally infected group (@tbl-tab1). Repeatability did not differ between treatment for boldness ($pMCMC_{\alpha = 0.05}$ = `r p_value_bold`), exploration ($pMCMC_{\alpha = 0.05}$ = `r p_value_exp`) and activity ($pMCMC_{\alpha = 0.05}$ = `r p_value_act`).We found evidence of behavioural syndromes between boldness and activity (cor = `r mean(bsyn_b_act2)`, 95% CI = `r q_b_act`); boldness and exploration (cor = `r mean(bsyn_b_exp)`, 95% CI = `r q_b_exp`), and between activity and exploration (cor = `r mean(bsyn_act_exp)`, 95% CI = `r q_act_exp`)  The correlation did not differ between the control and experimental group for these syndromes (Boldness-Activity: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_b_act`; Boldness-Exploration: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_b_exp`; Activity-Exploration: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_act_exp`).
+Exploration and activity were repeatable across trials (Exploration: R = `r R_exp_mean`, 95% CI = `r R_Blb_exp`, `r R_Bub_exp`, $pMCMC_{\alpha = 0.05}$ = `r p_value_exp_a`; Activity: R = `r R_act_mean`, 95% CI = `r R_Blb_act`, `r R_Bub_act`, $pMCMC_{\alpha = 0.05}$ = `r p_value_act_a`), but boldness was not significantly repeatable (Boldness: R = `r R_bold_mean`, 95% CI = `r R_Blb_bold`, `r R_Bub_bold`, $pMCMC_{\alpha = 0.05}$ = `r p_value_bold_a`). We did not observe among-individual variation to be higher in the uninfected vs experimentally infected group (@tbl-tab1). Repeatability did not differ between treatment for boldness ($pMCMC_{\alpha = 0.05}$ = `r p_value_bold`), exploration ($pMCMC_{\alpha = 0.05}$ = `r p_value_exp`) and activity ($pMCMC_{\alpha = 0.05}$ = `r p_value_act`).We found evidence of behavioural syndromes between boldness and activity (cor = `r mean(bsyn_b_act2)`, 95% CI = `r q_b_act`); boldness and exploration (cor = `r mean(bsyn_b_exp)`, 95% CI = `r q_b_exp`), and between activity and exploration (cor = `r mean(bsyn_act_exp)`, 95% CI = `r q_act_exp`)  The correlation did not differ between the uninfected and experimentally infected group for these syndromes (Boldness-Activity: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_b_act`; Boldness-Exploration: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_b_exp`; Activity-Exploration: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_act_exp`).
 
 
 
@@ -421,7 +421,7 @@ p1<-
 
     #Boldness and exploration average between trials
   dat_text2 <- data.frame(
-  label = c("r = -0.41, 95%CI =  -0.83, 0.11", "rb = -0.42, 95%CI = -0.85, 0.25"),
+  label = c("rb = -0.41, 95%CI =  -0.83, 0.11", "rb = -0.42, 95%CI = -0.85, 0.25"),
   treatment   = c("C","E")
 )
             
@@ -435,7 +435,7 @@ p1<-
     theme(legend.position="none") + labs(x = TeX("$Boldness_{log_{2}}$"), y = "Exploration")+
   geom_text(
   data    = dat_text2,
-  mapping = aes(x = -1, y = 3, label = label, group = NULL), parse = TRUE)
+  mapping = aes(x = -1, y = 3, label = label, group = NULL))
 
     #annotate("text", x = 1, y = 2.6, label = TeX(paste0("$r_{b}$ = ", " -0.42 ", " 95%CI: -0.84, 0.18 ")), size =2.5, color="darkblue") + 
    # annotate("text", x = 1, y = 2.2, label = TeX(paste0("$r_{w}$ = ", " -0.06 ", " 95%CI: -0.21, 0.09")), size=2.5, color="darkgreen")
@@ -557,91 +557,143 @@ dat_model<-data.frame(
   Lower_CI = c(blb_b_c, blb_b_e, blb_exp_c, blb_exp_e, blb_act_c, blb_act_e),
   Higher_CI = c(bub_b_c,bub_b_e,bub_exp_c,bub_exp_e,bub_act_c,bub_act_e))
 
-w1<-ggplot(data = dat_model) +
-geom_point(mapping = aes(x = treatment, y = estimate, color = trait))
+#plot model2      
 
+trt <- as.factor(all_data$treatment)
+
+m1<-ggplot(all_data, aes(x = trt, y = log_boldness, group = trt)) +
+geom_violin(aes(fill = trt), trim = FALSE) +
+geom_jitter(shape=16, position=position_jitter(0.1), color = "grey") +
+geom_errorbar(data = dat_model,aes(x = treatment,y = estimate, xmin= Lower_CI, xmax=Higher_CI, group = trait == "logboldness"), width=0.4, inherit.aes = FALSE)+
+scale_fill_manual(breaks = c("23", "28"), 
+                   values=c("#429ef5", "#f54242")) +
+labs(x = "Treatment", 
+y = "Log_boldness") +
+theme_classic() +
+theme(legend.position = "none",
+ legend.title = element_blank()) +
+geom_segment(aes(x = 1, xend = 2, y = 6.5, yend = 6.5)) +
+annotate(geom = "text", label="p = ", x = 1.5, y = 6.7 )
+
+
+            #geom_errorbar (put manually estimate + CI)
+
+dat <- data.frame(metab = (all_data$log_activity), trt)
+
+m2<-ggplot(dat, aes(x = trt, y = metab, group = trt)) +
+geom_violin(aes(fill = trt), trim = FALSE) +
+geom_jitter(shape=16, position=position_jitter(0.1), color = "grey") +
+scale_fill_manual(breaks = c("23", "28"), 
+                   values=c("#429ef5", "#f54242")) +
+labs(x = "Treatment", 
+y = "Log_activity",) +
+theme_classic() +
+theme(legend.position = "none",
+ legend.title = element_blank()) +
+geom_segment(aes(x = 1, xend = 2, y = 6.5, yend = 6.5)) +
+annotate(geom = "text", label="p < 0.001", x = 1.5, y = 6.7 )
+
+dat <- data.frame(metab = (all_data$exploration), trt)
+
+m3<-ggplot(dat, aes(x = trt, y = metab, group = trt)) +
+geom_violin(aes(fill = trt), trim = FALSE) +
+geom_jitter(shape=16, position=position_jitter(0.1), color = "grey") +
+scale_fill_manual(breaks = c("23", "28"), 
+                   values=c("#429ef5", "#f54242")) +
+labs(x = "Treatment", 
+y = "Exploration") +
+theme_classic() +
+theme(legend.position = "none",
+ legend.title = element_blank()) +
+geom_segment(aes(x = 1, xend = 2, y = 6.5, yend = 6.5)) +
+annotate(geom = "text", label="p < 0.001", x = 1.5, y = 6.7 )
+
+ plot_grid(
+  m1,m2,m3,
+  labels = "AUTO", ncol = 3)
+ 
 #Extract post sd from model 2 for each traits and treatment
 # AT ID LEVEL HERE
-post_sd_2 <- as_draws_df(model2, variable = "^sd", regex = TRUE)
+#post_sd_2 <- as_draws_df(model2, variable = "^sd", regex = TRUE)
 #Control
-post_b_c<-post_sd_C_2[,grep("logboldness", colnames(post_sd_C_2))]
-post_exp_c<-post_sd_C_2[,grep("exploration", colnames(post_sd_C_2))]
-post_act_c<-post_sd_C_2[,grep("logactivity", colnames(post_sd_C_2))]
+#post_b_c<-post_sd_C_2[,grep("logboldness", colnames(post_sd_C_2))]
+#post_exp_c<-post_sd_C_2[,grep("exploration", colnames(post_sd_C_2))]
+#post_act_c<-post_sd_C_2[,grep("logactivity", colnames(post_sd_C_2))]
 
 #Experimental
-post_b_e<-post_sd_E_2[,grep("logboldness", colnames(post_sd_E_2))]
-post_exp_e<-post_sd_E_2[,grep("exploration", colnames(post_sd_E_2))]
-post_act_e<-post_sd_E_2[,grep("logactivity", colnames(post_sd_E_2))]
+#post_b_e<-post_sd_E_2[,grep("logboldness", colnames(post_sd_E_2))]
+#post_exp_e<-post_sd_E_2[,grep("exploration", colnames(post_sd_E_2))]
+#post_act_e<-post_sd_E_2[,grep("logactivity", colnames(post_sd_E_2))]
 
 #unlist the data to be able to use the data as numeric
 #Control
-post_b_c_num<- as.numeric(unlist(post_b_c))
-post_exp_c_num<- as.numeric(unlist(post_exp_c))
-post_act_c_num<- as.numeric(unlist(post_act_c))
+#post_b_c_num<- as.numeric(unlist(post_b_c))
+#post_exp_c_num<- as.numeric(unlist(post_exp_c))
+#post_act_c_num<- as.numeric(unlist(post_act_c))
 
 #Experimental
-post_b_e_num<- as.numeric(unlist(post_b_e))
-post_exp_e_num<- as.numeric(unlist(post_exp_e))
-post_act_e_num<- as.numeric(unlist(post_act_e))
+#post_b_e_num<- as.numeric(unlist(post_b_e))
+#post_exp_e_num<- as.numeric(unlist(post_exp_e))
+#post_act_e_num<- as.numeric(unlist(post_act_e))
 
 #calculate mean estimate
 #Control
-mean_b_c<-mean(post_b_c_num)
-mean_exp_c<-mean(post_exp_c_num)
-mean_act_c<-mean(post_act_c_num)
+#mean_b_c<-mean(post_b_c_num)
+#mean_exp_c<-mean(post_exp_c_num)
+#mean_act_c<-mean(post_act_c_num)
 
 #Experimental
-mean_b_e<-mean(post_b_e_num)
-mean_exp_e<-mean(post_exp_e_num)
-mean_act_e<-mean(post_act_e_num)
+#mean_b_e<-mean(post_b_e_num)
+#mean_exp_e<-mean(post_exp_e_num)
+#mean_act_e<-mean(post_act_e_num)
 
 #95% IC
 #Boldness
   #Control
-blb_b_c <- round(quantile(post_b_c_num, c(0.025, 0.975))[1], 3)
-bub_b_c <- round(quantile(post_b_c_num, c(0.025, 0.975))[2], 3)
+#blb_b_c <- round(quantile(post_b_c_num, c(0.025, 0.975))[1], 3)
+#bub_b_c <- round(quantile(post_b_c_num, c(0.025, 0.975))[2], 3)
   #Experimental
-blb_b_e<- round(quantile(post_b_e_num, c(0.025, 0.975))[1], 3)
-bub_b_e<- round(quantile(post_b_e_num, c(0.025, 0.975))[2], 3)
+#blb_b_e<- round(quantile(post_b_e_num, c(0.025, 0.975))[1], 3)
+#bub_b_e<- round(quantile(post_b_e_num, c(0.025, 0.975))[2], 3)
 
 #Exploration
   #Control
-blb_exp_c <- round(quantile(post_exp_c_num, c(0.025, 0.975))[1], 3)
-bub_exp_c <- round(quantile(post_exp_c_num, c(0.025, 0.975))[2], 3)
+#blb_exp_c <- round(quantile(post_exp_c_num, c(0.025, 0.975))[1], 3)
+#bub_exp_c <- round(quantile(post_exp_c_num, c(0.025, 0.975))[2], 3)
   #Experimental
-blb_exp_e <- round(quantile(post_exp_e_num, c(0.025, 0.975))[1], 3)
-bub_exp_e <- round(quantile(post_exp_e_num, c(0.025, 0.975))[2], 3)
+#blb_exp_e <- round(quantile(post_exp_e_num, c(0.025, 0.975))[1], 3)
+#bub_exp_e <- round(quantile(post_exp_e_num, c(0.025, 0.975))[2], 3)
 
 #Activity
   #Control
-blb_act_c <- round(quantile(post_act_c_num, c(0.025, 0.975))[1], 3)
-bub_act_c <- round(quantile(post_act_c_num, c(0.025, 0.975))[2], 3)
+#blb_act_c <- round(quantile(post_act_c_num, c(0.025, 0.975))[1], 3)
+#bub_act_c <- round(quantile(post_act_c_num, c(0.025, 0.975))[2], 3)
   #Experimental
-blb_act_e <- round(quantile(post_act_e_num, c(0.025, 0.975))[1], 3)
-bub_act_e <- round(quantile(post_act_e_num, c(0.025, 0.975))[2], 3)
+#blb_act_e <- round(quantile(post_act_e_num, c(0.025, 0.975))[1], 3)
+#bub_act_e <- round(quantile(post_act_e_num, c(0.025, 0.975))[2], 3)
 
 #create data frame with metrics from posterior distribution from model2
-dat_model2<-data.frame(
-  trait=c("logboldness","logboldness","exploration","exploration","logactivity","logactivity"),
-  treatment=c("uninfected","infected","uninfected","infected","uninfected","infected"), 
-  estimate = c(mean_b_c,mean_b_e,mean_exp_c,mean_exp_e, mean_act_c,mean_act_e), 
-  Lower_CI = c(blb_b_c, blb_b_e, blb_exp_c, blb_exp_e, blb_act_c, blb_act_e),
-  Higher_CI = c(bub_b_c,bub_b_e,bub_exp_c,bub_exp_e,bub_act_c,bub_act_e))
+#dat_model2<-data.frame(
+  #trait=c("logboldness","logboldness","exploration","exploration","logactivity","logactivity"),
+  #treatment=c("uninfected","infected","uninfected","infected","uninfected","infected"), 
+  #estimate = c(mean_b_c,mean_b_e,mean_exp_c,mean_exp_e, mean_act_c,mean_act_e), 
+  #Lower_CI = c(blb_b_c, blb_b_e, blb_exp_c, blb_exp_e, blb_act_c, blb_act_e),
+ # Higher_CI = c(bub_b_c,bub_b_e,bub_exp_c,bub_exp_e,bub_act_c,bub_act_e))
 
       
 #plot model2      
-w1<-ggplot(data = dat_model2) +
-geom_point(mapping = aes(x = treatment, y = estimate, color = trait))
+#w1<-ggplot(data = dat_model2) +
+#geom_point(mapping = aes(x = treatment, y = estimate, color = trait))
   
-w2<-ggplot(data = all_data) + 
-geom_point(mapping = aes(x = treatment, y = log_activity))
+#w2<-ggplot(data = all_data) + 
+#geom_point(mapping = aes(x = treatment, y = log_activity))
 
-w3<-ggplot(data = all_data) + 
-geom_point(mapping = aes(x = treatment, y = exploration))
+#w3<-ggplot(data = all_data) + 
+#geom_point(mapping = aes(x = treatment, y = exploration))
 
- plot_grid(
-  w1, w2, w3,
-  labels = "AUTO", ncol = 1)
+ #plot_grid(
+  #w1, w2, w3,
+  #labels = "AUTO", ncol = 1)
 
 ```
 
@@ -652,10 +704,9 @@ geom_point(mapping = aes(x = treatment, y = exploration))
 tab1 <- data.frame(Trait = c("Boldness (log)", "Exploration","Activity (log)"), 
                 "Group C" = c(mean(R_C_boldness[,1]), mean(R_C_exploration[,1]), mean(R_C_activity[,1])), 
                   "2.5% CI (C)" = c((R_Blb_bold_C),(R_Blb_exp_C), (R_Blb_act_C)),
-              "9.75% CI (C)" = c((R_Bub_bold_C), (R_Bub_exp_C),(R_Bub_act_C)),
+              "97.5% CI (C)" = c((R_Bub_bold_C), (R_Bub_exp_C),(R_Bub_act_C)),
                 "Group E" = c(mean(R_E_boldness[,1]), mean(R_E_exploration[,1]), mean(R_E_activity[,1])),
-              "2.5% CI (E)" = c((R_Blb_bold_E), (R_Blb_exp_E), (R_Blb_act_E)), "9.75% CI (E)" = c((R_Bub_bold_E), (R_Bub_exp_E), (R_Bub_act_E)),           
-                "p_value" = c((p_value_bold), (p_value_exp), (p_value_act)), check.names = FALSE)
+              "2.5% CI (E)" = c((R_Blb_bold_E), (R_Blb_exp_E), (R_Blb_act_E)), "97.5% CI (E)" = c((R_Bub_bold_E), (R_Bub_exp_E), (R_Bub_act_E)), check.names = FALSE)
 
 gt(tab1) 
 
