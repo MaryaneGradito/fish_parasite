@@ -77,3 +77,4 @@ model2.2 <- brms::brm(boldness_C_2.2 + boldness_E_2.2 + activity_C_2.2 + activit
                     save_pars = save_pars(), file = "./output/models/model2.2", file_refit = "on_change",
                     control = list(adapt_delta = 0.98))
 
+#model 2.2 checked out; sigma is really similar in both models
