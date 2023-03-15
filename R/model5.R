@@ -9,7 +9,7 @@
 #############################
 # Import processed data
 #############################
-  all_data <- read.table("./output/all_data_p.csv",header=T, sep=",")
+all_data <- read.table("./output/all_data_p.csv",header=T, sep=",")
 
 #############################
 # Model 5: control group
@@ -20,11 +20,10 @@
 
 ### Subset of dataset into two groups
 # Experimental group
-  dat_E <-subset(dat, treatment == "E")
-
+  dat_E <-subset(all_data, treatment == "E")
 
 # Control group
-  dat_C <-subset(dat, treatment == "C")
+  dat_C <-subset(all_data, treatment == "C")
 
 ### Model 5: control group 
 
