@@ -402,7 +402,10 @@ plot_names2 <- c('C' = "",
                 'E' = "")
 
   dat_text <- data.frame(
-  label = c("rb = -0.52, 95%CI = -0.87, -0.03", "rb = -0.43, 95%CI = -0.84, 0.13"),
+  label = c("rb = -0.52, 95%CI = -0.87, -0.03\ 
+  rw = 0.18, 95%CI =  -0.06, 0.40", 
+  "rb = -0.43, 95%CI = -0.84, 0.13\
+  rw = 0.17, 95%CI = -0.07, 0.39"),
   treatment   = c("C","E")
 )
   
@@ -421,7 +424,10 @@ p1<-
 
     #Boldness and exploration average between trials
   dat_text2 <- data.frame(
-  label = c("rb = -0.41, 95%CI =  -0.83, 0.11", "rb = -0.42, 95%CI = -0.85, 0.25"),
+  label = c("rb = -0.41, 95%CI =  -0.83, 0.11\
+  rw = -0.06, 95%CI = -0.27, 0.17 ", 
+  "rb = -0.42, 95%CI = -0.85, 0.25\
+  rw = -0.12, 95%CI =  -0.33, 0.09"),
   treatment   = c("C","E")
 )
             
@@ -442,8 +448,12 @@ p1<-
   
    
     #Activity and exploration average between trials
+  expression_1<- expression(x[3] ~ variable ~ label)
 dat_text3 <- data.frame(
-  label = c("rb = 0.70, 95%CI =  0.37, 0.93", "rb = 0.14, 95%CI = -0.43, 0.66"),
+  label = (r = "= 0.70, 95%CI =  0.37, 0.93\
+  rw = 0.19, 95%CI = -0.04, 0.40"
+  "rb = 0.14, 95%CI = -0.43, 0.66\,
+  rw = -0.14, 95%CI = -0.35, 0.08"),
   treatment   = c("C","E")
 )
 
@@ -515,14 +525,14 @@ int_act_con_num<- as.numeric(unlist(int_act_con))
 mean(int_act_con_num)
 
 #subtract intercept for C - contrast to get intercept for E
-inter_b_e<-(int_b_con_num + int_b_c_num)
-mean_int_b_e<-mean(inter_b_e)
+int_b_e<-(int_b_con_num + int_b_c_num)
+mean_int_b_e<-mean(int_b_e)
 
-inter_exp_e<-(int_exp_con_num + int_exp_c_num)
-mean_int_exp_e<-mean(inter_exp_e)
+int_exp_e<-(int_exp_con_num + int_exp_c_num)
+mean_int_exp_e<-mean(int_exp_e)
 
-inter_act_e<-(int_act_con_num + int_act_c_num)
-mean_int_act_e<-mean(inter_act_e)
+int_act_e<-(int_act_con_num + int_act_c_num)
+mean_int_act_e<-mean(int_act_e)
 
 #95% IC
 #Boldness
@@ -530,30 +540,30 @@ mean_int_act_e<-mean(inter_act_e)
 blb_b_c <- round(quantile(int_b_c_num, c(0.025, 0.975))[1], 3)
 bub_b_c <- round(quantile(int_b_c_num, c(0.025, 0.975))[2], 3)
   #Experimental
-blb_b_e<- round(quantile(int_b_e_num, c(0.025, 0.975))[1], 3)
-bub_b_e<- round(quantile(int_b_e_num, c(0.025, 0.975))[2], 3)
+blb_b_e<- round(quantile(int_b_e, c(0.025, 0.975))[1], 3)
+bub_b_e<- round(quantile(int_b_e, c(0.025, 0.975))[2], 3)
 
 #Exploration
   #Control
 blb_exp_c <- round(quantile(int_exp_c_num, c(0.025, 0.975))[1], 3)
 bub_exp_c <- round(quantile(int_exp_c_num, c(0.025, 0.975))[2], 3)
   #Experimental
-blb_exp_e <- round(quantile(int_exp_e_num, c(0.025, 0.975))[1], 3)
-bub_exp_e <- round(quantile(int_exp_e_num, c(0.025, 0.975))[2], 3)
+blb_exp_e <- round(quantile(int_exp_e, c(0.025, 0.975))[1], 3)
+bub_exp_e <- round(quantile(int_exp_e, c(0.025, 0.975))[2], 3)
 
 #Activity
   #Control
 blb_act_c <- round(quantile(int_act_c_num, c(0.025, 0.975))[1], 3)
 bub_act_c <- round(quantile(int_act_c_num, c(0.025, 0.975))[2], 3)
   #Experimental
-blb_act_e <- round(quantile(int_act_e_num, c(0.025, 0.975))[1], 3)
-bub_act_e <- round(quantile(int_act_e_num, c(0.025, 0.975))[2], 3)
+blb_act_e <- round(quantile(int_act_e, c(0.025, 0.975))[1], 3)
+bub_act_e <- round(quantile(int_act_e, c(0.025, 0.975))[2], 3)
 
 #Create data frame
 dat_model<-data.frame(
   trait=c("logboldness","logboldness","exploration","exploration","logactivity","logactivity"),
   treatment=c("uninfected","infected","uninfected","infected","uninfected","infected"), 
-  estimate = c(mean_int_b_c,mean_int_b_e,mean_int_exp_c,mean_int_exp_e, mean_act_exp_c, mean_int_act_e), 
+  estimate = c(mean_int_b_c,mean_int_b_e,mean_int_exp_c,mean_int_exp_e, mean_int_act_c, mean_int_act_e), 
   Lower_CI = c(blb_b_c, blb_b_e, blb_exp_c, blb_exp_e, blb_act_c, blb_act_e),
   Higher_CI = c(bub_b_c,bub_b_e,bub_exp_c,bub_exp_e,bub_act_c,bub_act_e))
 
@@ -564,7 +574,7 @@ trt <- as.factor(all_data$treatment)
 m1<-ggplot(all_data, aes(x = trt, y = log_boldness, group = trt)) +
 geom_violin(aes(fill = trt), trim = FALSE) +
 geom_jitter(shape=16, position=position_jitter(0.1), color = "grey") +
-geom_errorbar(data = dat_model,aes(x = treatment,y = estimate, xmin= Lower_CI, xmax=Higher_CI, group = trait == "logboldness"), width=0.4, inherit.aes = FALSE)+
+geom_errorbar(data = dat_model,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI, group = trait == "logboldness"), width=0.4, inherit.aes = FALSE)+
 scale_fill_manual(breaks = c("23", "28"), 
                    values=c("#429ef5", "#f54242")) +
 labs(x = "Treatment", 
@@ -573,9 +583,14 @@ theme_classic() +
 theme(legend.position = "none",
  legend.title = element_blank()) +
 geom_segment(aes(x = 1, xend = 2, y = 6.5, yend = 6.5)) +
-annotate(geom = "text", label="p = ", x = 1.5, y = 6.7 )
+annotate(geom = "text", label=TeX("$p_$ = "), x = 1.5, y = 6.7 )
 
-
+#filter boldness data
+#match the names
+#differentes couleurs pour infecter et non infecté
+#errorbar black
+#transparent
+#compare mean estimate for pmcmc
             #geom_errorbar (put manually estimate + CI)
 
 dat <- data.frame(metab = (all_data$log_activity), trt)
