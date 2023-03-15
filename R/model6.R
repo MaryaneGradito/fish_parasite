@@ -10,7 +10,7 @@
 #############################
 
 # Load.packages
-  pacman::p_load(lme4, rstan, StanHeaders, jsonlite, rstantools, brms, Rcpp, dplyr, here, flextable, pander, cmdstanr)
+  pacman::p_load(lme4, rstan, tidyverse, StanHeaders, jsonlite, rstantools, brms, Rcpp, dplyr, here, flextable, pander)
 
 #pivot data for each trial
 #we need parasite load z-transform and body condition z-transform for the next model
@@ -41,7 +41,7 @@
 
 #rbind together to get dataset for the model
 
-dat_6<-rbind(dat_trial1, dat_trial2, dat_trial3, dat_trial4)
+dat_6<-rbind(dat_trial1, dat_trial2, dat_trial3, dat_trial4) %>% arrange(ID_fish)
   
 ### Model 6: body condition as a response variable
 
