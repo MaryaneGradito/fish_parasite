@@ -90,8 +90,11 @@ editor_options:
   model1.2 <- readRDS(file = "./output/models/model1.2.rds")
   model2 <- readRDS(file = "./output/models/model2.rds")
   model2.2 <- readRDS(file = "./output/models/model2.2.rds")
-
-    
+  model3 <- readRDS(file = "./output/models/model_3.rds")
+  model4 <- readRDS(file = "./output/models/model_4.rds")
+  model5 <- readRDS(file = "./output/models/model_5.rds")
+  model6 <- readRDS(file = "./output/models/model_6.rds")
+  
 ############################
 # Repeatability C vs E
 ############################
@@ -403,9 +406,9 @@ plot_names2 <- c('C' = "",
 
   dat_text <- data.frame(
   label = c("rb = -0.52, 95%CI = -0.87, -0.03\ 
-  rw = 0.18, 95%CI =  -0.06, 0.40", 
-  "rb = -0.43, 95%CI = -0.84, 0.13\
-  rw = 0.17, 95%CI = -0.07, 0.39"),
+rw = 0.18, 95%CI =  -0.06, 0.40", 
+"rb = -0.43, 95%CI = -0.84, 0.13\
+rw = 0.17, 95%CI = -0.07, 0.39"),
   treatment   = c("C","E")
 )
   
@@ -417,7 +420,7 @@ p1<-
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX("$Boldness_{log_{2}}$"), y = TeX("$Activity_{log_{2}}$"), title = "") + geom_text(
   data    = dat_text,
-  mapping = aes(x = -1, y = 3, label = label, group = NULL))
+  mapping = aes(x = -1, y = 3, label = label, group = NULL),size = 3)
   #  annotate("text", x = -1.5, y = 2.6, label = TeX(paste0("$r_{b}$ = ", " -0.48 ", " 95%CI: -0.86, 0.07 ")), size =2.5, color = "darkblue") + 
    # annotate("text", x = -1.5, y = 2.2, label = TeX(paste0("$r_{w}$ = ", " 0.22 ", " 95%CI: 0.06, 0.36")), size=2.5, color = "darkgreen")
 
@@ -441,18 +444,17 @@ p1<-
     theme(legend.position="none") + labs(x = TeX("$Boldness_{log_{2}}$"), y = "Exploration")+
   geom_text(
   data    = dat_text2,
-  mapping = aes(x = -1, y = 3, label = label, group = NULL))
+  mapping = aes(x = -1, y = 3, label = label, group = NULL),size = 3)
 
     #annotate("text", x = 1, y = 2.6, label = TeX(paste0("$r_{b}$ = ", " -0.42 ", " 95%CI: -0.84, 0.18 ")), size =2.5, color="darkblue") + 
    # annotate("text", x = 1, y = 2.2, label = TeX(paste0("$r_{w}$ = ", " -0.06 ", " 95%CI: -0.21, 0.09")), size=2.5, color="darkgreen")
   
    
     #Activity and exploration average between trials
-  expression_1<- expression(x[3] ~ variable ~ label)
-dat_text3 <- data.frame(
-  label = (r = "= 0.70, 95%CI =  0.37, 0.93\
-  rw = 0.19, 95%CI = -0.04, 0.40"
-  "rb = 0.14, 95%CI = -0.43, 0.66\,
+  dat_text3 <- data.frame(
+  label = c("rb = 0.70, 95%CI =  0.37, 0.93\
+  rw = 0.19, 95%CI = -0.04, 0.40",
+  "rb = 0.14, 95%CI = -0.43, 0.66\
   rw = -0.14, 95%CI = -0.35, 0.08"),
   treatment   = c("C","E")
 )
@@ -462,14 +464,13 @@ dat_text3 <- data.frame(
   geom_point(mapping = aes(x = log_activity, y = exploration, color = factor(ID_fish))) +
   scale_color_viridis_d(option = "mako") + theme_classic() +
   geom_line(mapping = aes(x = log_activity, y = exploration, color = factor(ID_fish) )) +
-    facet_wrap(~ treatment, labeller = as_labeller(plot_names)) + theme_classic() +
+    facet_wrap(~ treatment, labeller = as_labeller(plot_names)) +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
-    theme(axis.title = element_text(face = "bold"),
+    theme(axis.title = element_text(),
          legend.position="none" ) + labs(x = TeX("$Activity_{log_{2}}$"), y = "Exploration") +
   geom_text(
   data    = dat_text3,
-  mapping = aes(x = -1, y = 3, label = label, group = NULL),
-)
+  mapping = aes(x = -1, y = 2.5, label = label, group = NULL),size = 3)
   
 
   plot_grid(
@@ -525,14 +526,24 @@ int_act_con_num<- as.numeric(unlist(int_act_con))
 mean(int_act_con_num)
 
 #subtract intercept for C - contrast to get intercept for E
-int_b_e<-(int_b_con_num + int_b_c_num)
-mean_int_b_e<-mean(int_b_e)
+int_b_e<-(int_b_c_num + int_b_con_num)
+int_b_e_num<- as.numeric(unlist(int_b_e))
+mean_int_b_e<-mean(int_b_e_num)
 
 int_exp_e<-(int_exp_con_num + int_exp_c_num)
-mean_int_exp_e<-mean(int_exp_e)
+int_exp_e_num<- as.numeric(unlist(int_exp_e))
+mean_int_exp_e<-mean(int_exp_e_num)
 
 int_act_e<-(int_act_con_num + int_act_c_num)
-mean_int_act_e<-mean(int_act_e)
+int_act_e_num<- as.numeric(unlist(int_act_e))
+mean_int_act_e<-mean(int_act_e_num)
+
+ 
+#is E and C significantly different for each trait?
+pm_b<-pmcmc(int_b_c_num - int_b_e_num, twotail = TRUE) #significantly different
+pm_exp<-pmcmc(int_exp_c_num - int_exp_e_num, twotail = TRUE) #significantly different
+pm_act<-pmcmc(int_act_c_num - int_act_e_num, twotail = TRUE) #not significant
+
 
 #95% IC
 #Boldness
@@ -562,28 +573,37 @@ bub_act_e <- round(quantile(int_act_e, c(0.025, 0.975))[2], 3)
 #Create data frame
 dat_model<-data.frame(
   trait=c("logboldness","logboldness","exploration","exploration","logactivity","logactivity"),
-  treatment=c("uninfected","infected","uninfected","infected","uninfected","infected"), 
+  treatment=c("Uninfected","Infected","Uninfected","Infected","Uninfected","Infected"), 
   estimate = c(mean_int_b_c,mean_int_b_e,mean_int_exp_c,mean_int_exp_e, mean_int_act_c, mean_int_act_e), 
   Lower_CI = c(blb_b_c, blb_b_e, blb_exp_c, blb_exp_e, blb_act_c, blb_act_e),
   Higher_CI = c(bub_b_c,bub_b_e,bub_exp_c,bub_exp_e,bub_act_c,bub_act_e))
 
+
+all_data[all_data == 'C'] <- 'Uninfected'
+all_data[all_data == 'E'] <- 'Infected'
+
 #plot model2      
 
+dat1<-dat_model %>% 
+  filter(trait == "logboldness")
 trt <- as.factor(all_data$treatment)
 
-m1<-ggplot(all_data, aes(x = trt, y = log_boldness, group = trt)) +
-geom_violin(aes(fill = trt), trim = FALSE) +
-geom_jitter(shape=16, position=position_jitter(0.1), color = "grey") +
-geom_errorbar(data = dat_model,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI, group = trait == "logboldness"), width=0.4, inherit.aes = FALSE)+
-scale_fill_manual(breaks = c("23", "28"), 
-                   values=c("#429ef5", "#f54242")) +
-labs(x = "Treatment", 
-y = "Log_boldness") +
+#boldness
+m1<-
+ggplot(all_data, aes(x = trt, y = log_boldness, group = trt, color = trt)) +
+geom_violin(aes(), trim = FALSE) +
+geom_jitter(aes(colour = trt),shape=16, position=position_jitter(0.1))+
+scale_color_manual(labels = c("Uninfected", "Infected"), values = c("lightgreen", "turquoise"))+
+geom_errorbar(data = dat1,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth =0.7, color = "black", inherit.aes = FALSE)+
+labs(x = (""), 
+y = TeX("$Boldness_{log_{2}}$")) +
 theme_classic() +
 theme(legend.position = "none",
  legend.title = element_blank()) +
-geom_segment(aes(x = 1, xend = 2, y = 6.5, yend = 6.5)) +
-annotate(geom = "text", label=TeX("$p_$ = "), x = 1.5, y = 6.7 )
+geom_segment(aes(x = 1, xend = 2, y = 3.85, yend = 3.85)) +
+annotate("text",  x = 1.5, y = 4, label = TeX(paste0("$pMCMC_{\\alpha = 0.05}$ = 0.0005")), size =2.5)
+
+
 
 #filter boldness data
 #match the names
@@ -593,35 +613,41 @@ annotate(geom = "text", label=TeX("$p_$ = "), x = 1.5, y = 6.7 )
 #compare mean estimate for pmcmc
             #geom_errorbar (put manually estimate + CI)
 
-dat <- data.frame(metab = (all_data$log_activity), trt)
+dat2<-dat_model %>% 
+  filter(trait == "exploration")
+trt <- as.factor(all_data$treatment)
 
-m2<-ggplot(dat, aes(x = trt, y = metab, group = trt)) +
-geom_violin(aes(fill = trt), trim = FALSE) +
-geom_jitter(shape=16, position=position_jitter(0.1), color = "grey") +
-scale_fill_manual(breaks = c("23", "28"), 
-                   values=c("#429ef5", "#f54242")) +
-labs(x = "Treatment", 
-y = "Log_activity",) +
-theme_classic() +
-theme(legend.position = "none",
- legend.title = element_blank()) +
-geom_segment(aes(x = 1, xend = 2, y = 6.5, yend = 6.5)) +
-annotate(geom = "text", label="p < 0.001", x = 1.5, y = 6.7 )
-
-dat <- data.frame(metab = (all_data$exploration), trt)
-
-m3<-ggplot(dat, aes(x = trt, y = metab, group = trt)) +
-geom_violin(aes(fill = trt), trim = FALSE) +
-geom_jitter(shape=16, position=position_jitter(0.1), color = "grey") +
-scale_fill_manual(breaks = c("23", "28"), 
-                   values=c("#429ef5", "#f54242")) +
+#exploration
+m2<-ggplot(all_data, aes(x = trt, y = exploration, group = trt, col = trt)) +
+geom_violin(aes(), trim = FALSE) +
+geom_jitter(aes(colour = trt),shape=16, position=position_jitter(0.1)) +
+scale_color_manual(labels = c("Uninfected", "Infected"), values = c("lightgreen", "turquoise"))+
+geom_errorbar(data = dat2,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth = 0.7, color = "black", inherit.aes = FALSE)+
 labs(x = "Treatment", 
 y = "Exploration") +
 theme_classic() +
 theme(legend.position = "none",
  legend.title = element_blank()) +
-geom_segment(aes(x = 1, xend = 2, y = 6.5, yend = 6.5)) +
-annotate(geom = "text", label="p < 0.001", x = 1.5, y = 6.7 )
+geom_segment(aes(x = 1, xend = 2, y = 3.85, yend = 3.85)) +
+annotate("text",  x = 1.5, y = 4, label = TeX(paste0("$pMCMC_{\\alpha = 0.05}$ = 0.0015")), size =2.5)
+
+#activity
+dat3<-dat_model %>% 
+  filter(trait == "logactivity")
+
+m3<-ggplot(all_data, aes(x = trt, y = log_activity, group = trt, col = trt)) +
+geom_violin(aes(), trim = FALSE) +
+geom_jitter(aes(colour = trt), shape=16, position=position_jitter(0.1)) +
+geom_point(position = position_dodge(width = 0.1))+
+scale_color_manual(labels = c("Uninfected", "Infected"), values = c("lightgreen", "turquoise"))+
+geom_errorbar(data = dat3,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth =0.7, color = "black", inherit.aes = FALSE)+
+labs(x = "", 
+y = TeX("$Activity_{log_{2}}$")) +
+theme_classic() +
+theme(legend.position = "none",
+ legend.title = element_blank()) +
+geom_segment(aes(x = 1, xend = 2, y = 3.85, yend = 3.85)) +
+annotate("text",  x = 1.5, y = 4, label = TeX(paste0("$pMCMC_{\\alpha = 0.05}$ = 0.0666")), size =2.5)
 
  plot_grid(
   m1,m2,m3,
