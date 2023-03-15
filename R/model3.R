@@ -20,10 +20,10 @@
 
 ### Subset of dataset into two groups
 # Experimental group
-  dat_E <-subset(dat, treatment == "E")
+  dat_E <-subset(all_data, treatment == "E")
 
 # Control group
-  dat_C <-subset(dat, treatment == "C")
+  dat_C <-subset(all_data, treatment == "C")
 
 ### Model 3: experimental group
 
