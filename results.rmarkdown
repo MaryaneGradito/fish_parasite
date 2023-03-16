@@ -1,0 +1,821 @@
+---
+format:
+  docx: 
+    reference-doc: "./bib/template.docx"
+execute:
+  echo: false
+  error: false
+  cache: false
+  warning: false
+crossref:  
+  fig-title: Figure    # (default is "Figure")
+  tbl-title: Table   # (default is "Table")
+  title-delim: —     # (default is ":")
+  fig-prefix: Fig.   # (default is "Figure")
+  tbl-prefix: Tab.   # (default is "Table")
+editor_options: 
+  chunk_output_type: console
+---
+
+
+# Results
+
+
+```{r}
+#| label: load_packages
+#| output: false
+#| warning: false
+
+
+    source("./R/func.R")
+    pacman::p_load(tidyverse, brms, glmmTMB, gt, latex2exp, posterior, gt, glue, dplyr,magrittr, ggplot2, cowplot)
+    options(digits = 3, scipen = 2)
+    
+```
+
+```{r}
+#| label: load_data
+#| output: false
+#| warning: false
+
+############################
+# Import processed data
+#############################
+  all_data <- read.table("./output/all_data_p.csv",header=T, sep=",")
+  
+############################
+# Parasite count
+#############################
+### Blackspots distribution
+  hist(all_data$BS_post_tot)
+
+# Blackspots info
+  BS_min<-min(all_data$BS_post_tot)
+  BS_max<-max(all_data$BS_post_tot)
+  BS_median<-median(all_data$BS_post_tot)
+
+### Cestodes distribution
+  hist(all_data$P04_alive)
+
+# Cestodes info
+  cestode_min<-min(all_data$P04_alive)
+  cestode_max<-max(all_data$P04_alive)
+  cestode_median<-median(all_data$P04_alive)
+  mean(all_data$P04_alive)
+
+### Nematodes distribution
+  hist(all_data$P013_alive)
+
+# Nematodes info
+  nematode_min<-min(all_data$P013_alive)
+  nematode_max<-max(all_data$P013_alive)
+
+### Looking at BS gained after infection
+# Create new columns in the dataset
+  all_data$BS_gain<- all_data$BS_post_tot - all_data$BS_pre
+
+# BS gain distribution
+  hist(all_data$BS_gain)
+
+# BS gain info
+  gain_min<-min(all_data$BS_gain) ### miscount, some fish have less BS after infection
+  gain_max<-max(all_data$BS_gain)
+  gain_median<-median(all_data$BS_gain)
+  gain_mean<-mean(all_data$BS_gain)
+
+############################
+# Load model
+############################
+
+  model1 <- readRDS(file = "./output/models/model1.rds")
+  model1.2 <- readRDS(file = "./output/models/model1.2.rds")
+  model2 <- readRDS(file = "./output/models/model2.rds")
+  model2.2 <- readRDS(file = "./output/models/model2.2.rds")
+  model3 <- readRDS(file = "./output/models/model_3.rds")
+ 
+  R2_m_3 <- bayes_R2(model3, re.form = NA) #marginal
+  R2_c_3 <- bayes_R2(model3) #conditional
+  
+  model4 <- readRDS(file = "./output/models/model_4.rds")
+  model5 <- readRDS(file = "./output/models/model_5.rds")
+  
+  R2_m_5 <- bayes_R2(model5, re.form = NA) #marginal
+  R2_c_5 <- bayes_R2(model5) #conditional
+  
+  model6 <- readRDS(file = "./output/models/model_6.rds")
+  
+  R2_m_6 <- bayes_R2(model6, re.form = NA) #marginal
+  R2_c_6 <- bayes_R2(model6) #conditional
+  
+  model7 <- readRDS(file = "./output/models/model_7.rds")
+  R2_m_7 <- bayes_R2(model7, re.form = NA) #marginal
+  R2_c_7 <- bayes_R2(model7) #conditional
+  
+  #Compare model 3 and 6 (only thing that changed was body condition)
+  loo(model3,model6) #model 6 better but they are really close
+  
+
+############################
+# Repeatability C vs E
+############################
+
+         post_sd_2 <- as_draws_df(model2, variable = "^sd", regex = TRUE)
+       post_sd_C_2 <- post_sd_2[,grepl("C", colnames(post_sd_2))] #ID control
+       post_sd_E_2 <- post_sd_2[,grepl("E", colnames(post_sd_2))] #ID experimental
+    post_sd_cage_2 <- post_sd_2[,grepl("cage", colnames(post_sd_2))]
+     post_sd_sig_2 <- as_draws_df(model2, variable = "^b_sigma", regex = TRUE)
+     post_sd_sig_C_2 <- exp(post_sd_sig_2[,grepl("C", colnames(post_sd_sig_2))]) #ID control
+       post_sd_sig_E_2 <- exp(post_sd_sig_2[,grepl("E", colnames(post_sd_sig_2))]) #ID experimental
+
+############################
+##     CONTROL GROUP
+############################
+
+#Boldness for control group
+  fish_c_b <- post_sd_C_2[,grep("logboldness", colnames(post_sd_C_2))]^2
+  cage_c_b <- post_sd_cage_2[ ,grep("logboldness", colnames(post_sd_cage_2))]^2
+   res_c_b <- post_sd_sig_C_2[,grep("b_sigma_logboldness_treatmentC", colnames(post_sd_sig_C_2))]^2
+
+  R_C_boldness <-   fish_c_b / (fish_c_b + cage_c_b + res_c_b)
+
+#verification
+ 0.40^2 / (0.15^2 + 0.40^2 + exp(-0.14)^2)
+ 
+  hist(R_C_boldness[,1])
+  R_C_bold <- mean(R_C_boldness[,1])
+  R_Blb_bold_C <- round(quantile(R_C_boldness[,1], c(0.025, 0.975))[1], 3)
+  R_Bub_bold_C <- round(quantile(R_C_boldness[,1], c(0.025, 0.975))[2], 3)
+
+#exploration for control group
+  fish_c_ex <- post_sd_C_2[,grep("exploration", colnames(post_sd_C_2))]^2
+  cage_c_ex <- post_sd_cage_2[ ,grep("exploration", colnames(post_sd_cage_2))]^2
+   res_c_ex <- post_sd_sig_C_2[,grep("b_sigma_exploration_treatmentC", colnames(post_sd_sig_C_2))]^2
+
+  R_C_exploration <-   fish_c_ex / (fish_c_ex + cage_c_ex + res_c_ex)
+  
+#verification
+  0.57^2 / (exp(-0.11)^2 + 0.57^2 + 0.16^2) #same number
+
+  hist(R_C_exploration[,1])
+  mean(R_C_exploration[,1])
+  R_Blb_exp_C <- round(quantile(R_C_exploration[,1], c(0.025, 0.975))[1], 3)
+  R_Bub_exp_C <- round(quantile(R_C_exploration[,1], c(0.025, 0.975))[2], 3)
+
+#activity for control group
+  fish_c_ac <- post_sd_C_2[,grep("logactivity", colnames(post_sd_C_2))]^2
+  cage_c_ac <- post_sd_cage_2[ ,grep("logactivity", colnames(post_sd_cage_2))]^2
+  res_c_ac <- post_sd_sig_C_2[,grep("b_sigma_logactivity_treatmentC", colnames(post_sd_sig_C_2))]^2
+
+  R_C_activity <-   fish_c_ac / (fish_c_ac + cage_c_ac + res_c_ac)
+  
+#verification
+  0.64^2 / (exp(-0.15)^2 + 0.64^2 + 0.11^2) 
+
+  hist(R_C_activity[,1])
+  mean(R_C_activity[,1])
+  R_Blb_act_C <- round(quantile(R_C_activity[,1], c(0.025, 0.975))[1], 3)
+  R_Bub_act_C <- round(quantile(R_C_activity[,1], c(0.025, 0.975))[2], 3)
+
+############################
+# EXPERIMENTAL GROUP
+############################
+
+#Boldness for experimental group
+  fish_e_b <- post_sd_E_2[,grep("logboldness", colnames(post_sd_E_2))]^2
+  cage_e_b <- post_sd_cage_2[ ,grep("logboldness", colnames(post_sd_cage_2))]^2
+  res_e_b <- post_sd_sig_E_2[,grep("b_sigma_logboldness_treatmentE", colnames(post_sd_sig_E_2))]^2
+
+  R_E_boldness <-   fish_e_b / (fish_e_b + cage_e_b + res_e_b)
+  
+#verification
+  0.42^2 / (exp(-0.11)^2 + 0.42^2 + 0.15^2)
+
+  hist(R_E_boldness[,1])
+  mean(R_E_boldness[,1])
+  R_Blb_bold_E <- round(quantile(R_E_boldness[,1], c(0.025, 0.975))[1], 3)
+  R_Bub_bold_E <- round(quantile(R_E_boldness[,1], c(0.025, 0.975))[2], 3)
+
+#exploration for experimental group
+   fish_e_ex <- post_sd_E_2[,grep("exploration", colnames(post_sd_E_2))]^2
+  cage_e_ex <- post_sd_cage_2[ ,grep("exploration", colnames(post_sd_cage_2))]^2
+  res_e_ex <- post_sd_sig_E_2[,grep("b_sigma_exploration_treatmentE", colnames(post_sd_sig_E_2))]^2
+
+  R_E_exploration <-   fish_e_ex / (fish_e_ex + cage_e_ex + res_e_ex)
+  
+#verification
+  0.38^2 / (exp(-0.28)^2 + 0.38^2 + 0.16^2) 
+
+  hist(R_E_exploration[,1])
+  mean(R_E_exploration[,1])
+  R_Blb_exp_E <- round(quantile(R_E_exploration[,1], c(0.025, 0.975))[1], 3)
+  R_Bub_exp_E <- round(quantile(R_E_exploration[,1], c(0.025, 0.975))[2], 3)
+
+#activity for experimental group
+  fish_e_ac <- post_sd_E_2[,grep("logactivity", colnames(post_sd_E_2))]^2
+  cage_e_ac <- post_sd_cage_2[ ,grep("logactivity", colnames(post_sd_cage_2))]^2
+  res_e_ac <- post_sd_sig_E_2[,grep("b_sigma_logactivity_treatmentE", colnames(post_sd_sig_E_2))]^2
+
+  R_E_activity <-   fish_e_ac / (fish_e_ac + cage_e_ac + res_e_ac)
+
+#verification
+  0.51^2 / (exp(-0.26)^2 + 0.51^2 + 0.11^2) 
+  
+  hist(R_E_activity[,1])
+  mean(R_E_activity[,1])
+  R_Blb_act_E <- round(quantile(R_E_activity[,1], c(0.025, 0.975))[1], 3)
+  R_Bub_act_E <- round(quantile(R_E_activity[,1], c(0.025, 0.975))[2], 3)
+
+#############################
+# Overall Repeatability
+#############################
+
+  # Boldness
+   R_bold  <-  overall_repeatability(post_sd_C_2, post_sd_E_2, post_sd_cage_2, post_sd_sig_C_2, post_sd_sig_E_2, trait = "logboldness")
+  
+        R_bold_mean <- mean(R_bold)
+        R_Blb_bold <- round(quantile(R_bold, c(0.025, 0.975))[1], 2)
+        R_Bub_bold <- round(quantile(R_bold, c(0.025, 0.975))[2], 2)
+        
+  #Exploration
+  R_exp  <-  overall_repeatability(post_sd_C_2, post_sd_E_2, post_sd_cage_2, post_sd_sig_C_2, post_sd_sig_E_2, trait = "exploration")
+  
+      R_exp_mean<-mean(R_exp)
+       R_Blb_exp <- round(quantile(R_exp, c(0.025, 0.975))[1], 2)
+       R_Bub_exp <- round(quantile(R_exp, c(0.025, 0.975))[2], 2)
+       
+  #Activity
+  R_act  <-  overall_repeatability(post_sd_C_2, post_sd_E_2, post_sd_cage_2, post_sd_sig_C_2, post_sd_sig_E_2, trait = "logactivity")
+  
+  R_act_mean<-mean(R_act)
+       R_Blb_act <- round(quantile(R_act, c(0.025, 0.975))[1], 2)
+       R_Bub_act <- round(quantile(R_act, c(0.025, 0.975))[2], 2)
+
+#################################
+# Compare R in E and C treatments
+#################################
+
+#Is the repeatability different before and after treatment ? 
+  
+  #Boldness
+  p_value_bold<-pmcmc((R_C_boldness[,1]) - (R_E_boldness[,1])) # Not different
+  # That makes sense given:
+  par(mfrow = c(1,2))
+  hist(R_E_boldness[,1])
+  hist(R_C_boldness[,1])
+  
+  #Exploration
+  p_value_exp<-pmcmc((R_C_exploration[,1]) - (R_E_exploration[,1])) #not different
+  
+  # Histograms
+  hist(R_E_exploration[,1])
+  hist(R_C_exploration[,1])
+  
+  #Activity
+  p_value_act<-pmcmc((R_C_activity[,1]) - (R_E_activity[,1])) #not different
+  
+   # Histograms
+  hist(R_E_activity[,1])
+  hist(R_C_activity[,1])
+  
+  
+#Is the repeatability different from 5?
+
+#Boldness control
+  p_value_bold_C<-pmcmc(R_C_boldness[,1]*100, null = 5, twotail = FALSE)#not significative
+#Boldness experimental
+  p_value_bold_E<-pmcmc(R_E_boldness[,1]*100, null = 5, twotail = FALSE)#not significative
+#Average boldness
+  p_value_bold_a<-pmcmc(R_bold*100, null = 5, twotail = FALSE)#not significative but really close
+  
+#Exploration control
+  p_value_exp_C<-pmcmc(R_C_exploration[,1]*100, null = 5, twotail = FALSE)#significative
+  
+  hist(R_C_exploration[,1])
+  hist(R_E_exploration[,1])
+#Exploration experimental
+  p_value_exp_E<-pmcmc(R_E_exploration[,1]*100, null = 5, twotail = FALSE)#not significative
+#Average exploration
+  p_value_exp_a<-pmcmc(R_exp*100, null = 5, twotail = FALSE)#significative
+
+#Activity control
+  p_value_act_C<-pmcmc(R_C_activity[,1]*100, null = 5, twotail = FALSE)##significative
+  hist(R_C_activity[,1])
+#Activity experimental
+  p_value_act_E<-pmcmc(R_E_activity[,1]*100, null = 5, twotail = FALSE)#significative
+#Activity average
+  p_value_act_a<-pmcmc(R_act*100, null = 5,twotail = FALSE) #significative
+  
+  
+#################################
+# Behavioural Syndromes
+#################################
+  
+# Extract correlations from model
+  post_cor  <- as_draws_df(model2, variable = "^cor", regex= TRUE)
+  head(post_cor)
+
+# Extract the C and E groups separately
+  cor_bold_treatC <-   post_cor[,grep("treatmentC__[a-z]*_treatmentC", colnames(post_cor))]
+  cor_bold_treatE <-   post_cor[,grep("treatmentE__[a-z]*_treatmentE", colnames(post_cor))]
+
+# See if syndromes differ in C and E
+  #how to you know if they are different? CI overlap?
+  
+  #Boldness and activity
+  bsyn_b_act_C <- data.frame(cor_bold_treatC[,1]); mean(bsyn_b_act_C[,1]); quantile(bsyn_b_act_C[,1], c(0.025, 0.975))
+  
+  bsyn_b_act_E <- data.frame(cor_bold_treatE[,1]); mean(bsyn_b_act_E[,1]); quantile(bsyn_b_act_E[,1], c(0.025, 0.975))
+  
+  pmcmc_b_act_E<-pmcmc(bsyn_b_act_E[,1], twotail = TRUE)
+  pmcmc_b_act_C<-pmcmc(bsyn_b_act_C[,1], twotail = TRUE)
+  
+  #is the difference significant
+   pmcmc_b_act<-pmcmc(bsyn_b_act_C[,1] - bsyn_b_act_E[,1], twotail = TRUE) #no
+  
+  #Boldness and exploration
+  bsyn_b_exp_C <- data.frame(cor_bold_treatC[,2]); mean(bsyn_b_exp_C[,1]); quantile(bsyn_b_exp_C[,1], c(0.025, 0.975))
+  
+  bsyn_b_exp_E <- data.frame(cor_bold_treatE[,2]); mean(bsyn_b_exp_E[,1]); quantile(bsyn_b_exp_E[,1], c(0.025, 0.975))
+  
+  #is the difference significant
+  pmcmc_b_exp<-pmcmc(bsyn_b_exp_C[,1] - bsyn_b_exp_E[,1], twotail = TRUE) #no
+  
+  #Activity and exploration
+  bsyn_act_exp_C <- data.frame(cor_bold_treatC[,3]); mean(bsyn_act_exp_C[,1]); quantile(bsyn_act_exp_C[,1], c(0.025, 0.975))
+  
+  pmcmc_act_exp_C<- pmcmc(bsyn_act_exp_C[,1], twotail = TRUE) #significant
+  
+  bsyn_act_exp_E <- data.frame(cor_bold_treatE[,3]); mean(bsyn_act_exp_E[,1]); quantile(bsyn_act_exp_E[,1], c(0.025, 0.975))  
+  
+   pmcmc_act_exp_E<- pmcmc(bsyn_act_exp_E[,1], twotail = TRUE) #not significant
+
+  #is the difference significant
+ pmcmc_act_exp<- pmcmc(bsyn_act_exp_C[,1] - bsyn_act_exp_E[,1], twotail = TRUE) #no
+  
+# Overall syndrome
+  # Take average of the two treatments
+    bsyn_b_act   <- cbind(bsyn_b_act_C[,1], bsyn_b_act_E[,1]); mean(rowMeans(bsyn_b_act)); quantile(rowMeans(bsyn_b_act), c(0.025, 0.975))
+
+  # Pool the two MCMC chains from the treatments into a giant vector 32,000 rows (2*16,000)
+    #Boldness and activity
+bsyn_b_act2  <- rbind(c(bsyn_b_act_C[,1], bsyn_b_act_E[,1]))
+mean(bsyn_b_act2)
+q_b_act<-quantile(bsyn_b_act2, c(0.025, 0.975))
+    
+    #Boldness and exploration
+bsyn_b_exp  <- rbind(c(bsyn_b_exp_C[,1], bsyn_b_exp_E[,1]))
+mean(bsyn_b_exp)
+q_b_exp<-quantile(bsyn_b_exp, c(0.025, 0.975))
+    
+    #Activity and exploration
+bsyn_act_exp  <- rbind(c(bsyn_act_exp_C[,1], bsyn_act_exp_E[,1]))
+mean(bsyn_act_exp)
+q_act_exp<-quantile(bsyn_act_exp, c(0.025, 0.975))
+    
+#Values in model 1.2 for logactivity-boldness
+    #estimate = -0.48
+    #CI = -0.93, 0.18 ##pool is closest to model 1.2
+
+    
+```
+
+### Methods
+#### *Statistical analysis*
+
+All statistical analyses were performed with the software R (version 4.2.2). Adjusted fish mass was calculated as the fish mass minus parasite mass (Lagrue and Poulin, 2015). Parasite mass was estimated with the mean mass of 20 parasites (Vic, in prep). For bass tapeworm, adult average mass was 0.003g and larval form was 0.0008g. We decided to exclude nematodes since the mass varies grandly between individuals and is found rarely in our fish. Blackspots mass was considered too small to be subtracted from total mass ($10^{-7}g$). Body condition was calculated with the Fulton index ($mass/length^3$) (Jakob, 1996). We had 4 measures of body condition, one for each trial (measured closest to the trial). We used the adjusted fish mass for the 2 measures of body condition after the experimental infection (we assume there is no parasite before the experimental infection). We used standard length of the fish in centimeters. We calculated parasite load by adding the total number of blackspots post-infection with the total number of cestodes found alive (adult and larvae form). We could not determine if larvae form was alive or not visually, but we assumed it can have an effect if the larva is developping in the fish. 
+
+Exploration was distributed normally visually. Activity and boldness were log-transformed to impose normality. All variable were z-scaled before fitting the models. We fitted our models with a Bayesian statistical inference using 4 chains with an iteration of 6000 and a warm up of 2000. We visually inspected the MCMC sampling to see if the sampling ...(?) 
+
+To test if we find evidence of personality and behavioural syndromes between traits, we built a model (n = 264) with traits as response variables, treatment (uninfected vs infected) as a fixed effect, fish ID and cage number as random effects. Model 1 had tank effect as a fixed factor compared to Model 2. We compared the models using the loo package. Model 2 was better fitted than model 1 and we decided not to include tank effect in our models. Repeatability (R) was calculated using the squared standard deviation for fish ID divided by the squared standard deviation for fish ID, cage and sigma from the posterior distribution of model 2 for each treatment group and across groups. To estimate if repeatability was different from 0, we choose 0.05 as a threshold since the values can't be 0 in the distribution. Correlation between traits were extracted from the posterior distribution of model 2 to determine if there was a behavioural syndrome between traits. To measure the average correlation for each group, we pooled together the two MCMC chains for both group.
+
+To test if the experimental infection had an effect on personality, we sublet the data set according to the treatment (uninfected: n = 144; infected: n = 120). We built Model 3 to see if parasite load have an effect on the traits. Parasite load was included as a fixed factor, fish ID and cage number as random factors. Model 3 assume than parasite load effect is linear, so we included parasite $load^2$ as a fixed factor in model 4. Our sample was too small to estimate model 4. 
+
+To test if body condition as an effect on traits, we fitted model 5 with body condition as a fixed factor, ID and cage number as random effects for our uninfected group. Model 6 was fitted with parasite load and body condition for our infected group. Finally, to see if the parasite species have different effects on the traits, we built model 7 with total of cestodes, total of blackspots and body condition as fixed factors; ID and cage number as random factors. 
+
+### Results
+#### *Experimental infection*
+
+The caging experiment successfully infected our fish. Control fish that stayed in the laboratory had no alive parasite, which indicate that the praziquantel treatment was effective. The two most abundant species found in the experimentally infected fish were trematodes causing the blackspot disease (Trematoda: *Apophallus sp.* and *Uvulifer sp.*; min-max: `r BS_min`- `r BS_max`; median: `r BS_median`) and the bass tapeworm (Cestoda: *Proteocephalus ambloplites*; min-max: `r cestode_min` - `r cestode_max` ; median: `r cestode_median`). The most abundant species of trematode causing blackspots was *Apophallus sp*. (Binning, Lanthier, unpublished data), but *Uvulifer sp.* was found more frequently inside the muscles (MG, personal observations).Experimentally fish gained in mean `r gain_mean` blackspots, and were found on the fines, body, gills and inside the muscles. Bass tapeworm were mostly found in the liver, stomach and digestive tract, occasionally around the spleen (parasite count: 9), and rarely on the gills (parasite count: 3) or the heart (parasite count: 2). Unknown nematode species were found rarely in the body cavity (alive parasite count: 4).
+
+#### *Evidence of personality and behavioural syndromes*
+
+Exploration and activity were repeatable across trials (Exploration: R = `r R_exp_mean`, 95% CI = `r R_Blb_exp`, `r R_Bub_exp`, $pMCMC_{\alpha = 0.05}$ = `r p_value_exp_a`; Activity: R = `r R_act_mean`, 95% CI = `r R_Blb_act`, `r R_Bub_act`, $pMCMC_{\alpha = 0.05}$ = `r p_value_act_a`), but boldness was not significantly repeatable (Boldness: R = `r R_bold_mean`, 95% CI = `r R_Blb_bold`, `r R_Bub_bold`, $pMCMC_{\alpha = 0.05}$ = `r p_value_bold_a`). We did not observe among-individual variation to be higher in the uninfected vs experimentally infected group (@tbl-tab1). Repeatability did not differ between treatment for boldness ($pMCMC_{\alpha = 0.05}$ = `r p_value_bold`), exploration ($pMCMC_{\alpha = 0.05}$ = `r p_value_exp`) and activity ($pMCMC_{\alpha = 0.05}$ = `r p_value_act`).We found evidence of behavioural syndromes between boldness and activity (cor = `r mean(bsyn_b_act2)`, 95% CI = `r q_b_act`); boldness and exploration (cor = `r mean(bsyn_b_exp)`, 95% CI = `r q_b_exp`), and between activity and exploration (cor = `r mean(bsyn_act_exp)`, 95% CI = `r q_act_exp`)  The correlation did not differ between the uninfected and experimentally infected group for these syndromes (Boldness-Activity: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_b_act`; Boldness-Exploration: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_b_exp`; Activity-Exploration: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_act_exp`).
+
+
+
+
+```{r}
+#| echo: false
+#| include: false
+
+summary(model2)
+summary(model1)
+```
+
+
+#### *Parasites change host fish personality*
+
+#### *Behavioural syndromes*
+
+
+```{r}
+#| label: fig-fig1
+#| fig-cap: Correlation between traits
+#| out-width: 100%
+#| fig-width: 7
+#| fig-height: 8
+
+
+#Boldness and activity average between trials
+dat_E <- read.table("./output/dat_models_E.csv",header=T, sep=",")
+dat_C <- read.table("./output/dat_models_C.csv",header=T, sep=",")
+
+#Boldness activity 
+p1<-
+   ggplot(data=dat_C)+
+  geom_point(mapping = aes(x = log_boldness, y = log_activity, color = factor(ID_fish)))+ scale_color_viridis_d(option = "mako") +
+  geom_line(mapping = aes(x = log_boldness, y = log_activity, color = factor(ID_fish))) + 
+   theme_classic() +
+    theme(strip.background = element_rect(fill = "white", colour = "white")) +
+    theme(legend.position="none") + labs(x = TeX("$Boldness_{log_{2}}$"), y = TeX("$Activity_{log_{2}}$"), title = "Uninfected") +
+  annotate("text", x = -1.3, y = 2.8, label = TeX(paste0("$r_{b}$ = "," -0.52 ", " 95%CI: -0.87, -0.03")), size =3, color = "darkblue") + 
+  annotate("text", x = -1.3, y = 2.4, label = TeX(paste0("$r_{w}$ = ", " 0.18 ", " 95%CI: -0.06, 0.40")), size=3, color = "darkgreen")
+
+p2<-
+  ggplot(data=dat_E)+
+  geom_point(mapping = aes(x = log_boldness, y = log_activity, color = factor(ID_fish)))+ scale_color_viridis_d(option = "mako") +
+  geom_line(mapping = aes(x = log_boldness, y = log_activity, color = factor(ID_fish))) + 
+   theme_classic() +
+    theme(strip.background = element_rect(fill = "white", colour = "white")) +
+    theme(legend.position="none") + labs(x = TeX("$Boldness_{log_{2}}$"), y = TeX("$Activity_{log_{2}}$"), title = "Infected") +
+  annotate("text", x = -1.5, y = 2.8, label = TeX(paste0("$r_{b}$ = ", " -0.43 ", " 95%CI: -0.84, 0.13 ")), size =3, color = "darkblue") + 
+  annotate("text", x = -1.5, y = 2.4, label = TeX(paste0("$r_{w}$ = ", " 0.17 ", " 95%CI: -0.07, 0.39")), size=3, color = "darkgreen")
+ 
+ p_1<- plot_grid(
+  p1, p2, ncol = 2)
+
+    #Boldness and exploration average between trials
+            
+  p3<-
+ ggplot(data=dat_C)+
+  geom_point(mapping = aes(x = log_boldness, y = exploration, color = factor(ID_fish)))+ scale_color_viridis_d(option = "mako") +
+  geom_line(mapping = aes(x = log_boldness, y = exploration, color = factor(ID_fish))) + 
+   theme_classic() +
+    theme(strip.background = element_rect(fill = "white", colour = "white")) +
+    theme(legend.position="none") + labs(x = TeX("$Boldness_{log_{2}}$"), y = TeX("Exploration"), title = "Uninfected") +
+  annotate("text", x = -1.3, y = 2.8, label = TeX(paste0("$r_{b}$ = ", " -0.41 ", " 95%CI: -0.83, 0.11 ")), size =3, color = "darkblue") + 
+  annotate("text", x = -1.3, y = 2.4, label = TeX(paste0("$r_{w}$ = ", " -0.06 ", " 95%CI: -0.27, 0.17")), size=3, color = "darkgreen")
+  
+
+  p4<-
+    ggplot(data=dat_E)+
+  geom_point(mapping = aes(x = log_boldness, y = exploration, color = factor(ID_fish)))+ scale_color_viridis_d(option = "mako") +
+  geom_line(mapping = aes(x = log_boldness, y = exploration, color = factor(ID_fish))) + 
+   theme_classic() +
+    theme(strip.background = element_rect(fill = "white", colour = "white")) +
+    theme(legend.position="none") + labs(x = TeX("$Boldness_{log_{2}}$"), y = TeX("Exploration"), title = "Infected") +
+  annotate("text", x = 1, y = 2.8, label = TeX(paste0("$r_{b}$ = ", " -0.42 ", " 95%CI: -0.85, 0.25 ")), size =3, color = "darkblue") + 
+  annotate("text", x = 1, y = 2.4, label = TeX(paste0("$r_{w}$ = ", " -0.12 ", " 95%CI: -0.33, 0.09")), size=3, color = "darkgreen")
+    
+  
+   p_2<- plot_grid(
+  p3, p4, ncol = 2)
+
+    
+  #Activity and exploration average between trials
+
+    p5<-
+ ggplot(data=dat_C)+
+  geom_point(mapping = aes(x = log_activity, y = exploration, color = factor(ID_fish)))+ scale_color_viridis_d(option = "mako") +
+  geom_line(mapping = aes(x = log_activity, y = exploration, color = factor(ID_fish))) + 
+   theme_classic() +
+    theme(strip.background = element_rect(fill = "white", colour = "white")) +
+    theme(legend.position="none") + labs(x = TeX("$Activity_{log_{2}}$"), y = TeX("Exploration"), title = "Uninfected") +
+  annotate("text", x = -1.3, y = 2.8, label = TeX(paste0("$r_{b}$ = ", " 0.70 ", " 95%CI: 0.37, 0.93")), size =3, color = "darkblue") + 
+  annotate("text", x = -1.3, y = 2.4, label = TeX(paste0("$r_{w}$ = ", " 0.19 ", " 95%CI: -0.04, 0.40")), size=3, color = "darkgreen")
+  
+  p6<-
+    ggplot(data=dat_E)+
+  geom_point(mapping = aes(x = log_activity, y = exploration, color = factor(ID_fish)))+ scale_color_viridis_d(option = "mako") +
+  geom_line(mapping = aes(x = log_activity, y = exploration, color = factor(ID_fish))) + 
+   theme_classic() +
+    theme(strip.background = element_rect(fill = "white", colour = "white")) +
+    theme(legend.position="none") + labs(x = TeX("$Activity_{log_{2}}$"), y = TeX("Exploration"), title = "Infected") +
+  annotate("text", x = -1, y = 2.8, label = TeX(paste0("$r_{b}$ = ", " 0.14 ", " 95%CI: -0.43, 0.66 ")), size =3, color = "darkblue") + 
+  annotate("text", x = -1, y = 2.4, label = TeX(paste0("$r_{w}$ = ", " -0.14 ", " 95%CI: -0.35, 0.08")), size=3, color = "darkgreen")
+    
+
+  p_3<-plot_grid(
+  p5, p6, ncol = 2)
+
+  plot_grid(
+  p_1, p_2, p_3,
+  labels = "AUTO", ncol = 1)
+
+
+```
+
+```{r}
+#| label: fig-fig2
+#| fig-cap: Plotting model
+#| out-width: 100%
+#| fig-width: 7
+#| fig-height: 4
+
+
+
+#Create dataframe with estimates and CI
+
+#Extract post sd from model 2 for each traits and treatment
+int_b <- as_draws_df(model2, variable = "^b", regex = TRUE)
+
+#intercept for control
+int_b_c<-int_b[,grep("logboldness_Intercept", colnames(int_b))]
+int_exp_c<-int_b[,grep("exploration_Intercept", colnames(int_b))]
+int_act_c<-int_b[,grep("logactivity_Intercept", colnames(int_b))]
+
+#mean estimates for control
+int_b_c_num<- as.numeric(unlist(int_b_c))
+mean_int_b_c<-mean(int_b_c_num)
+
+int_exp_c_num<- as.numeric(unlist(int_exp_c))
+mean_int_exp_c<-mean(int_exp_c_num)
+
+int_act_c_num<- as.numeric(unlist(int_act_c))
+mean_int_act_c<-mean(int_act_c_num)
+
+#contrast between intercept C and E
+int_b_con<-int_b[,grep("b_logboldness_treatmentE", colnames(int_b))]
+int_exp_con<-int_b[,grep("b_exploration_treatmentE", colnames(int_b))]
+int_act_con<-int_b[,grep("b_logactivity_treatmentE", colnames(int_b))]
+
+#mean estimates for contrast
+int_b_con_num<- as.numeric(unlist(int_b_con))
+mean_con_b<-mean(int_b_con_num)
+
+int_exp_con_num<- as.numeric(unlist(int_exp_con))
+mean_con_exp<-mean(int_exp_con_num)
+
+int_act_con_num<- as.numeric(unlist(int_act_con))
+mean_con_act<-mean(int_act_con_num)
+
+#subtract intercept for C - contrast to get intercept for E
+int_b_e<-(int_b_c_num + int_b_con_num)
+int_b_e_num<- as.numeric(unlist(int_b_e))
+mean_int_b_e<-mean(int_b_e_num)
+
+int_exp_e<-(int_exp_con_num + int_exp_c_num)
+int_exp_e_num<- as.numeric(unlist(int_exp_e))
+mean_int_exp_e<-mean(int_exp_e_num)
+
+int_act_e<-(int_act_con_num + int_act_c_num)
+int_act_e_num<- as.numeric(unlist(int_act_e))
+mean_int_act_e<-mean(int_act_e_num)
+
+ 
+#is E and C significantly different for each trait?
+pm_b<-pmcmc(int_b_c_num - int_b_e_num, twotail = TRUE) #significantly different
+pm_exp<-pmcmc(int_exp_c_num - int_exp_e_num, twotail = TRUE) #significantly different
+pm_act<-pmcmc(int_act_c_num - int_act_e_num, twotail = TRUE) #not significant
+
+
+#95% IC
+#Boldness
+  #Control
+blb_b_c <- round(quantile(int_b_c_num, c(0.025, 0.975))[1], 3)
+bub_b_c <- round(quantile(int_b_c_num, c(0.025, 0.975))[2], 3)
+  #Experimental
+blb_b_e<- round(quantile(int_b_e, c(0.025, 0.975))[1], 3)
+bub_b_e<- round(quantile(int_b_e, c(0.025, 0.975))[2], 3)
+
+#Exploration
+  #Control
+blb_exp_c <- round(quantile(int_exp_c_num, c(0.025, 0.975))[1], 3)
+bub_exp_c <- round(quantile(int_exp_c_num, c(0.025, 0.975))[2], 3)
+  #Experimental
+blb_exp_e <- round(quantile(int_exp_e, c(0.025, 0.975))[1], 3)
+bub_exp_e <- round(quantile(int_exp_e, c(0.025, 0.975))[2], 3)
+
+#Activity
+  #Control
+blb_act_c <- round(quantile(int_act_c_num, c(0.025, 0.975))[1], 3)
+bub_act_c <- round(quantile(int_act_c_num, c(0.025, 0.975))[2], 3)
+  #Experimental
+blb_act_e <- round(quantile(int_act_e, c(0.025, 0.975))[1], 3)
+bub_act_e <- round(quantile(int_act_e, c(0.025, 0.975))[2], 3)
+
+#Create data frame
+dat_model<-data.frame(
+  trait=c("logboldness","logboldness","exploration","exploration","logactivity","logactivity"),
+  treatment=c("Uninfected","Infected","Uninfected","Infected","Uninfected","Infected"), 
+  estimate = c(mean_int_b_c,mean_int_b_e,mean_int_exp_c,mean_int_exp_e, mean_int_act_c, mean_int_act_e), 
+  Lower_CI = c(blb_b_c, blb_b_e, blb_exp_c, blb_exp_e, blb_act_c, blb_act_e),
+  Higher_CI = c(bub_b_c,bub_b_e,bub_exp_c,bub_exp_e,bub_act_c,bub_act_e))
+
+
+all_data[all_data == 'C'] <- 'Uninfected'
+all_data[all_data == 'E'] <- 'Infected'
+
+#plot model2      
+all_data$treatment <- factor(all_data$treatment, levels=c("Uninfected", "Infected"))
+trt <- as.factor(all_data$treatment)
+
+dat1<-dat_model %>% 
+  filter(trait == "logboldness")
+
+
+#boldness
+m1<-
+ggplot(all_data, aes(x = trt, y = log_boldness, group = trt, color = trt)) +
+geom_violin(aes(), trim = FALSE) +
+geom_jitter(aes(colour = trt),shape=16, position=position_jitter(0.1))+
+scale_color_manual(labels = c("Uninfected", "Infected"), values = c("lightgreen", "turquoise"))+
+geom_errorbar(data = dat1,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth =0.7, color = "black", inherit.aes = FALSE)+
+labs(x = (""), 
+y = TeX("$Boldness_{log_{2}}$")) +
+theme_classic() +
+theme(legend.position = "none",
+ legend.title = element_blank()) +
+geom_segment(aes(x = 1, xend = 2, y = 3.85, yend = 3.85)) +
+annotate("text",  x = 1.5, y = 4, label = TeX(paste0("$pMCMC_{\\alpha = 0.05}$ = 0.0005")), size =2.5)
+
+
+dat2<-dat_model %>% 
+  filter(trait == "exploration")
+trt <- as.factor(all_data$treatment)
+
+#exploration
+m2<-ggplot(all_data, aes(x = trt, y = exploration, group = trt, col = trt)) +
+geom_violin(aes(), trim = FALSE) +
+geom_jitter(aes(colour = trt),shape=16, position=position_jitter(0.1)) +
+scale_color_manual(labels = c("Uninfected", "Infected"), values = c("lightgreen", "turquoise"))+
+geom_errorbar(data = dat2,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth = 0.7, color = "black", inherit.aes = FALSE)+
+labs(x = "Treatment", 
+y = "Exploration") +
+theme_classic() +
+theme(legend.position = "none",
+ legend.title = element_blank()) +
+geom_segment(aes(x = 1, xend = 2, y = 3.85, yend = 3.85)) +
+annotate("text",  x = 1.5, y = 4, label = TeX(paste0("$pMCMC_{\\alpha = 0.05}$ = 0.0015")), size =2.5)
+
+#activity
+dat3<-dat_model %>% 
+  filter(trait == "logactivity")
+
+m3<-ggplot(all_data, aes(x = trt, y = log_activity, group = trt, col = trt)) +
+geom_violin(aes(), trim = FALSE) +
+geom_jitter(aes(colour = trt), shape=16, position=position_jitter(0.1)) +
+geom_point(position = position_dodge(width = 0.1))+
+scale_color_manual(labels = c("Uninfected", "Infected"), values = c("lightgreen", "turquoise"))+
+geom_errorbar(data = dat3,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth =0.7, color = "black", inherit.aes = FALSE)+
+labs(x = "", 
+y = TeX("$Activity_{log_{2}}$")) +
+theme_classic() +
+theme(legend.position = "none",
+ legend.title = element_blank()) +
+geom_segment(aes(x = 1, xend = 2, y = 3.85, yend = 3.85)) +
+annotate("text",  x = 1.5, y = 4, label = TeX(paste0("$pMCMC_{\\alpha = 0.05}$ = 0.0666")), size =2.5)
+
+ plot_grid(
+  m1,m2,m3,
+  labels = "AUTO", ncol = 3)
+ 
+#Extract post sd from model 2 for each traits and treatment
+# AT ID LEVEL HERE
+#post_sd_2 <- as_draws_df(model2, variable = "^sd", regex = TRUE)
+#Control
+#post_b_c<-post_sd_C_2[,grep("logboldness", colnames(post_sd_C_2))]
+#post_exp_c<-post_sd_C_2[,grep("exploration", colnames(post_sd_C_2))]
+#post_act_c<-post_sd_C_2[,grep("logactivity", colnames(post_sd_C_2))]
+
+#Experimental
+#post_b_e<-post_sd_E_2[,grep("logboldness", colnames(post_sd_E_2))]
+#post_exp_e<-post_sd_E_2[,grep("exploration", colnames(post_sd_E_2))]
+#post_act_e<-post_sd_E_2[,grep("logactivity", colnames(post_sd_E_2))]
+
+#unlist the data to be able to use the data as numeric
+#Control
+#post_b_c_num<- as.numeric(unlist(post_b_c))
+#post_exp_c_num<- as.numeric(unlist(post_exp_c))
+#post_act_c_num<- as.numeric(unlist(post_act_c))
+
+#Experimental
+#post_b_e_num<- as.numeric(unlist(post_b_e))
+#post_exp_e_num<- as.numeric(unlist(post_exp_e))
+#post_act_e_num<- as.numeric(unlist(post_act_e))
+
+#calculate mean estimate
+#Control
+#mean_b_c<-mean(post_b_c_num)
+#mean_exp_c<-mean(post_exp_c_num)
+#mean_act_c<-mean(post_act_c_num)
+
+#Experimental
+#mean_b_e<-mean(post_b_e_num)
+#mean_exp_e<-mean(post_exp_e_num)
+#mean_act_e<-mean(post_act_e_num)
+
+#95% IC
+#Boldness
+  #Control
+#blb_b_c <- round(quantile(post_b_c_num, c(0.025, 0.975))[1], 3)
+#bub_b_c <- round(quantile(post_b_c_num, c(0.025, 0.975))[2], 3)
+  #Experimental
+#blb_b_e<- round(quantile(post_b_e_num, c(0.025, 0.975))[1], 3)
+#bub_b_e<- round(quantile(post_b_e_num, c(0.025, 0.975))[2], 3)
+
+#Exploration
+  #Control
+#blb_exp_c <- round(quantile(post_exp_c_num, c(0.025, 0.975))[1], 3)
+#bub_exp_c <- round(quantile(post_exp_c_num, c(0.025, 0.975))[2], 3)
+  #Experimental
+#blb_exp_e <- round(quantile(post_exp_e_num, c(0.025, 0.975))[1], 3)
+#bub_exp_e <- round(quantile(post_exp_e_num, c(0.025, 0.975))[2], 3)
+
+#Activity
+  #Control
+#blb_act_c <- round(quantile(post_act_c_num, c(0.025, 0.975))[1], 3)
+#bub_act_c <- round(quantile(post_act_c_num, c(0.025, 0.975))[2], 3)
+  #Experimental
+#blb_act_e <- round(quantile(post_act_e_num, c(0.025, 0.975))[1], 3)
+#bub_act_e <- round(quantile(post_act_e_num, c(0.025, 0.975))[2], 3)
+
+#create data frame with metrics from posterior distribution from model2
+#dat_model2<-data.frame(
+  #trait=c("logboldness","logboldness","exploration","exploration","logactivity","logactivity"),
+  #treatment=c("uninfected","infected","uninfected","infected","uninfected","infected"), 
+  #estimate = c(mean_b_c,mean_b_e,mean_exp_c,mean_exp_e, mean_act_c,mean_act_e), 
+  #Lower_CI = c(blb_b_c, blb_b_e, blb_exp_c, blb_exp_e, blb_act_c, blb_act_e),
+ # Higher_CI = c(bub_b_c,bub_b_e,bub_exp_c,bub_exp_e,bub_act_c,bub_act_e))
+
+      
+#plot model2      
+#w1<-ggplot(data = dat_model2) +
+#geom_point(mapping = aes(x = treatment, y = estimate, color = trait))
+  
+#w2<-ggplot(data = all_data) + 
+#geom_point(mapping = aes(x = treatment, y = log_activity))
+
+#w3<-ggplot(data = all_data) + 
+#geom_point(mapping = aes(x = treatment, y = exploration))
+
+ #plot_grid(
+  #w1, w2, w3,
+  #labels = "AUTO", ncol = 1)
+
+```
+
+```{r}
+#| label: fig-fig3
+#| fig-cap: Effect of parasite load
+#| out-width: 100%
+#| fig-width: 7
+#| fig-height: 8
+
+    ggplot(data=dat_parasite)+
+  geom_smooth(mapping = aes(x = z_pl, y = log_boldness), color = "red")+
+  geom_smooth(mapping = aes(x = z_ces, y = log_boldness), color = "green")+
+  geom_smooth(mapping = aes(x = z_bs, y = log_boldness))+
+  geom_point(mapping = aes(x = z_pl, y = log_boldness))+
+   theme_classic() +
+    theme(strip.background = element_rect(fill = "white", colour = "white")) +
+    theme(legend.position="none") + labs(x = TeX("$Boldness_{log_{2}}$"), y = TeX("Parasite load"), title = "")
+  #annotate("text", x = 1, y = 2.8, label = TeX(paste0("$r_{b}$ = ", " -0.42 ", " 95%CI: -0.85, 0.25 ")), size =3, color = "darkblue") + 
+  #annotate("text", x = 1, y = 2.4, label = TeX(paste0("$r_{w}$ = ", " -0.12 ", " 95%CI: -0.33, 0.09")), size=3, color = "darkgreen")
+
+ggplot(data=dat_parasite)+
+  geom_smooth(mapping = aes(x = z_pl, y = log_activity), color = "red")+
+  geom_smooth(mapping = aes(x = z_ces, y = log_activity), color = "green")+
+  geom_smooth(mapping = aes(x = z_bs, y = log_activity))+
+  geom_point(mapping = aes(x = z_pl, y = log_activity))+
+   theme_classic() +
+    theme(strip.background = element_rect(fill = "white", colour = "white")) +
+    theme(legend.position="none") + labs(x = TeX("Parasite load"), y = TeX("$Activity_{log_{2}}$ load"), title = "")
+    
+ggplot(data=dat_parasite)+
+  geom_smooth(mapping = aes(x = z_pl, y = exploration), color = "red")+
+  geom_smooth(mapping = aes(x = z_ces, y = exploration), color = "green")+
+  geom_smooth(mapping = aes(x = z_bs, y = exploration))+
+  geom_point(mapping = aes(x = z_pl, y = exploration))+
+   theme_classic() +
+    theme(strip.background = element_rect(fill = "white", colour = "white")) +
+    theme(legend.position="none") + labs(x = TeX("Parasite load"), y = TeX("Exploration"), title = "")
+    
+
+```
+
+```{r}
+#| label: tbl-tab1
+#| tbl-cap: Repeatbility estimates for traits
+#| 
+tab1 <- data.frame(Trait = c("Boldness (log)", "Exploration","Activity (log)"), 
+                "Group C" = c(mean(R_C_boldness[,1]), mean(R_C_exploration[,1]), mean(R_C_activity[,1])), 
+                  "2.5% CI (C)" = c((R_Blb_bold_C),(R_Blb_exp_C), (R_Blb_act_C)),
+              "97.5% CI (C)" = c((R_Bub_bold_C), (R_Bub_exp_C),(R_Bub_act_C)),
+                "Group E" = c(mean(R_E_boldness[,1]), mean(R_E_exploration[,1]), mean(R_E_activity[,1])),
+              "2.5% CI (E)" = c((R_Blb_bold_E), (R_Blb_exp_E), (R_Blb_act_E)), "97.5% CI (E)" = c((R_Bub_bold_E), (R_Bub_exp_E), (R_Bub_act_E)), check.names = FALSE)
+
+gt(tab1) 
+
+```
+
