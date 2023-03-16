@@ -269,3 +269,43 @@ write.table(dat_6, file = "dat_models_E.csv",
 
 write.table(dat_5, file = "dat_models_C.csv",
             sep = ",", row.names = F)
+
+###Processing data for type of parasites
+all_dat <- read.table("./output/all_data_p.csv",header=T, sep=",")
+all_dat$ces_tot<- (all_dat$P04_alive + all_data$P06)
+
+dat_trial1<-all_dat  %>% 
+  select(ID_fish, trial, cage, treatment, log_boldness, log_activity, exploration, fulton1, parasite_load, BS_post_tot, ces_tot) %>% 
+  filter(trial == 1) %>% 
+  pivot_longer("fulton1",
+               values_to='body_condition') %>% arrange(ID_fish)
+
+dat_trial2<-all_dat  %>% 
+  select(ID_fish, trial, cage, treatment, log_boldness, log_activity, exploration,fulton2, parasite_load, BS_post_tot, ces_tot) %>%
+  filter(trial == 2) %>% 
+  pivot_longer("fulton2",
+               values_to='body_condition') %>% arrange(ID_fish)
+
+dat_trial3<-all_dat  %>% 
+  select(ID_fish, trial, cage, treatment, log_boldness, log_activity, exploration,fulton3, parasite_load, BS_post_tot, ces_tot) %>%
+  filter(trial == 3) %>% 
+  pivot_longer("fulton3",
+               values_to='body_condition') %>% arrange(ID_fish)
+
+dat_trial4<-all_dat  %>% 
+  select(ID_fish, trial, cage, treatment, log_boldness, log_activity, exploration, fulton4, parasite_load, BS_post_tot, ces_tot) %>%
+  filter(trial == 4) %>% 
+  pivot_longer("fulton4",
+               values_to='body_condition') %>% arrange(ID_fish)
+
+#rbind together to get dataset for the model
+dat_trials <- rbind(dat_trial1, dat_trial2, dat_trial3, dat_trial4) %>% arrange(ID_fish)
+
+#Select for experimentally infected fish and scale parasite and body condition
+dat_par_type <- dat_trials %>% filter(treatment == "E") %>%  mutate(z_bc = scale(body_condition),
+                                                             z_pl = scale(parasite_load),
+                                                             z_bs = scale(BS_post_tot),
+                                                            z_ces = scale (ces_tot))
+#Save data
+write.table(dat_par_type, file = "dat_models_parasite.csv",
+            sep = ",", row.names = F)
