@@ -41,13 +41,15 @@
 
 #rbind together to get dataset for the model
 
-dat_6<-rbind(dat_trial1, dat_trial2, dat_trial3, dat_trial4) %>% arrange(ID_fish)
-  
+dat_6 <- rbind(dat_trial1, dat_trial2, dat_trial3, dat_trial4) %>% arrange(ID_fish)
+dat_6 <- dat6 %>% filter(treatment == "E") %>%  mutate(z_bc = scale(body_condition),
+                                                       z_pl = scale(parasite_load))
+
 ### Model 6: body condition as a response variable
 
-  boldness_6 <- bf(log_boldness ~ 1 + z_parasite_load + (1 | ID_fish) + (1 | cage)) + gaussian()
-  activity_6 <- bf(log_activity ~ 1 + z_parasite_load + (1 | ID_fish) + (1 | cage)) + gaussian()
-  explore_6 <- bf(exploration ~ 1 + z_parasite_load + (1 | ID_fish) + (1 | cage)) + gaussian()
+  boldness_6 <- bf(log_boldness ~ 1 + z_parasite_load + body_condition+ (1 | ID_fish) + (1 | cage)) + gaussian()
+  activity_6 <- bf(log_activity ~ 1 + z_parasite_load + body_condition + (1 | ID_fish) + (1 | cage)) + gaussian()
+   explore_6 <- bf(exploration  ~ 1 + z_parasite_load + body_condition + (1 | ID_fish) + (1 | cage)) + gaussian()
   body_condition_6 <- bf(body_condition ~ 1  + (1 | ID_fish) + (1 | cage)) + gaussian()
   
   model_6 <- brms::brm(boldness_6 + activity_6 + explore_6 + body_condition_6 + set_rescor(TRUE), 

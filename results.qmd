@@ -91,6 +91,8 @@ editor_options:
   model2 <- readRDS(file = "./output/models/model2.rds")
   model2.2 <- readRDS(file = "./output/models/model2.2.rds")
   model3 <- readRDS(file = "./output/models/model_3.rds")
+  R2_m <- bayes_R2(model3, re.form = NA) #marginal
+  R2_c <- bayes_R2(model3) #conditional
   model4 <- readRDS(file = "./output/models/model_4.rds")
   model5 <- readRDS(file = "./output/models/model_5.rds")
   model6 <- readRDS(file = "./output/models/model_6.rds")
@@ -396,6 +398,8 @@ summary(model1)
 #| label: fig-fig1
 #| fig-cap: Correlation between traits
 #| out-width: 100%
+#| echo: false
+#| include: false
 
 #Boldness and activity average between trials
       
@@ -488,6 +492,8 @@ p1<-
 #| label: fig-fig2
 #| fig-cap: Plotting model
 #| out-width: 100%
+#| echo: false
+#| include: false
 
 
 #Create dataframe with estimates and CI
