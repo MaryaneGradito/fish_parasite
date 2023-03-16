@@ -218,8 +218,54 @@ dat <- all_data
 dat <- dat %>%
   dplyr::mutate(id = factor(ID_fish, levels = unique(ID_fish)),
                 log_activity = scale(log(activity)), log_boldness = scale(log(boldness)),
-                exploration = scale(exploration), tank1 = as.factor(bassin_bold), tank2 = as.factor(bassin_exp),z_parasite_load = scale(parasite_load), z_bc_1 = scale(fulton1), z_bc_2 = scale(fulton2), z_bc_3 = scale(fulton3), z_bc_4 = scale(fulton4),(id = ID_fish))
+                exploration = scale(exploration), tank1 = as.factor(bassin_bold), tank2 = as.factor(bassin_exp),(id = ID_fish))
 
 ###Save the new dataset with processed data
 write.table(dat, file = "all_data_p.csv",
+            sep = ",", row.names = F)
+
+#data processing for models
+#pivot data for each trial
+#we need parasite load z-transform and body condition z-transform for the next model
+all_dat <- read.table("./output/all_data_p.csv",header=T, sep=",")
+
+dat_trial1<-all_dat  %>% 
+  select(ID_fish, trial, cage, treatment, log_boldness, log_activity, exploration, fulton1, parasite_load) %>% 
+  filter(trial == 1) %>% 
+  pivot_longer("fulton1",
+               values_to='body_condition') %>% arrange(ID_fish)
+
+dat_trial2<-all_dat  %>% 
+  select(ID_fish, trial, cage, treatment, log_boldness, log_activity, exploration,fulton2, parasite_load) %>%
+  filter(trial == 2) %>% 
+  pivot_longer("fulton2",
+               values_to='body_condition') %>% arrange(ID_fish)
+
+dat_trial3<-all_dat  %>% 
+  select(ID_fish, trial, cage, treatment, log_boldness, log_activity, exploration,fulton3, parasite_load) %>%
+  filter(trial == 3) %>% 
+  pivot_longer("fulton3",
+               values_to='body_condition') %>% arrange(ID_fish)
+
+dat_trial4<-all_dat  %>% 
+  select(ID_fish, trial, cage, treatment, log_boldness, log_activity, exploration, fulton4, parasite_load) %>%
+  filter(trial == 4) %>% 
+  pivot_longer("fulton4",
+               values_to='body_condition') %>% arrange(ID_fish)
+
+#rbind together to get dataset for the model
+dat_trials <- rbind(dat_trial1, dat_trial2, dat_trial3, dat_trial4) %>% arrange(ID_fish)
+
+#Select for each group the data and scale 
+#Experimental group
+dat_6 <- dat_trials %>% filter(treatment == "E") %>%  mutate(z_bc = scale(body_condition),
+                                                            z_pl = scale(parasite_load))
+#Control group
+dat_5 <- dat_trials %>% filter(treatment == "C") %>% mutate(z_bc = scale(body_condition))
+
+#Save data
+write.table(dat_6, file = "dat_models_E.csv",
+            sep = ",", row.names = F)
+
+write.table(dat_5, file = "dat_models_C.csv",
             sep = ",", row.names = F)
