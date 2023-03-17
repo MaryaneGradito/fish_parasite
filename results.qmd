@@ -24,7 +24,6 @@ editor_options:
 #| output: false
 #| warning: false
 
-
     source("./R/func.R")
     pacman::p_load(tidyverse, brms, glmmTMB, gt, latex2exp, posterior, gt, glue, dplyr,magrittr, ggplot2, cowplot)
     options(digits = 3, scipen = 2)
@@ -32,7 +31,7 @@ editor_options:
 ```
 
 ```{r}
-#| label: load_data
+#| label: load_data and models
 #| output: false
 #| warning: false
 
@@ -40,7 +39,48 @@ editor_options:
 # Import processed data
 #############################
   all_data <- read.table("./output/all_data_p.csv",header=T, sep=",")
+
+############################
+# Load model
+############################
+
+  model1 <- readRDS(file = "./output/models/model1.rds")
+  model1.2 <- readRDS(file = "./output/models/model1.2.rds")
+  model2 <- readRDS(file = "./output/models/model2.rds")
+  model2.2 <- readRDS(file = "./output/models/model2.2.rds")
+  model3 <- readRDS(file = "./output/models/model_3.rds")
+ 
+  R2_m_3 <- bayes_R2(model3, re.form = NA) #marginal
+  R2_c_3 <- bayes_R2(model3) #conditional
   
+  model4 <- readRDS(file = "./output/models/model_4.rds")
+  model5 <- readRDS(file = "./output/models/model_5.rds")
+  
+  R2_m_5 <- bayes_R2(model5, re.form = NA) #marginal
+  R2_c_5 <- bayes_R2(model5) #conditional
+  
+  model6 <- readRDS(file = "./output/models/model_6.rds")
+  
+  R2_m_6 <- bayes_R2(model6, re.form = NA) #marginal
+  R2_c_6 <- bayes_R2(model6) #conditional
+  
+  model7 <- readRDS(file = "./output/models/model_7.rds")
+  R2_m_7 <- bayes_R2(model7, re.form = NA) #marginal
+  R2_c_7 <- bayes_R2(model7) #conditional
+  
+  #Compare model 3 and 6 (only thing that changed was body condition)
+  loo(model3,model6) #model 6 better but they are really close
+  
+  model8<-readRDS(file = "./output/models/model_8.rds")
+  model9<-readRDS(file = "./output/models/model_9.rds")
+
+```
+
+```{r}
+#| label: Repeatability and behavioral syndromes
+#| output: false
+#| warning: false
+
 ############################
 # Parasite count
 #############################
@@ -81,37 +121,6 @@ editor_options:
   gain_median<-median(all_data$BS_gain)
   gain_mean<-mean(all_data$BS_gain)
 
-############################
-# Load model
-############################
-
-  model1 <- readRDS(file = "./output/models/model1.rds")
-  model1.2 <- readRDS(file = "./output/models/model1.2.rds")
-  model2 <- readRDS(file = "./output/models/model2.rds")
-  model2.2 <- readRDS(file = "./output/models/model2.2.rds")
-  model3 <- readRDS(file = "./output/models/model_3.rds")
- 
-  R2_m_3 <- bayes_R2(model3, re.form = NA) #marginal
-  R2_c_3 <- bayes_R2(model3) #conditional
-  
-  model4 <- readRDS(file = "./output/models/model_4.rds")
-  model5 <- readRDS(file = "./output/models/model_5.rds")
-  
-  R2_m_5 <- bayes_R2(model5, re.form = NA) #marginal
-  R2_c_5 <- bayes_R2(model5) #conditional
-  
-  model6 <- readRDS(file = "./output/models/model_6.rds")
-  
-  R2_m_6 <- bayes_R2(model6, re.form = NA) #marginal
-  R2_c_6 <- bayes_R2(model6) #conditional
-  
-  model7 <- readRDS(file = "./output/models/model_7.rds")
-  R2_m_7 <- bayes_R2(model7, re.form = NA) #marginal
-  R2_c_7 <- bayes_R2(model7) #conditional
-  
-  #Compare model 3 and 6 (only thing that changed was body condition)
-  loo(model3,model6) #model 6 better but they are really close
-  
 
 ############################
 # Repeatability C vs E
@@ -376,6 +385,7 @@ q_act_exp<-quantile(bsyn_act_exp, c(0.025, 0.975))
 
     
 ```
+
 ### Methods
 #### *Statistical analysis*
 
@@ -399,23 +409,13 @@ The caging experiment successfully infected our fish. Control fish that stayed i
 Exploration and activity were repeatable across trials (Exploration: R = `r R_exp_mean`, 95% CI = `r R_Blb_exp`, `r R_Bub_exp`, $pMCMC_{\alpha = 0.05}$ = `r p_value_exp_a`; Activity: R = `r R_act_mean`, 95% CI = `r R_Blb_act`, `r R_Bub_act`, $pMCMC_{\alpha = 0.05}$ = `r p_value_act_a`), but boldness was not significantly repeatable (Boldness: R = `r R_bold_mean`, 95% CI = `r R_Blb_bold`, `r R_Bub_bold`, $pMCMC_{\alpha = 0.05}$ = `r p_value_bold_a`). We did not observe among-individual variation to be higher in the uninfected vs experimentally infected group (@tbl-tab1). Repeatability did not differ between treatment for boldness ($pMCMC_{\alpha = 0.05}$ = `r p_value_bold`), exploration ($pMCMC_{\alpha = 0.05}$ = `r p_value_exp`) and activity ($pMCMC_{\alpha = 0.05}$ = `r p_value_act`).We found evidence of behavioural syndromes between boldness and activity (cor = `r mean(bsyn_b_act2)`, 95% CI = `r q_b_act`); boldness and exploration (cor = `r mean(bsyn_b_exp)`, 95% CI = `r q_b_exp`), and between activity and exploration (cor = `r mean(bsyn_act_exp)`, 95% CI = `r q_act_exp`)  The correlation did not differ between the uninfected and experimentally infected group for these syndromes (Boldness-Activity: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_b_act`; Boldness-Exploration: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_b_exp`; Activity-Exploration: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_act_exp`).
 
 
-
-```{r}
-#| echo: false
-#| include: false
-
-summary(model2)
-summary(model1)
-```
-
-
 ```{r}
 #| label: parasite effects
 #| output: false
 #| warning: false
 
 #################################
-# MODEL 3
+# MODEL 3: effect of parasite on experimental group
 #################################
   
 #Extract post sd from model 3
@@ -441,7 +441,7 @@ act_pl<-post_sd_pl[,grep("b_logactivity_z_pl", colnames(post_sd_pl))]
   
   
 #################################
-# MODEL 5
+# MODEL 5: body condition on control group
 #################################
   
 #Extract post sd from model 5
@@ -452,40 +452,89 @@ bold_bc<-post_sd_bc[,grep("b_logboldness_z_bc", colnames(post_sd_bc))]
 exp_bc<-post_sd_bc[,grep("b_exploration_z_bc", colnames(post_sd_bc))]
 act_bc<-post_sd_bc[,grep("b_logactivity_z_bc", colnames(post_sd_bc))]
 
-  #mean and quantile
+  #mean and quantile for activity 
   act_bc_num<- as.numeric(unlist(act_bc))
   act_bc_mean <- mean(act_bc_num)
   act_bc_Blb <- round(quantile(act_bc_num, c(0.025, 0.975))[1], 3)
   act_bc_Bub <- round(quantile(act_bc_num, c(0.025, 0.975))[2], 3)
   
-  #pmcmc value
+  #pmcmc value for activity
   p_act_bc<-pmcmc(act_bc_num, twotail = TRUE) #significant
 
   #R2
   R2_m_5 <- bayes_R2(model5, re.form = NA) #marginal
   R2_c_5 <- bayes_R2(model5) #conditional
   
+  #mean and quantile for exploration
+  exp_bc_num<- as.numeric(unlist(exp_bc))
+  exp_bc_mean <- mean(exp_bc_num)
+  exp_bc_Blb <- round(quantile(exp_bc_num, c(0.025, 0.975))[1], 3)
+  exp_bc_Bub <- round(quantile(exp_bc_num, c(0.025, 0.975))[2], 3)
+  
+  #pmcmc value for exploration
+  p_exp_bc<-pmcmc(exp_bc_num, twotail = TRUE) 
+
+  #mean and quantile for boldness
+  bold_bc_num<- as.numeric(unlist(bold_bc))
+  bold_bc_mean <- mean(bold_bc_num)
+  bold_bc_Blb <- round(quantile(bold_bc_num, c(0.025, 0.975))[1], 3)
+  bold_bc_Bub <- round(quantile(bold_bc_num, c(0.025, 0.975))[2], 3)
+  
+  #pmcmc value for activity
+  p_bold_bc<-pmcmc(bold_bc_num, twotail = TRUE) 
+
+  
   
 #################################
-# MODEL 6
+# MODEL 6: body condition and parasite load on infected fish
+#################################
+#Extract post sd from model 6
+post_sd_pl_bc<- as_draws_df(model6, variable = "^b", regex = TRUE)
+
+#extrait effect of body condition and parasite load on each traits
+bold_bc_6<-post_sd_pl_bc[,grep("b_logboldness_z_bc", colnames(post_sd_pl_bc))]
+exp_bc_6<-post_sd_pl_bc[,grep("b_exploration_z_bc", colnames(post_sd_pl_bc))]
+act_bc_6<-post_sd_pl_bc[,grep("b_logactivity_z_bc", colnames(post_sd_pl_bc))]
+
+  #mean and quantile for activity 
+  act_bc_num_6<- as.numeric(unlist(act_bc))
+  act_bc_mean_6 <- mean(act_bc_num)
+  act_bc_Blb_6 <- round(quantile(act_bc_num, c(0.025, 0.975))[1], 3)
+  act_bc_Bub_6 <- round(quantile(act_bc_num, c(0.025, 0.975))[2], 3)
+  
+  #pmcmc value for activity
+  p_act_bc_6<-pmcmc(act_bc_num, twotail = TRUE) #significant
+
+  #R2
+  R2_m_5 <- bayes_R2(model6, re.form = NA) #marginal
+  R2_c_5 <- bayes_R2(model6) #conditional
+  R2_c_5 1,1
+  
+#################################
+# MODEL 7: looking at two species of parasites
 #################################
   
+#################################
+# MODEL 8: interaction between body condition and parasite load
+#################################
   
 #################################
-# MODEL 7
+# MODEL 9: interaction between BS and cestodes
 #################################
   
   
 ```
 
-#### *Parasites change host fish personality*
-Body condition important for each group for activity. Didn't strongly affect the other traits
+#### *Parasites effects  on personality traits*
 
+Body condition had a positive effect on activity in both the uninfected and experimentally infected group (Uninfected: $\Beta$ = `r act_bc_mean`, 95% CI = `r act_bc_Blb`, `r act_bc_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_bc`, $R_{^2}$ = 0.046), Infected: $\Beta$ = `r act_bc_mean_6`, 95% CI = `r act_bc_Blb_6`, `r act_bc_Bub_6`, $pMCMC_{\alpha = 0.05}$ = `r p_act_bc_6`, $R_{^2}$ = 0.143)). Body condition did not have a significant effect on boldness or exploration in the uninfected group () and infected group ().
+
+
+When looking at the experimentally infected fish, parasite load had a negative effect on activity ($\Beta$ = `r act_pl_mean`, 95% CI = `r act_pl_Blb`, `r act_pl_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_pl`, $R_{^2}$ = 0.068). We did not capture an effect of parasite load on exploration or boldness (). 
+
+no interwaction between parasites = good
 Looking at the experimentally infected fish. When we include parasite load, strong effect on activity, decrease activity. Interaction. And two types parasites (differents modes). Distinct differences between parasites. Unexpected, then explored. More conservative models. Something worth pointing out even if it's not significant. 
 
-Parasite load had a negative effect on activity ($\Beta$ = `r act_pl_mean`, 95% CI = `r act_pl_Blb`, `r act_pl_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_pl`, $R_{^2}$ = 0.068). We did not capture an effect of parasite load on exploration or boldness.   
-
-#### *Behavioural syndromes*
 
 ```{r}
 #| label: fig-fig1
@@ -590,8 +639,6 @@ p2<-
 #| out-width: 100%
 #| fig-width: 7
 #| fig-height: 4
-
-
 
 #Create dataframe with estimates and CI
 
