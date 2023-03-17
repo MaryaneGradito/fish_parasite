@@ -388,7 +388,7 @@ Exploration was distributed normally visually. Activity and boldness were log-tr
 
 To test if we find evidence of personality and behavioural syndromes between traits, we built a model (n = 264) with traits as response variables, treatment (uninfected vs infected) as a fixed effect, fish ID and cage number as random effects. Model 1 had tank effect as a fixed factor compared to Model 2. We compared the models using the loo package. Model 2 was better fitted than model 1 and we decided not to include tank effect in our models. Repeatability (R) was calculated using the squared standard deviation for fish ID divided by the squared standard deviation for fish ID, cage and sigma from the posterior distribution of model 2 for each treatment group and across groups. To estimate if repeatability was different from 0, we choose 0.05 as a threshold since the values can't be 0 in the distribution. Correlation between traits were extracted from the posterior distribution of model 2 to determine if there was a behavioural syndrome between traits. To measure the average correlation for each group, we pooled together the two MCMC chains for both group.
 
-To test if the experimental infection had an effect on personality, we sublet the data set according to the treatment (uninfected: n = 144; infected: n = 120). We built Model 3 to see if parasite load have an effect on the traits. Parasite load was included as a fixed factor, fish ID and cage number as random factors. Model 3 assume than parasite load effect is linear, so we included parasite $load^2$ as a fixed factor in model 4. Our sample was too small to estimate model 4. 
+To test if the experimental infection had an effect on personality, we sublet the data set according to the treatment (uninfected/pre-infection: n = 144; infected/post-infection: n = 120). We built Model 3 to see if parasite load have an effect on the traits. Parasite load was included as a fixed factor, fish ID and cage number as random factors. Model 3 assume than parasite load effect is linear, so we included parasite $load^2$ as a fixed factor in model 4. Our sample was too small to estimate model 4. 
 
 To test if body condition as an effect on traits, we fitted model 5 with body condition as a fixed factor, ID and cage number as random effects for our uninfected group. Model 6 was fitted with parasite load and body condition for our infected group. Finally, to see if the parasite species have different effects on the traits, we built model 7 with total of cestodes, total of blackspots and body condition as fixed factors; ID and cage number as random factors. 
 
@@ -412,8 +412,78 @@ summary(model2)
 summary(model1)
 ```
 
+```{r}
+#| label: parasite effects
+#| output: false
+#| warning: false
+
+#################################
+# MODEL 3
+#################################
+  
+#Extract post sd from model 3
+post_sd_pl <- as_draws_df(model3, variable = "^b", regex = TRUE)
+
+#extrait effect of parasite load on each traits
+bold_pl<-post_sd_pl[,grep("b_logboldness_z_pl", colnames(post_sd_pl))]
+exp_pl<-post_sd_pl[,grep("b_exploration_z_pl", colnames(post_sd_pl))]
+act_pl<-post_sd_pl[,grep("b_logactivity_z_pl", colnames(post_sd_pl))]
+
+  #mean and quantile
+  act_pl_num<- as.numeric(unlist(act_pl))
+  act_pl_mean <- mean(act_pl_num)
+  act_pl_Blb <- round(quantile(act_pl_num, c(0.025, 0.975))[1], 3)
+  act_pl_Bub <- round(quantile(act_pl_num, c(0.025, 0.975))[2], 3)
+  
+  #pmcmc value
+  p_act_pl<-pmcmc(act_pl_num, twotail = TRUE) #significant
+
+  #R2
+  R2_m_3 <- bayes_R2(model3, re.form = NA) #marginal
+  R2_c_3 <- bayes_R2(model3) #conditional
+  
+  
+#################################
+# MODEL 5
+#################################
+  
+#Extract post sd from model 5
+post_sd_bc <- as_draws_df(model5, variable = "^b", regex = TRUE)
+
+#extrait effect of parasite load on each traits
+bold_bc<-post_sd_bc[,grep("b_logboldness_z_bc", colnames(post_sd_bc))]
+exp_bc<-post_sd_bc[,grep("b_exploration_z_bc", colnames(post_sd_bc))]
+act_bc<-post_sd_bc[,grep("b_logactivity_z_bc", colnames(post_sd_bc))]
+
+  #mean and quantile
+  act_bc_num<- as.numeric(unlist(act_bc))
+  act_bc_mean <- mean(act_bc_num)
+  act_bc_Blb <- round(quantile(act_bc_num, c(0.025, 0.975))[1], 3)
+  act_bc_Bub <- round(quantile(act_bc_num, c(0.025, 0.975))[2], 3)
+  
+  #pmcmc value
+  p_act_bc<-pmcmc(act_bc_num, twotail = TRUE) #significant
+
+  #R2
+  R2_m_5 <- bayes_R2(model5, re.form = NA) #marginal
+  R2_c_5 <- bayes_R2(model5) #conditional
+  
+  
+#################################
+# MODEL 6
+#################################
+  
+  
+#################################
+# MODEL 7
+#################################
+  
+  
+```
+
 
 #### *Parasites change host fish personality*
+Parasite load had a negative effect on activity ($\Beta$ = `r act_pl_mean`, 95% CI = `r act_pl_Blb`, `r act_pl_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_pl`, $R_{^2}$ = 0.068). We did not capture an effect of parasite load on exploration or boldness. 
 
 #### *Behavioural syndromes*
 
