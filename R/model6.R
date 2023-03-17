@@ -6,13 +6,13 @@
   dat_E <- read.table("./output/dat_models_E.csv",header=T, sep=",")
 
 #############################
-# Model 6: body condition as a response variable
+# Model 6: body condition and parasite load
 #############################
 
 # Load.packages
   pacman::p_load(lme4, rstan, tidyverse, StanHeaders, jsonlite, rstantools, brms, Rcpp, dplyr, here, flextable, pander)
 
-### Model 6: body condition as a response variable
+### Model 6:
 
   boldness_6 <- bf(log_boldness ~ 1 + z_pl + z_bc + (1 | ID_fish) + (1 | cage)) + gaussian()
   activity_6 <- bf(log_activity ~ 1 + z_pl + z_bc + (1 | ID_fish) + (1 | cage)) + gaussian()
