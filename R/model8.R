@@ -21,10 +21,10 @@ activity_8 <- bf(log_activity ~ 1 + z_pl + z_bc + z_pl*z_bc + (1 | ID_fish) + (1
 
 model_8 <- brms::brm(boldness_8 + activity_8 + explore_8 + set_rescor(TRUE), 
                      data = dat_E, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
-                     save_pars = save_pars(), file = "./output/models/model_8", file_refit = "on_change",
+                     save_pars = save_pars(all = TRUE), file = "./output/models/model_8", file_refit = "on_change",
                      control = list(adapt_delta = 0.98))
 
-add_criterion(model_8, c("loo", "waic"))
+model_8 <- add_criterion(model_8, c("loo", "waic"), moment_match = TRUE)
 
 # Look at the MCMC chains.
 plot(model_8)

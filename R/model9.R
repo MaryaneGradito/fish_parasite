@@ -22,10 +22,10 @@ activity_9 <- bf(log_activity ~ 1 + z_ces + z_bs + z_ces*z_bs + z_bc + (1 | ID_f
 
 model_9 <- brms::brm(boldness_9 + activity_9 + explore_9 + set_rescor(TRUE), 
                      data = dat_parasite, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
-                     save_pars = save_pars(), file = "./output/models/model_9", file_refit = "on_change",
+                     save_pars = save_pars(all = TRUE), file = "./output/models/model_9", file_refit = "on_change",
                      control = list(adapt_delta = 0.98))
 
-add_criterion(model_9, c("loo", "waic"))
+model_9 <- add_criterion(model_9, c("loo", "waic"), moment_match = TRUE)
 
 # Look at the MCMC chains.
 plot(model_9)
