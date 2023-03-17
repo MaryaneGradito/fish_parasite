@@ -21,7 +21,7 @@ dat_E <- read.table("./output/dat_models_E.csv",header=T, sep=",")
 
   boldness_3 <- bf(log_boldness ~ 1 + z_pl + (1 | ID_fish) + (1 | cage)) + gaussian()
   activity_3 <- bf(log_activity ~ 1 + z_pl + (1 | ID_fish) + (1 | cage)) + gaussian()
-  explore_3 <- bf(exploration ~ 1 + z_pl  formula = activity_3 + (1 | ID_fish) + (1 | cage)) + gaussian()
+  explore_3 <- bf(exploration ~ 1 + z_pl  + (1 | ID_fish) + (1 | cage)) + gaussian()
 
   model_3 <- brms::brm(boldness_3 + activity_3 + explore_3 + set_rescor(TRUE), 
                       data = dat_E, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
