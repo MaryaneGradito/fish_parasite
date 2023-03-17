@@ -48,28 +48,14 @@ editor_options:
   model1.2 <- readRDS(file = "./output/models/model1.2.rds")
   model2 <- readRDS(file = "./output/models/model2.rds")
   model2.2 <- readRDS(file = "./output/models/model2.2.rds")
-  model3 <- readRDS(file = "./output/models/model_3.rds")
- 
-  R2_m_3 <- bayes_R2(model3, re.form = NA) #marginal
-  R2_c_3 <- bayes_R2(model3) #conditional
-  
+  model3<-readRDS(file = "./output/models/model3.rds")
   model4 <- readRDS(file = "./output/models/model_4.rds")
   model5 <- readRDS(file = "./output/models/model_5.rds")
-  
-  R2_m_5 <- bayes_R2(model5, re.form = NA) #marginal
-  R2_c_5 <- bayes_R2(model5) #conditional
-  
   model6 <- readRDS(file = "./output/models/model_6.rds")
-  
-  R2_m_6 <- bayes_R2(model6, re.form = NA) #marginal
-  R2_c_6 <- bayes_R2(model6) #conditional
-  
   model7 <- readRDS(file = "./output/models/model_7.rds")
-  R2_m_7 <- bayes_R2(model7, re.form = NA) #marginal
-  R2_c_7 <- bayes_R2(model7) #conditional
   
-  #Compare model 3 and 6 (only thing that changed was body condition)
-  loo(model3,model6) #model 6 better but they are really close
+  #Compare model 4 and 6 (only thing that changed was body condition)
+  loo(model4 ,model6) #model 6 better but they are really close
   
   model8<-readRDS(file = "./output/models/model_8.rds")
   model9<-readRDS(file = "./output/models/model_9.rds")
@@ -389,20 +375,25 @@ q_act_exp<-quantile(bsyn_act_exp, c(0.025, 0.975))
 ### Methods
 #### *Statistical analysis*
 
-All statistical analyses were performed with the software R (version 4.2.2). Adjusted fish mass was calculated as the fish mass minus parasite mass (Lagrue and Poulin, 2015). Parasite mass was estimated with the mean mass of 20 parasites (Vic, in prep). For bass tapeworm, adult average mass was 0.003g and larval form was 0.0008g. We decided to exclude nematodes since the mass varies grandly between individuals and is found rarely in our fish. Blackspots mass was considered too small to be subtracted from total mass ($10^{-7}g$). Body condition was calculated with the Fulton index ($mass/length^3$) (Jakob, 1996). We had 4 measures of body condition, one for each trial (measured closest to the trial). We used the adjusted fish mass for the 2 measures of body condition after the experimental infection (we assume there is no parasite before the experimental infection). We used standard length of the fish in centimeters. We calculated parasite load by adding the total number of blackspots post-infection with the total number of cestodes found alive (adult and larvae form). We could not determine if larvae form was alive or not visually, but we assumed it can have an effect if the larva is developping in the fish. 
+All statistical analyses were performed with the software R (version 4.2.2). Adjusted fish mass was calculated as the fish mass minus parasite mass (Lagrue and Poulin, 2015). Parasite mass was estimated with the mean mass of 20 parasites (Vic, in prep). For bass tapeworm, adult average mass was 0.003g and larval form was 0.0008g. We decided to exclude nematodes since the mass varies grandly between individuals and is found rarely in our fish. Blackspots mass was considered too small to be subtracted from total mass ($10^{-7}g$). Body condition was calculated with the Fulton index ($mass/length^3$) (Jakob, 1996). We had 4 measures of body condition, one for each trial. We used the adjusted fish mass for the 2 measures of body condition after the experimental infection (we assume there is no parasite before the experimental infection). We used standard length of the fish in centimeters. We calculated parasite load by adding the total number of blackspots post-infection with the total number of cestodes found alive (adult and larvae form). We could not determine if larvae form was alive or not visually, but we assumed it can have an effect if the larva is developping in the fish. 
 
 Exploration was distributed normally visually. Activity and boldness were log-transformed to impose normality. All variable were z-scaled before fitting the models. We fitted our models with a Bayesian statistical inference using 4 chains with an iteration of 6000 and a warm up of 2000. We visually inspected the MCMC sampling to see if the sampling ...(?) 
 
-To test if we find evidence of personality and behavioural syndromes between traits, we built a model (n = 264) with traits as response variables, treatment (uninfected vs infected) as a fixed effect, fish ID and cage number as random effects. Model 1 had tank effect as a fixed factor compared to Model 2. We compared the models using the loo package. Model 2 was better fitted than model 1 and we decided not to include tank effect in our models. Repeatability (R) was calculated using the squared standard deviation for fish ID divided by the squared standard deviation for fish ID, cage and sigma from the posterior distribution of model 2 for each treatment group and across groups. To estimate if repeatability was different from 0, we choose 0.05 as a threshold since the values can't be 0 in the distribution. Correlation between traits were extracted from the posterior distribution of model 2 to determine if there was a behavioural syndrome between traits. To measure the average correlation for each group, we pooled together the two MCMC chains for both group.
+To test if we find evidence of personality and behavioural syndromes between traits, we built a multi-responses model (n = 264) with traits as response variables, treatment (uninfected vs infected) as a fixed effect, fish ID and cage number as random effects. Model 1 had tank effect as a fixed factor compared to Model 2. We compared the models using the loo package. Model 2 was better fitted than model 1 and we decided not to include tank effect in our models.
+Repeatability (R) was calculated as:
+
+$R = \displaystyle \frac{\sd(ID^{2})}{\sd(ID^{2}) + sd(cage^{2}) +  exp(sd(sigma^{2}))}$
+
+where sd is the standard deviation from the posterior distribution from the model, ID is fish ID, cage is the cage number and sigma is distributed for each group. We also calculated repeatability across groups by pooling the posterior distribution of sigma and ID. To estimate if repeatability was different from 0, we choose 0.05 as a threshold since the values can't be 0 in the distribution. Correlation between traits were extracted from the posterior distribution of the model to determine if there was a behavioural syndrome between traits. To measure the average correlation for each group, we pooled together the two MCMC chains for both group.
 
 To test if the experimental infection had an effect on personality, we sublet the data set according to the treatment (uninfected/pre-infection: n = 144; infected/post-infection: n = 120). We built Model 3 to see if parasite load have an effect on the traits. Parasite load was included as a fixed factor, fish ID and cage number as random factors. Model 3 assume than parasite load effect is linear, so we included parasite $load^2$ as a fixed factor in model 4. Our sample was too small to estimate model 4. 
 
-To test if body condition as an effect on traits, we fitted model 5 with body condition as a fixed factor, ID and cage number as random effects for our uninfected group. Model 6 was fitted with parasite load and body condition for our infected group. Finally, to see if the parasite species have different effects on the traits, we built model 7 with total of cestodes, total of blackspots and body condition as fixed factors; ID and cage number as random factors. 
+To test if body condition as an effect on traits, we fitted model 5 with body condition as a fixed factor, ID and cage number as random effects for our uninfected group. Model 6 was fitted with parasite load and body condition for our infected group. Finally, to see if the parasite species have different effects on the traits, we built model 7 with total of cestodes, total of blackspots and body condition as fixed factors; ID and cage number as random factors. We suspected an interaction between body condition and parasite load and so we fitted a new model to test this. We also wanted to see if there was an interaction between the two species of parasites and we built a new model with that interaction. Both interactions were not significant and so we decided not to include them in our models. 
 
 ### Results
 #### *Experimental infection*
 
-The caging experiment successfully infected our fish. Control fish that stayed in the laboratory had no alive parasite, which indicate that the praziquantel treatment was effective. The two most abundant species found in the experimentally infected fish were trematodes causing the blackspot disease (Trematoda: *Apophallus sp.* and *Uvulifer sp.*; min-max: `r BS_min`- `r BS_max`; median: `r BS_median`) and the bass tapeworm (Cestoda: *Proteocephalus ambloplites*; min-max: `r cestode_min` - `r cestode_max` ; median: `r cestode_median`). The most abundant species of trematode causing blackspots was *Apophallus sp*. (Binning, Lanthier, unpublished data), but *Uvulifer sp.* was found more frequently inside the muscles (MG, personal observations).Experimentally fish gained in mean `r gain_mean` blackspots, and were found on the fines, body, gills and inside the muscles. Bass tapeworm were mostly found in the liver, stomach and digestive tract, occasionally around the spleen (parasite count: 9), and rarely on the gills (parasite count: 3) or the heart (parasite count: 2). Unknown nematode species were found rarely in the body cavity (alive parasite count: 4).
+The caging experiment successfully infected our fish. Uninfected fish that stayed in the laboratory had no alive parasite, which indicate that the praziquantel treatment was effective. The two most abundant species found in the experimentally infected fish were trematodes causing the blackspot disease (Trematoda: *Apophallus sp.* and *Uvulifer sp.*; min-max: `r BS_min`- `r BS_max`; median: `r BS_median`) and the bass tapeworm (Cestoda: *Proteocephalus ambloplites*; min-max: `r cestode_min` - `r cestode_max` ; median: `r cestode_median`). The most abundant species of trematode causing blackspots was *Apophallus sp*. (Binning, Lanthier, unpublished data), but *Uvulifer sp.* was found more frequently inside the muscles (MG, personal observations).Experimentally fish gained in mean `r gain_mean` blackspots, and were found on the fines, body, gills and inside the muscles. Bass tapeworm were mostly found in the liver, stomach and digestive tract, occasionally around the spleen (parasite count: 9), and rarely on the gills (parasite count: 3) or the heart (parasite count: 2). Unknown nematode species were found rarely in the body cavity (alive parasite count: 4).
 
 #### *Evidence of personality and behavioural syndromes*
 
@@ -415,18 +406,22 @@ Exploration and activity were repeatable across trials (Exploration: R = `r R_ex
 #| warning: false
 
 #################################
-# MODEL 3: effect of parasite on experimental group
+# MODEL 3: random slopes
+#################################
+
+#################################
+# MODEL 4: effect of parasite on experimental group
 #################################
   
-#Extract post sd from model 3
-post_sd_pl <- as_draws_df(model3, variable = "^b", regex = TRUE)
+#Extract post sd from model 4
+post_sd_pl <- as_draws_df(model4, variable = "^b", regex = TRUE)
 
 #extrait effect of parasite load on each traits
 bold_pl<-post_sd_pl[,grep("b_logboldness_z_pl", colnames(post_sd_pl))]
 exp_pl<-post_sd_pl[,grep("b_exploration_z_pl", colnames(post_sd_pl))]
 act_pl<-post_sd_pl[,grep("b_logactivity_z_pl", colnames(post_sd_pl))]
 
-  #mean and quantile
+  #mean and quantile for activity
   act_pl_num<- as.numeric(unlist(act_pl))
   act_pl_mean <- mean(act_pl_num)
   act_pl_Blb <- round(quantile(act_pl_num, c(0.025, 0.975))[1], 3)
@@ -436,10 +431,30 @@ act_pl<-post_sd_pl[,grep("b_logactivity_z_pl", colnames(post_sd_pl))]
   p_act_pl<-pmcmc(act_pl_num, twotail = TRUE) #significant
 
   #R2
-  R2_m_3 <- bayes_R2(model3, re.form = NA) #marginal
-  R2_c_3 <- bayes_R2(model3) #conditional
+  R2_m_4 <- bayes_R2(model4, re.form = NA) #marginal
+  R2_c_4 <- bayes_R2(model4) #conditional
   
+  R2_act_4_m<-R2_m_4[2,1]
+  R2_act_4_c<-R2_c_4[2,1]
   
+    #mean and quantile for exploration
+  exp_pl_num<- as.numeric(unlist(exp_pl))
+  exp_pl_mean <- mean(exp_pl_num)
+  exp_pl_Blb <- round(quantile(exp_pl_num, c(0.025, 0.975))[1], 3)
+  exp_pl_Bub <- round(quantile(exp_pl_num, c(0.025, 0.975))[2], 3)
+  
+  #pmcmc value
+  p_exp_pl<-pmcmc(exp_pl_num, twotail = TRUE) #significant
+
+    #mean and quantile for boldness
+  bold_pl_num <- as.numeric(unlist(bold_pl))
+  bold_pl_mean <- mean(bold_pl_num)
+  bold_pl_Blb <- round(quantile(bold_pl_num, c(0.025, 0.975))[1], 3)
+  bold_pl_Bub <- round(quantile(bold_pl_num, c(0.025, 0.975))[2], 3)
+  
+  #pmcmc value
+  p_bold_pl<-pmcmc(bold_pl_num, twotail = TRUE) #significant
+
 #################################
 # MODEL 5: body condition on control group
 #################################
@@ -464,6 +479,9 @@ act_bc<-post_sd_bc[,grep("b_logactivity_z_bc", colnames(post_sd_bc))]
   #R2
   R2_m_5 <- bayes_R2(model5, re.form = NA) #marginal
   R2_c_5 <- bayes_R2(model5) #conditional
+  
+  R2_act_5_m<-R2_m_5[2,1]
+  R2_act_5_c<-R2_c_5[2,1]
   
   #mean and quantile for exploration
   exp_bc_num<- as.numeric(unlist(exp_bc))
@@ -497,43 +515,129 @@ exp_bc_6<-post_sd_pl_bc[,grep("b_exploration_z_bc", colnames(post_sd_pl_bc))]
 act_bc_6<-post_sd_pl_bc[,grep("b_logactivity_z_bc", colnames(post_sd_pl_bc))]
 
   #mean and quantile for activity 
-  act_bc_num_6<- as.numeric(unlist(act_bc))
-  act_bc_mean_6 <- mean(act_bc_num)
-  act_bc_Blb_6 <- round(quantile(act_bc_num, c(0.025, 0.975))[1], 3)
-  act_bc_Bub_6 <- round(quantile(act_bc_num, c(0.025, 0.975))[2], 3)
+  act_bc_num_6<- as.numeric(unlist(act_bc_6))
+  act_bc_mean_6 <- mean(act_bc_num_6)
+  act_bc_Blb_6 <- round(quantile(act_bc_num_6, c(0.025, 0.975))[1], 3)
+  act_bc_Bub_6 <- round(quantile(act_bc_num_6, c(0.025, 0.975))[2], 3)
   
   #pmcmc value for activity
-  p_act_bc_6<-pmcmc(act_bc_num, twotail = TRUE) #significant
+  p_act_bc_6<-pmcmc(act_bc_num_6, twotail = TRUE) #significant
 
   #R2
-  R2_m_5 <- bayes_R2(model6, re.form = NA) #marginal
-  R2_c_5 <- bayes_R2(model6) #conditional
-  R2_c_5 1,1
+  R2_m_6 <- bayes_R2(model6, re.form = NA) #marginal
+  R2_c_6 <- bayes_R2(model6) #conditional
+  
+  R2_act_6_m<-R2_m_6[2,1]
+  R2_act_6_c<-R2_c_6[2,1]
+  
+   #mean and quantile for exploration
+  exp_bc_num_6<- as.numeric(unlist(exp_bc_6))
+  exp_bc_mean_6 <- mean(exp_bc_num_6)
+  exp_bc_Blb_6 <- round(quantile(exp_bc_num_6, c(0.025, 0.975))[1], 3)
+  exp_bc_Bub_6 <- round(quantile(exp_bc_num_6, c(0.025, 0.975))[2], 3)
+  
+  #pmcmc value for activity
+  p_exp_bc_6<-pmcmc(exp_bc_num_6, twotail = TRUE) #significant
+
+   #mean and quantile for boldness
+  bold_bc_num_6<- as.numeric(unlist(bold_bc))
+ bold_bc_mean_6 <- mean(bold_bc_num_6)
+  bold_bc_Blb_6 <- round(quantile(bold_bc_num_6, c(0.025, 0.975))[1], 3)
+  bold_bc_Bub_6 <- round(quantile(bold_bc_num_6, c(0.025, 0.975))[2], 3)
+  
+  #pmcmc value for activity
+  p_bold_bc_6<-pmcmc(bold_bc_num_6, twotail = TRUE) #significant
+
   
 #################################
 # MODEL 7: looking at two species of parasites
 #################################
+
+  #Extract post sd from model 7
+post_sd_2_p <- as_draws_df(model7, variable = "^b", regex = TRUE)
+
+#extrait effect of parasite load on each traits
+bold_bs<-post_sd_2_p[,grep("b_logboldness_z_bs", colnames(post_sd_2_p))]
+exp_bs<-post_sd_2_p[,grep("b_exploration_z_bs", colnames(post_sd_2_p))]
+act_bs<-post_sd_2_p[,grep("b_logactivity_z_bs", colnames(post_sd_2_p))]
+
+bold_ces<-post_sd_2_p[,grep("b_logboldness_z_ces", colnames(post_sd_2_p))]
+exp_ces<-post_sd_2_p[,grep("b_exploration_z_ces", colnames(post_sd_2_p))]
+act_ces<-post_sd_2_p[,grep("b_logactivity_z_ces", colnames(post_sd_2_p))]
+
+  #blackspots
+  #mean and quantile for activity
+  act_bs_num<- as.numeric(unlist(act_bs))
+  act_bs_mean <- mean(act_bs_num)
+  act_bs_Blb <- round(quantile(act_bs_num, c(0.025, 0.975))[1], 3)
+  act_bs_Bub <- round(quantile(act_bs_num, c(0.025, 0.975))[2], 3)
   
-#################################
-# MODEL 8: interaction between body condition and parasite load
-#################################
+  #pmcmc value
+  p_act_bs<-pmcmc(act_bs_num, twotail = TRUE) #significant
+
+  #R2
+  R2_m_7 <- bayes_R2(model7, re.form = NA) #marginal
+  R2_c_7 <- bayes_R2(model7) #conditional
   
-#################################
-# MODEL 9: interaction between BS and cestodes
-#################################
+  R2_act_7_m<-R2_m_7[2,1]
+  R2_act_7_c<-R2_c_7[2,1]
+  
+    #mean and quantile for exploration
+  exp_bs_num<- as.numeric(unlist(exp_bs))
+  exp_bs_mean <- mean(exp_bs_num)
+  exp_bs_Blb <- round(quantile(exp_bs_num, c(0.025, 0.975))[1], 3)
+  exp_bs_Bub <- round(quantile(exp_bs_num, c(0.025, 0.975))[2], 3)
+  
+  #pmcmc value
+  p_exp_bs<-pmcmc(exp_bs_num, twotail = TRUE) #significant
+
+    #mean and quantile for boldness
+  bold_bs_num<- as.numeric(unlist(bold_bs))
+  bold_bs_mean <- mean(bold_bs_num)
+  bold_bs_Blb <- round(quantile(bold_bs_num, c(0.025, 0.975))[1], 3)
+  bold_bs_Bub <- round(quantile(bold_bs_num, c(0.025, 0.975))[2], 3)
+  
+  #pmcmc value
+  p_bold_bs<-pmcmc(bold_bs_num, twotail = TRUE) #significant
+
+  ###cestodes
+  #mean and quantile for activity
+  act_ces_num<- as.numeric(unlist(act_ces))
+  act_ces_mean <- mean(act_ces_num)
+  act_ces_Blb <- round(quantile(act_ces_num, c(0.025, 0.975))[1], 3)
+  act_ces_Bub <- round(quantile(act_ces_num, c(0.025, 0.975))[2], 3)
+  
+  #pmcmc value
+  p_act_ces<-pmcmc(act_ces_num, twotail = TRUE) #significant
+  
+    #mean and quantile for exploration
+  exp_ces_num<- as.numeric(unlist(exp_ces))
+  exp_ces_mean <- mean(exp_ces_num)
+  exp_ces_Blb <- round(quantile(exp_ces_num, c(0.025, 0.975))[1], 3)
+  exp_ces_Bub <- round(quantile(exp_ces_num, c(0.025, 0.975))[2], 3)
+  
+  #pmcmc value
+  p_exp_ces<-pmcmc(exp_ces_num, twotail = TRUE) #significant
+
+    #mean and quantile for boldness
+  bold_ces_num<- as.numeric(unlist(bold_ces))
+  bold_ces_mean <- mean(bold_ces_num)
+  bold_ces_Blb <- round(quantile(bold_ces_num, c(0.025, 0.975))[1], 3)
+  bold_ces_Bub <- round(quantile(bold_ces_num, c(0.025, 0.975))[2], 3)
+  
+  #pmcmc value
+  p_bold_ces<-pmcmc(bold_ces_num, twotail = TRUE) #significant
   
   
 ```
 
-#### *Parasites effects  on personality traits*
+#### *Body condition affect positively activity*
 
-Body condition had a positive effect on activity in both the uninfected and experimentally infected group (Uninfected: $\Beta$ = `r act_bc_mean`, 95% CI = `r act_bc_Blb`, `r act_bc_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_bc`, $R_{^2}$ = 0.046), Infected: $\Beta$ = `r act_bc_mean_6`, 95% CI = `r act_bc_Blb_6`, `r act_bc_Bub_6`, $pMCMC_{\alpha = 0.05}$ = `r p_act_bc_6`, $R_{^2}$ = 0.143)). Body condition did not have a significant effect on boldness or exploration in the uninfected group () and infected group ().
+Body condition had a positive effect on activity in both the uninfected and experimentally infected group (Uninfected: $\beta$ = `r act_bc_mean`, 95% CI = `r act_bc_Blb`, `r act_bc_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_bc`, $R_{m}^{2}$ = `r R2_act_5_m`, $R_{c}^{2}$ = `r R2_act_5_c`, Infected: $\beta$ = `r act_bc_mean_6`, 95% CI = `r act_bc_Blb_6`, `r act_bc_Bub_6`, $pMCMC_{\alpha = 0.05}$ = `r p_act_bc_6`, $R_{m}^{2}$ = `r R2_act_6_m`, $R_{c}^{2}$ = `r R2_act_6_c`). Body condition did not have a significant effect on exploration or boldness in the uninfected group (Exploration: $\beta$ = `r exp_bc_mean`, 95% CI = `r exp_bc_Blb`, `r exp_bc_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_exp_bc`; Boldness: $\beta$ = `r bold_bc_mean`, 95% CI = `r bold_bc_Blb`, `r bold_bc_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_bold_bc`) and infected group (Exploration: $\beta$ = `r exp_bc_mean_6`, 95% CI = `r exp_bc_Blb_6`, `r exp_bc_Bub_6`, $pMCMC_{\alpha = 0.05}$ = `r p_exp_bc_6`; Boldness: $\beta$ = `r bold_bc_mean_6`, 95% CI = `r bold_bc_Blb_6`, `r bold_bc_Bub_6`, $pMCMC_{\alpha = 0.05}$ = `r p_bold_bc_6`).
 
+#### *Parasite load decrease activity*
 
-When looking at the experimentally infected fish, parasite load had a negative effect on activity ($\Beta$ = `r act_pl_mean`, 95% CI = `r act_pl_Blb`, `r act_pl_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_pl`, $R_{^2}$ = 0.068). We did not capture an effect of parasite load on exploration or boldness (). 
-
-no interwaction between parasites = good
-Looking at the experimentally infected fish. When we include parasite load, strong effect on activity, decrease activity. Interaction. And two types parasites (differents modes). Distinct differences between parasites. Unexpected, then explored. More conservative models. Something worth pointing out even if it's not significant. 
+When looking at the experimentally infected fish, parasite load had a negative effect on activity ($\beta$ = `r act_pl_mean`, 95% CI = `r act_pl_Blb`, `r act_pl_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_pl`, $R_{^2}$ = 0.068). We did not capture an effect of parasite load on exploration and boldness (Exploration: $\beta$ = `r exp_pl_mean`, 95% CI = `r exp_pl_Blb`, `r exp_pl_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_exp_pl`; Boldness: $\beta$ = `r bold_pl_mean`, 95% CI = `r bold_pl_Blb`, `r bold_pl_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_bold_pl`). When looking at both parasites separately,surprisingly we found an effect of the number of blackspots on activity ($\beta$ = `r act_bs_mean`, 95% CI = `r act_bs_Blb`, `r act_bs_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_bs`, $R_{m}^{2}$ = `r R2_act_7_m`, $R_{c}^{2}$ = `r R2_act_7_c`), but not for exploration and boldness (Exploration: $\beta$ = `r exp_bs_mean`, 95% CI = `r exp_bs_Blb`, `r exp_bs_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_exp_bs`; Boldness: $\beta$ = `r bold_bs_mean`, 95% CI = `r bold_bs_Blb`, `r bold_bs_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_bold_bs`). We find worth mentioning the negative effect of cestodes on exploration ($\beta$ = `r exp_ces_mean`, 95% CI = `r exp_ces_Blb`, `r exp_ces_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_exp_ces`) and positive effect on boldness ($\beta$ = `r bold_ces_mean`, 95% CI = `r bold_ces_Blb`, `r bold_ces_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_bold_ces`) even though it was not significant. Activity was not impacted at all by cestodes ($\beta$ = `r act_ces_mean`, 95% CI = `r act_ces_Blb`, `r act_ces_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_ces`).
 
 
 ```{r}
@@ -739,7 +843,6 @@ trt <- as.factor(all_data$treatment)
 dat1<-dat_model %>% 
   filter(trait == "logboldness")
 
-
 #boldness
 m1<-
 ggplot(all_data, aes(x = trt, y = log_boldness, group = trt, color = trt)) +
@@ -888,6 +991,8 @@ annotate("text",  x = 1.5, y = 4, label = TeX(paste0("$pMCMC_{\\alpha = 0.05}$ =
 #| fig-width: 7
 #| fig-height: 8
 
+dat_parasite <- read.table("./output/dat_models_parasite.csv",header=T, sep=",")
+#need to fit geom-smooth with my models
     ggplot(data=dat_parasite)+
   geom_smooth(mapping = aes(x = z_pl, y = log_boldness), color = "red")+
   geom_smooth(mapping = aes(x = z_ces, y = log_boldness), color = "green")+
