@@ -23,7 +23,7 @@ explore_3 <- bf(exploration ~ 1 + treatment + (treatment |q| ID_fish) + (1 | cag
 
 model3 <- brms::brm(boldness_3 + activity_3 + explore_3 + set_rescor(TRUE), 
                     data = all_data, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
-                    save_pars = save_pars(), file = "./output/models/model3", file_refit = "on_change",
+                    save_pars = save_pars(all = TRUE), file = "./output/models/model3", file_refit = "on_change",
                     control = list(adapt_delta = 0.98))
 
 # Compare models  
