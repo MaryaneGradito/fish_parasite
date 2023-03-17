@@ -408,7 +408,78 @@ summary(model2)
 summary(model1)
 ```
 
+
+```{r}
+#| label: parasite effects
+#| output: false
+#| warning: false
+
+#################################
+# MODEL 3
+#################################
+  
+#Extract post sd from model 3
+post_sd_pl <- as_draws_df(model3, variable = "^b", regex = TRUE)
+
+#extrait effect of parasite load on each traits
+bold_pl<-post_sd_pl[,grep("b_logboldness_z_pl", colnames(post_sd_pl))]
+exp_pl<-post_sd_pl[,grep("b_exploration_z_pl", colnames(post_sd_pl))]
+act_pl<-post_sd_pl[,grep("b_logactivity_z_pl", colnames(post_sd_pl))]
+
+  #mean and quantile
+  act_pl_num<- as.numeric(unlist(act_pl))
+  act_pl_mean <- mean(act_pl_num)
+  act_pl_Blb <- round(quantile(act_pl_num, c(0.025, 0.975))[1], 3)
+  act_pl_Bub <- round(quantile(act_pl_num, c(0.025, 0.975))[2], 3)
+  
+  #pmcmc value
+  p_act_pl<-pmcmc(act_pl_num, twotail = TRUE) #significant
+
+  #R2
+  R2_m_3 <- bayes_R2(model3, re.form = NA) #marginal
+  R2_c_3 <- bayes_R2(model3) #conditional
+  
+  
+#################################
+# MODEL 5
+#################################
+  
+#Extract post sd from model 5
+post_sd_bc <- as_draws_df(model5, variable = "^b", regex = TRUE)
+
+#extrait effect of parasite load on each traits
+bold_bc<-post_sd_bc[,grep("b_logboldness_z_bc", colnames(post_sd_bc))]
+exp_bc<-post_sd_bc[,grep("b_exploration_z_bc", colnames(post_sd_bc))]
+act_bc<-post_sd_bc[,grep("b_logactivity_z_bc", colnames(post_sd_bc))]
+
+  #mean and quantile
+  act_bc_num<- as.numeric(unlist(act_bc))
+  act_bc_mean <- mean(act_bc_num)
+  act_bc_Blb <- round(quantile(act_bc_num, c(0.025, 0.975))[1], 3)
+  act_bc_Bub <- round(quantile(act_bc_num, c(0.025, 0.975))[2], 3)
+  
+  #pmcmc value
+  p_act_bc<-pmcmc(act_bc_num, twotail = TRUE) #significant
+
+  #R2
+  R2_m_5 <- bayes_R2(model5, re.form = NA) #marginal
+  R2_c_5 <- bayes_R2(model5) #conditional
+  
+  
+#################################
+# MODEL 6
+#################################
+  
+  
+#################################
+# MODEL 7
+#################################
+  
+  
+```
+
 #### *Parasites change host fish personality*
+Parasite load had a negative effect on activity ($\Beta$ = `r act_pl_mean`, 95% CI = `r act_pl_Blb`, `r act_pl_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_pl`, $R_{^2}$ = 0.068). We did not capture an effect of parasite load on exploration or boldness. 
 
 #### *Behavioural syndromes*
 
