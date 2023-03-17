@@ -30,3 +30,5 @@ model3 <- brms::brm(boldness_3 + activity_3 + explore_3 + set_rescor(TRUE),
 model3 <- add_criterion(model3 , c("loo", "waic"), moment_match = TRUE)
 
 saveRDS(model3, file = "./output/models/model3.rds")
+
+loo(model3,model2) #model 2 is better but small differences
