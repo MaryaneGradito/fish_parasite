@@ -479,7 +479,11 @@ act_bc<-post_sd_bc[,grep("b_logactivity_z_bc", colnames(post_sd_bc))]
 ```
 
 #### *Parasites change host fish personality*
-Parasite load had a negative effect on activity ($\Beta$ = `r act_pl_mean`, 95% CI = `r act_pl_Blb`, `r act_pl_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_pl`, $R_{^2}$ = 0.068). We did not capture an effect of parasite load on exploration or boldness. 
+Body condition important for each group for activity. Didn't strongly affect the other traits
+
+Looking at the experimentally infected fish. When we include parasite load, strong effect on activity, decrease activity. Interaction. And two types parasites (differents modes). Distinct differences between parasites. Unexpected, then explored. More conservative models. Something worth pointing out even if it's not significant. 
+
+Parasite load had a negative effect on activity ($\Beta$ = `r act_pl_mean`, 95% CI = `r act_pl_Blb`, `r act_pl_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_pl`, $R_{^2}$ = 0.068). We did not capture an effect of parasite load on exploration or boldness.   
 
 #### *Behavioural syndromes*
 
