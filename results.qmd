@@ -404,6 +404,68 @@ Exploration and activity were repeatable across trials (Exploration: R = `r R_ex
 #################################
 # MODEL 3: random slopes
 #################################
+# Extract correlations from model
+  post_cor_3  <- as_draws_df(model3, variable = "^cor", regex= TRUE)
+  head(post_cor_3)
+
+# Extract correlations
+  
+  #Bold and act treatment E
+  cor_bold_act_E <-   post_cor_3[,grep("cor_ID_fish__logboldness_treatmentE__logactivity_treatmentE", colnames(post_cor_3))]
+  
+   cor_bold_act_E<- as.numeric(unlist(cor_bold_act_E))
+   cor_b_act_mean<-mean(cor_bold_act_E)
+   Blb_cor_b_act_E <- round(quantile(cor_bold_act_E, c(0.025, 0.975))[1], 2)
+  Bub_cor_b_act_E <- round(quantile(cor_bold_act_E, c(0.025, 0.975))[2], 2)
+  pmcmc_cor_bold_act_E<- pmcmc(cor_bold_act_E, twotail = TRUE) #not significant
+  
+  #Bold and exploration treatment E
+  cor_bold_exp_E <-   post_cor_3[,grep("cor_ID_fish__logboldness_treatmentE__exploration_treatmentE", colnames(post_cor_3))]
+  pmcmc_cor_bold_exp_E<- pmcmc(cor_bold_exp_E[,1], twotail = TRUE)
+  
+   cor_bold_exp_E<- as.numeric(unlist(cor_bold_exp_E))
+   cor_b_exp_mean<-mean(cor_bold_exp_E)
+   Blb_cor_b_exp_E <- round(quantile(cor_bold_exp_E, c(0.025, 0.975))[1], 2)
+  Bub_cor_b_exp_E <- round(quantile(cor_bold_exp_E, c(0.025, 0.975))[2], 2)
+  pmcmc_cor_bold_exp_E<- pmcmc(cor_bold_exp_E, twotail = TRUE) #not significant
+  
+  #Activity and exploration E
+  cor_act_exp_E <-   post_cor_3[,grep("cor_ID_fish__logactivity_treatmentE__exploration_treatmentE", colnames(post_cor_3))]
+  
+   cor_act_exp_E<- as.numeric(unlist(cor_act_exp_E))
+   cor_act_exp_E_mean<-mean(cor_act_exp_E)
+   Blb_cor_act_exp_E <- round(quantile(cor_act_exp_E, c(0.025, 0.975))[1], 2)
+  Bub_cor_act_exp_E <- round(quantile(cor_act_exp_E, c(0.025, 0.975))[2], 2)
+  pmcmc_cor_act_exp_E<- pmcmc(cor_act_exp_E, twotail = TRUE) #not significant
+  
+  
+#  Bold Intercept vs Bold E
+  cor_bold_I_E <-   post_cor_3[,grep("cor_ID_fish__logboldness_Intercept__logboldness_treatmentE", colnames(post_cor_3))]
+  
+  cor_bold_I_E<- as.numeric(unlist(cor_bold_I_E))
+   cor_bold_I_E_mean<-mean(cor_bold_I_E)
+   Blb_cor_bold_I_E <- round(quantile(cor_bold_I_E, c(0.025, 0.975))[1], 2)
+  Bub_cor_bold_I_E <- round(quantile(cor_bold_I_E, c(0.025, 0.975))[2], 2)
+  pmcmc_cor_bold_I_E<- pmcmc(cor_bold_I_E, twotail = TRUE) #not significant
+  
+  #Exploration I and Exp E
+  cor_exp_I_E <-   post_cor_3[,grep("cor_ID_fish__exploration_Intercept__exploration_treatment", colnames(post_cor_3))]
+  
+  cor_exp_I_E <- as.numeric(unlist(cor_exp_I_E))
+   cor_exp_I_E_mean<-mean(cor_exp_I_E)
+   Blb_cor_exp_I_E <- round(quantile(cor_exp_I_E, c(0.025, 0.975))[1], 2)
+  Bub_cor_exp_I_E <- round(quantile(cor_exp_I_E, c(0.025, 0.975))[2], 2)
+  pmcmc_cor_exp_I_E<- pmcmc(cor_exp_I_E, twotail = TRUE) #not significant
+  
+#Act Intercept and act E
+  cor_act_I_E <-   post_cor_3[,grep("cor_ID_fish__logactivity_Intercept__logactivity_treatmentE", colnames(post_cor_3))]
+  
+   cor_act_I_E <- as.numeric(unlist(cor_act_I_E))
+   cor_act_I_E_mean<-mean(cor_act_I_E)
+   Blb_cor_act_I_E <- round(quantile(cor_act_I_E, c(0.025, 0.975))[1], 2)
+  Bub_cor_act_I_E <- round(quantile(cor_act_I_E, c(0.025, 0.975))[2], 2)
+  pmcmc_cor_act_I_E<- pmcmc(cor_act_I_E, twotail = TRUE) #almost significant
+  
 
 #################################
 # MODEL 4: effect of parasite on experimental group
@@ -635,8 +697,7 @@ Body condition had a positive effect on activity in both the uninfected and expe
 
 When looking at the experimentally infected fish, parasite load had a negative effect on activity ($\beta$ = `r act_pl_mean`, 95% CI = `r act_pl_Blb`, `r act_pl_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_pl`, $R_{^2}$ = 0.068). We did not capture an effect of parasite load on exploration and boldness (Exploration: $\beta$ = `r exp_pl_mean`, 95% CI = `r exp_pl_Blb`, `r exp_pl_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_exp_pl`; Boldness: $\beta$ = `r bold_pl_mean`, 95% CI = `r bold_pl_Blb`, `r bold_pl_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_bold_pl`). When looking at both parasites separately,surprisingly we found an effect of the number of blackspots on activity ($\beta$ = `r act_bs_mean`, 95% CI = `r act_bs_Blb`, `r act_bs_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_bs`, $R_{m}^{2}$ = `r R2_act_7_m`, $R_{c}^{2}$ = `r R2_act_7_c`), but not for exploration and boldness (Exploration: $\beta$ = `r exp_bs_mean`, 95% CI = `r exp_bs_Blb`, `r exp_bs_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_exp_bs`; Boldness: $\beta$ = `r bold_bs_mean`, 95% CI = `r bold_bs_Blb`, `r bold_bs_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_bold_bs`). We find worth mentioning the negative effect of cestodes on exploration ($\beta$ = `r exp_ces_mean`, 95% CI = `r exp_ces_Blb`, `r exp_ces_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_exp_ces`) and positive effect on boldness ($\beta$ = `r bold_ces_mean`, 95% CI = `r bold_ces_Blb`, `r bold_ces_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_bold_ces`) even though it was not significant. Activity was not impacted at all by cestodes ($\beta$ = `r act_ces_mean`, 95% CI = `r act_ces_Blb`, `r act_ces_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_ces`).
 
-
-
+Looking at the within-individual level, individuals that increased the most in their exploratory behaviour tend to have the strongest change in boldness ($cor_{id}$ = `r cor_b_exp_mean`, 95% CI = `r Blb_cor_b_exp_E`, `r Bub_cor_b_exp_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_bold_exp_E`). Fish that tend to have strong negative change in their boldness slope tend to have positive change in their activity slope ($cor_{id}$ = `r cor_b_act_mean`, 95% CI = `r Blb_cor_b_act_E`, `r Bub_cor_b_act_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_bold_act_E`). We found that when a fish have a strong positive change in exploration, they tend to have a positive change in their activity as well ($cor_{id}$ = `r cor_act_exp_E_mean`, 95% CI = `r Blb_cor_act_exp_E`, `r Bub_cor_act_exp_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_act_exp_E`). Fish above average for boldness had a bigger decrease in boldness ($cor_{id}$ = `r cor_bold_I_E_mean`, 95% CI = `r Blb_cor_bold_I_E`, `r Bub_cor_bold_I_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_bold_I_E`). Animals below average for exploration had a larger increase in their exploratory behaviour after the experimental infection ($cor_{id}$ = `r cor_exp_I_E_mean`, 95% CI = `r Blb_cor_exp_I_E`, `r Bub_cor_exp_I_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_exp_I_E`). More active fish tend to have the strongest negative change, and the least active fish tend to have a bigger increase in activity after the experimental infection ($cor_{id}$ = `r cor_act_I_E_mean`, 95% CI = `r Blb_cor_act_I_E`, `r Bub_cor_act_I_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_act_I_E`). 
 
 ```{r}
 #| label: fig-fig1
@@ -1152,7 +1213,7 @@ k3<-ggplot(data= dat_slopes)+
                color="paleturquoise4"
                )+
       labs(y = TeX(paste0("log Activity", " ", "$\\beta_{id}$")),
-           x = TeX(paste0("Exploratoon", " ", "$\\beta_{id}$")))
+           x = TeX(paste0("Exploration", " ", "$\\beta_{id}$")))
 
   plot_grid(
   k1, k2, k3,
