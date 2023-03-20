@@ -1034,7 +1034,6 @@ ggplot(data=dat_parasite)+
 
 #exploration treatment E
  test  <- ranef(model3, summary = FALSE)$ID_fish
-  test  <- ranef(model3)$ID_fish
 
  exploration_treatmentE_blup <-  test[, , "exploration_treatmentE"]
   posterior <- as_draws_df(model3, vars = "^b")
@@ -1105,8 +1104,10 @@ k1<-ggplot(data= dat_slopes)+
      geom_segment(data =dat_slopes,
                aes(x=bold_E, xend=bold_E-se_b_E, y=exp_E, yend=exp_E), size = 0.0025,
                color="paleturquoise4"
-               )
-
+               ) +
+      labs(y = TeX(paste0("Exploration", " ", "$\\beta_{id}$")),
+           x = TeX(paste0("log Boldness", " ", "$\\beta_{id}$")))
+ 
 #boldness and activity E
 k2<-ggplot(data= dat_slopes)+
   theme_classic()+
@@ -1126,7 +1127,9 @@ k2<-ggplot(data= dat_slopes)+
      geom_segment(data =dat_slopes,
                aes(x=bold_E, xend=bold_E-se_b_E, y=act_E, yend=act_E), size = 0.0025,
                color="paleturquoise4"
-               )
+               ) +
+      labs(y = TeX(paste0("log Activity", " ", "$\\beta_{id}$")),
+           x = TeX(paste0("log Boldness", " ", "$\\beta_{id}$")))
 
 #activity and exploration E
 k3<-ggplot(data= dat_slopes)+
@@ -1147,7 +1150,9 @@ k3<-ggplot(data= dat_slopes)+
      geom_segment(data =dat_slopes,
                aes(x=exp_E, xend=exp_E-se_exp_E, y=act_E, yend=act_E), size = 0.0025,
                color="paleturquoise4"
-               )
+               )+
+      labs(y = TeX(paste0("log Activity", " ", "$\\beta_{id}$")),
+           x = TeX(paste0("Exploratoon", " ", "$\\beta_{id}$")))
 
   plot_grid(
   k1, k2, k3,
@@ -1169,7 +1174,9 @@ k4<-ggplot(data= dat_slopes)+
                ) +
      geom_segment(data =dat_slopes,
                aes(x=bold_I, xend=bold_I-se_b_I, y=bold_E, yend=bold_E), size = 0.0025,color ="lemonchiffon4"
-               )
+               ) +
+     labs(x = TeX(paste0("Boldness Behaviour", " (personality - intercept)")),
+           y = TeX(paste0("Boldness", " Slope ", " $\\beta_{id}$")))
 
 #Exp I  vs Exp E
 k5<-ggplot(data= dat_slopes)+
@@ -1190,7 +1197,9 @@ k5<-ggplot(data= dat_slopes)+
      geom_segment(data =dat_slopes,
                aes(x=exp_I, xend=exp_I-se_exp_I, y=exp_E, yend=exp_E), size = 0.0025,
                color ="lemonchiffon4"
-               )
+               ) +
+      labs(x = TeX(paste0("Exploratory Behaviour", " (personality - intercept)")),
+           y = TeX(paste0("Exploration", " Slope ", " $\\beta_{id}$")))
 
 #act I  vs act E
 k6<-ggplot(data= dat_slopes)+
@@ -1211,7 +1220,9 @@ k6<-ggplot(data= dat_slopes)+
      geom_segment(data =dat_slopes,
                aes(x=act_I, xend=act_I-se_act_I, y=act_E, yend=act_E), size = 0.0025,
                color ="lemonchiffon4"
-               )
+               ) +
+      labs(x = TeX(paste0("Activity Behaviour", " (personality - intercept)")),
+           y = TeX(paste0("Activity", " Slope ", " $\\beta_{id}$")))
 
   plot_grid(
   k4, k5, k6,
