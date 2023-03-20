@@ -86,3 +86,21 @@ overall_repeatability <- function(C_t, E_t, cage, logsigmaC, logsigmaE, trait) {
 
     return(R)
 }
+
+
+
+#' @title creation of a dataframe
+#' @description Will create a dataframe using the posterior distribution from a model
+#' @param blup posterior distribution of the deviation for each ID
+#' @param b posterior distribution at the population level
+
+
+df <- function(blup, b){
+  
+  fishid_slope <- apply(blup, 2, function(x) rowSums(b + x))
+  fishid_slope_est <- apply(fishid_slope,2, function(x) mean(x))
+  fishid_slope_se <- apply(fishid_slope,2, function(x) sd(x))
+  fishid_slope <- cbind(fishid_slope_est,fishid_slope_se)
+  
+  return(fishid_slope)                                              
+  }
