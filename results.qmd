@@ -54,6 +54,33 @@ editor_options:
   model6 <- readRDS(file = "./output/models/model_6.rds")
   model7 <- readRDS(file = "./output/models/model_7.rds")
   
+  test  <- ranef(model3, summary = FALSE)$ID_fish
+  test  <- ranef(model3)$ID_fish
+
+ exploration_treatmentE_blup <-  test[, , "exploration_treatmentE"]
+  posterior <- as_draws_df(model3, vars = "^b")
+  exploration_treatmentE_b <- data.frame(posterior[,grep("b_exploration_treatmentE", colnames(posterior))])
+
+fishid_slope <- apply(exploration_treatmentE_blup, 2, function(x) rowSums(exploration_treatmentE_b + x))
+fishid_slope_est <- apply(fishid_slope,2, function(x) mean(x))
+fishid_slope_se <- apply(fishid_slope,2, function(x) sd(x))
+fishid_slope <- cbind(fishid_slope_est,fishid_slope_se)
+
+y = test[,1,"logboldness_Intercept"] + 0.22
+x = test[,1,"logactivity_treatmentE"]+-0.26
+sey <- test[,2,"logboldness_Intercept"]
+sex <- test[,2,"logactivity_treatmentE"]
+
+  plot(y~x, xlab = "Slope for Activity", ylab = "log Mean Boldness", pch = 2, ylim = c(-0.5, 1), xlim=c(-1.2, 1)) 
+  arrows(x0 = x, x1 = x, y0 = y, y1 = y+sey, length 
+  = 0.025, angle = 90)
+  arrows(x0 = x, x1 = x, y0 = y, y1 = y-sey, length 
+  = 0.025, angle = 90)
+  arrows(x0 = x, x1 = x+sex, y0 = y, y1 = y, length 
+  = 0.025, angle = 90)
+  arrows(x0 = x, x1 = x-sex, y0 = y, y1 = y, length 
+  = 0.025, angle = 90)
+
   #Compare model 4 and 6 (only thing that changed was body condition)
   loo(model4 ,model6) #model 6 better but they are really close
   
