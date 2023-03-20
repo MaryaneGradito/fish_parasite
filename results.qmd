@@ -53,37 +53,6 @@ editor_options:
   model5 <- readRDS(file = "./output/models/model_5.rds")
   model6 <- readRDS(file = "./output/models/model_6.rds")
   model7 <- readRDS(file = "./output/models/model_7.rds")
-  
-  test  <- ranef(model3, summary = FALSE)$ID_fish
-  test  <- ranef(model3)$ID_fish
-
- exploration_treatmentE_blup <-  test[, , "exploration_treatmentE"]
-  posterior <- as_draws_df(model3, vars = "^b")
-  exploration_treatmentE_b <- data.frame(posterior[,grep("b_exploration_treatmentE", colnames(posterior))])
-
-fishid_slope <- apply(exploration_treatmentE_blup, 2, function(x) rowSums(exploration_treatmentE_b + x))
-fishid_slope_est <- apply(fishid_slope,2, function(x) mean(x))
-fishid_slope_se <- apply(fishid_slope,2, function(x) sd(x))
-fishid_slope <- cbind(fishid_slope_est,fishid_slope_se)
-
-y = test[,1,"logboldness_Intercept"] + 0.22
-x = test[,1,"logactivity_treatmentE"]+-0.26
-sey <- test[,2,"logboldness_Intercept"]
-sex <- test[,2,"logactivity_treatmentE"]
-
-  plot(y~x, xlab = "Slope for Activity", ylab = "log Mean Boldness", pch = 2, ylim = c(-0.5, 1), xlim=c(-1.2, 1)) 
-  arrows(x0 = x, x1 = x, y0 = y, y1 = y+sey, length 
-  = 0.025, angle = 90)
-  arrows(x0 = x, x1 = x, y0 = y, y1 = y-sey, length 
-  = 0.025, angle = 90)
-  arrows(x0 = x, x1 = x+sex, y0 = y, y1 = y, length 
-  = 0.025, angle = 90)
-  arrows(x0 = x, x1 = x-sex, y0 = y, y1 = y, length 
-  = 0.025, angle = 90)
-
-  #Compare model 4 and 6 (only thing that changed was body condition)
-  loo(model4 ,model6) #model 6 better but they are really close
-  
   model8<-readRDS(file = "./output/models/model_8.rds")
   model9<-readRDS(file = "./output/models/model_9.rds")
 
@@ -667,6 +636,8 @@ Body condition had a positive effect on activity in both the uninfected and expe
 When looking at the experimentally infected fish, parasite load had a negative effect on activity ($\beta$ = `r act_pl_mean`, 95% CI = `r act_pl_Blb`, `r act_pl_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_pl`, $R_{^2}$ = 0.068). We did not capture an effect of parasite load on exploration and boldness (Exploration: $\beta$ = `r exp_pl_mean`, 95% CI = `r exp_pl_Blb`, `r exp_pl_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_exp_pl`; Boldness: $\beta$ = `r bold_pl_mean`, 95% CI = `r bold_pl_Blb`, `r bold_pl_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_bold_pl`). When looking at both parasites separately,surprisingly we found an effect of the number of blackspots on activity ($\beta$ = `r act_bs_mean`, 95% CI = `r act_bs_Blb`, `r act_bs_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_bs`, $R_{m}^{2}$ = `r R2_act_7_m`, $R_{c}^{2}$ = `r R2_act_7_c`), but not for exploration and boldness (Exploration: $\beta$ = `r exp_bs_mean`, 95% CI = `r exp_bs_Blb`, `r exp_bs_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_exp_bs`; Boldness: $\beta$ = `r bold_bs_mean`, 95% CI = `r bold_bs_Blb`, `r bold_bs_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_bold_bs`). We find worth mentioning the negative effect of cestodes on exploration ($\beta$ = `r exp_ces_mean`, 95% CI = `r exp_ces_Blb`, `r exp_ces_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_exp_ces`) and positive effect on boldness ($\beta$ = `r bold_ces_mean`, 95% CI = `r bold_ces_Blb`, `r bold_ces_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_bold_ces`) even though it was not significant. Activity was not impacted at all by cestodes ($\beta$ = `r act_ces_mean`, 95% CI = `r act_ces_Blb`, `r act_ces_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_ces`).
 
 
+
+
 ```{r}
 #| label: fig-fig1
 #| fig-cap: Correlation between traits
@@ -1052,6 +1023,216 @@ ggplot(data=dat_parasite)+
 
 ```
 
+```{r}
+#| label: fig-fig4
+#| fig-cap: Random slopes
+#| out-width: 100%
+#| fig-width: 7
+#| fig-height: 4
+
+#Create data frame with posterior distribution from model2
+
+#exploration treatment E
+ test  <- ranef(model3, summary = FALSE)$ID_fish
+  test  <- ranef(model3)$ID_fish
+
+ exploration_treatmentE_blup <-  test[, , "exploration_treatmentE"]
+  posterior <- as_draws_df(model3, vars = "^b")
+  exploration_treatmentE_b <- data.frame(posterior[,grep("b_exploration_treatmentE", colnames(posterior))])
+
+fishid_slope <- apply(exploration_treatmentE_blup, 2, function(x) rowSums(exploration_treatmentE_b + x))
+fishid_slope_est <- apply(fishid_slope,2, function(x) mean(x))
+fishid_slope_se <- apply(fishid_slope,2, function(x) sd(x))
+fishid_slope <- cbind(fishid_slope_est,fishid_slope_se)
+
+exp_E<-df(exploration_treatmentE_blup,exploration_treatmentE_b) #function works
+
+#Boldness treatment E
+ logboldness_treatmentE_blup <-  test[, , "logboldness_treatmentE"]
+  logboldness_treatmentE_b <- data.frame(posterior[,grep("b_logboldness_treatmentE", colnames(posterior))])
+  
+  bold_E<-df(logboldness_treatmentE_blup,logboldness_treatmentE_b)
+
+#Activity treatmentE
+   logactivity_treatmentE_blup <-  test[, , "logactivity_treatmentE"]
+  logactivity_treatmentE_b <- data.frame(posterior[,grep("b_logactivity_treatmentE", colnames(posterior))])
+  
+  act_E<-df(logactivity_treatmentE_blup,logactivity_treatmentE_b)
+
+  
+#Bold Intercept
+   logboldness_Intercept_blup <-  test[, , "logboldness_Intercept"]
+  logboldness_Intercept_b <- data.frame(posterior[,grep("b_logboldness_Intercept", colnames(posterior))])
+  
+  bold_I<-df(logboldness_Intercept_blup,logboldness_Intercept_b)
+
+#Exploration Intercept
+   exploration_Intercept_blup <-  test[, , "exploration_Intercept"]
+  exploration_Intercept_b <- data.frame(posterior[,grep("b_exploration_Intercept", colnames(posterior))])
+  
+  exp_I<-df(exploration_Intercept_blup,exploration_Intercept_b)
+
+#Activity Intercept
+   logactivity_Intercept_blup <-  test[, , "logactivity_Intercept"]
+  logactivity_Intercept_b <- data.frame(posterior[,grep("b_logactivity_Intercept", colnames(posterior))])
+  
+  act_I<-df(logactivity_Intercept_blup,logactivity_Intercept_b)
+  
+#combine data
+data_slopes<-cbind(bold_E,exp_E,act_E,bold_I,exp_I,act_I)
+dat_slopes<-as.data.frame(data_slopes)
+
+# assigning new names to the columns of the data frame
+colnames(dat_slopes) <- c('bold_E','se_b_E','exp_E','se_exp_E','act_E','se_act_E','bold_I','se_b_I','exp_I','se_exp_I','act_I','se_act_I')
+###Plot dataframe
+#boldness and exploration E
+
+k1<-ggplot(data= dat_slopes)+
+  theme_classic()+
+  geom_point(aes(x=bold_E,y=exp_E), color ="cyan3", size = 3)+
+  geom_segment(data =dat_slopes,
+               aes(x=bold_E, xend=bold_E, y=exp_E, yend=exp_E+se_exp_E), size = 0.0025,
+               color="paleturquoise4"
+               ) +
+     geom_segment(data =dat_slopes,
+               aes(x=bold_E, xend=bold_E, y=exp_E, yend=exp_E-se_exp_E), size = 0.0025,
+               color="paleturquoise4"
+               )+
+  geom_segment(data =dat_slopes,
+               aes(x=bold_E, xend=bold_E+se_b_E, y=exp_E, yend=exp_E), size = 0.0025,
+               color="paleturquoise4"
+               ) +
+     geom_segment(data =dat_slopes,
+               aes(x=bold_E, xend=bold_E-se_b_E, y=exp_E, yend=exp_E), size = 0.0025,
+               color="paleturquoise4"
+               )
+
+#boldness and activity E
+k2<-ggplot(data= dat_slopes)+
+  theme_classic()+
+  geom_point(aes(x=bold_E,y=act_E), color ="cyan3", size = 3)+
+  geom_segment(data =dat_slopes,
+               aes(x=bold_E, xend=bold_E, y=act_E, yend=act_E+se_act_E), size = 0.0025,
+               color="paleturquoise4"
+               ) +
+     geom_segment(data =dat_slopes,
+               aes(x=bold_E, xend=bold_E, y=act_E, yend=act_E-se_act_E), size = 0.0025,
+               color="paleturquoise4"
+               )+
+  geom_segment(data =dat_slopes,
+               aes(x=bold_E, xend=bold_E+se_b_E, y=act_E, yend=act_E), size = 0.0025,
+               color="paleturquoise4"
+               ) +
+     geom_segment(data =dat_slopes,
+               aes(x=bold_E, xend=bold_E-se_b_E, y=act_E, yend=act_E), size = 0.0025,
+               color="paleturquoise4"
+               )
+
+#activity and exploration E
+k3<-ggplot(data= dat_slopes)+
+  theme_classic()+
+  geom_point(aes(x=exp_E,y=act_E), color ="cyan3", size = 3)+
+  geom_segment(data =dat_slopes,
+               aes(x=exp_E, xend=exp_E, y=act_E, yend=act_E+se_act_E), size = 0.0025,
+               color="paleturquoise4"
+               ) +
+     geom_segment(data =dat_slopes,
+               aes(x=exp_E, xend=exp_E, y=act_E, yend=act_E-se_act_E), size = 0.0025,
+               color="paleturquoise4"
+               )+
+  geom_segment(data =dat_slopes,
+               aes(x=exp_E, xend=exp_E+se_exp_E, y=act_E, yend=act_E), size = 0.0025,
+               color="paleturquoise4"
+               ) +
+     geom_segment(data =dat_slopes,
+               aes(x=exp_E, xend=exp_E-se_exp_E, y=act_E, yend=act_E), size = 0.0025,
+               color="paleturquoise4"
+               )
+
+  plot_grid(
+  k1, k2, k3,
+  labels = "AUTO", ncol = 3)
+
+
+#Boldness I  vs Bold E
+k4<-ggplot(data= dat_slopes)+
+  theme_classic()+
+  geom_point(aes(x=bold_I,y=bold_E), color ="darkolivegreen3", size = 3)+
+  geom_segment(data =dat_slopes,
+               aes(x=bold_I, xend=bold_I, y=bold_E, yend=bold_E+se_b_E), size = 0.0025, color ="lemonchiffon4"
+               ) +
+     geom_segment(data =dat_slopes,
+               aes(x=bold_I, xend=bold_I, y=bold_E, yend=bold_E-se_b_E), size = 0.0025,color ="lemonchiffon4"
+               )+
+  geom_segment(data =dat_slopes,
+               aes(x=bold_I, xend=bold_I+se_b_I, y=bold_E, yend=bold_E), size = 0.0025,color ="lemonchiffon4"
+               ) +
+     geom_segment(data =dat_slopes,
+               aes(x=bold_I, xend=bold_I-se_b_I, y=bold_E, yend=bold_E), size = 0.0025,color ="lemonchiffon4"
+               )
+
+#Exp I  vs Exp E
+k5<-ggplot(data= dat_slopes)+
+  theme_classic()+
+  geom_point(aes(x=exp_I,y=exp_E), color ="darkolivegreen3", size = 3)+
+  geom_segment(data =dat_slopes,
+               aes(x=exp_I, xend=exp_I, y=exp_E, yend=exp_E+se_exp_E), size = 0.0025,
+               color ="lemonchiffon4"
+               ) +
+     geom_segment(data =dat_slopes,
+               aes(x=exp_I, xend=exp_I, y=exp_E, yend=exp_E-se_exp_E), size = 0.0025,
+               color ="lemonchiffon4"
+               )+
+  geom_segment(data =dat_slopes,
+               aes(x=exp_I, xend=exp_I+se_exp_I, y=exp_E, yend=exp_E), size = 0.0025,
+               color ="lemonchiffon4"
+               ) +
+     geom_segment(data =dat_slopes,
+               aes(x=exp_I, xend=exp_I-se_exp_I, y=exp_E, yend=exp_E), size = 0.0025,
+               color ="lemonchiffon4"
+               )
+
+#act I  vs act E
+k6<-ggplot(data= dat_slopes)+
+  theme_classic()+
+  geom_point(aes(x=act_I,y=act_E), color ="darkolivegreen3", size = 3)+
+  geom_segment(data =dat_slopes,
+               aes(x=act_I, xend=act_I, y=act_E, yend=act_E+se_act_E), size = 0.0025,
+               color ="lemonchiffon4"
+               ) +
+     geom_segment(data =dat_slopes,
+               aes(x=act_I, xend=act_I, y=act_E, yend=act_E-se_act_E), size = 0.0025,
+               color ="lemonchiffon4"
+               )+
+  geom_segment(data =dat_slopes,
+               aes(x=act_I, xend=act_I+se_act_I, y=act_E, yend=act_E), size = 0.0025,
+               color ="lemonchiffon4"
+               ) +
+     geom_segment(data =dat_slopes,
+               aes(x=act_I, xend=act_I-se_act_I, y=act_E, yend=act_E), size = 0.0025,
+               color ="lemonchiffon4"
+               )
+
+  plot_grid(
+  k4, k5, k6,
+  labels = "AUTO", ncol = 3)
+  
+#y = test[,1,"logboldness_Intercept"] + 0.22
+#x = test[,1,"logactivity_treatmentE"]+-0.26
+#sey <- test[,2,"logboldness_Intercept"]
+#sex <- test[,2,"logactivity_treatmentE"]
+
+ # plot(dat_slopes$bold_E~dat_slopes$exp_E, xlab = "Slope for exp", ylab = "slope for bold", pch = 2, ylim = c(-0.5, 1), xlim=c(-1.2, 1)) 
+  #arrows(x0 = x, x1 = x, y0 = y, y1 = y+sey, length 
+  #= 0.025, angle = 90)
+  #arrows(x0 = x, x1 = x, y0 = y, y1 = y-sey, length 
+  #= 0.025, angle = 90)
+  #arrows(x0 = x, x1 = x+sex, y0 = y, y1 = y, length 
+  #= 0.025, angle = 90)
+  #arrows(x0 = x, x1 = x-sex, y0 = y, y1 = y, length 
+  #= 0.025, angle = 90)
+
+```
 
 ```{r}
 #| label: tbl-tab1
