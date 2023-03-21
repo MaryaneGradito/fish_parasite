@@ -397,7 +397,7 @@ Exploration and activity were repeatable across trials (Exploration: R = `r R_ex
 
 
 ```{r}
-#| label: parasite effects
+#| label: parasite and body condition effects
 #| output: false
 #| warning: false
 
@@ -715,7 +715,7 @@ dat_C <- read.table("./output/dat_models_C.csv",header=T, sep=",")
 p1<-
    ggplot(data=dat_C)+
   geom_point(mapping = aes(x = log_boldness, y = log_activity, color = factor(ID_fish)))+ scale_color_viridis_d(option = "mako") +
-  geom_line(mapping = aes(x = log_boldness, y = log_activity, color = factor(ID_fish))) + 
+  geom_line(mapping = aes(x = log_boldness, y = log_activity, color = factor(ID_fish))) +
    theme_classic() +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX("$Boldness_{log_{2}}$"), y = TeX("$Activity_{log_{2}}$"), title = "Uninfected") +
@@ -1045,53 +1045,116 @@ annotate("text",  x = 1.5, y = 4, label = TeX(paste0("$pMCMC_{\\alpha = 0.05}$ =
 
 ```{r}
 #| label: fig-fig3
-#| fig-cap: Effect of parasite load
+#| fig-cap: Effect of parasite load (model7)
 #| out-width: 100%
 #| fig-width: 7
 #| fig-height: 8
 
 dat_parasite <- read.table("./output/dat_models_parasite.csv",header=T, sep=",")
-#need to fit geom-smooth with my models
-    ggplot(data=dat_parasite)+
-  geom_smooth(mapping = aes(x = z_pl, y = log_boldness), color = "red")+
-  geom_smooth(mapping = aes(x = z_ces, y = log_boldness), color = "green")+
-  geom_smooth(mapping = aes(x = z_bs, y = log_boldness))+
-  geom_point(mapping = aes(x = z_pl, y = log_boldness))+
-   theme_classic() +
-    theme(strip.background = element_rect(fill = "white", colour = "white")) +
-    theme(legend.position="none") + labs(x = TeX("$Boldness_{log_{2}}$"), y = TeX("Parasite load"), title = "")
-  #annotate("text", x = 1, y = 2.8, label = TeX(paste0("$r_{b}$ = ", " -0.42 ", " 95%CI: -0.85, 0.25 ")), size =3, color = "darkblue") + 
-  #annotate("text", x = 1, y = 2.4, label = TeX(paste0("$r_{w}$ = ", " -0.12 ", " 95%CI: -0.33, 0.09")), size=3, color = "darkgreen")
+install.packages("jpeg")
+require(jpeg)
+install.packages("magick")
+require(magick)
+img<-readJPEG("crapet_1.jpg")
+#now open a plot window with coordinates
+plot(1:10,ty="n")
+#specify the position of the image through bottom-left and top-right coords
+rasterImage(img,2,2,4,4)
 
-ggplot(data=dat_parasite)+
-  geom_smooth(mapping = aes(x = z_pl, y = log_activity), color = "red")+
-  geom_smooth(mapping = aes(x = z_ces, y = log_activity), color = "green")+
-  geom_smooth(mapping = aes(x = z_bs, y = log_activity))+
-  geom_point(mapping = aes(x = z_pl, y = log_activity))+
+  n1<- ggplot(data=dat_parasite)+
+  geom_point(mapping = aes(x = z_ces, y = log_boldness), color = "aquamarine3")+
+  geom_abline(intercept=-0.26, slope=0.11, color = "aquamarine3", size=1.2)+
+ geom_point(mapping = aes(x = z_bs, y = log_boldness), color ="darkgoldenrod")+
+geom_abline(intercept=-0.26, slope=-0.08, color ="darkgoldenrod", size = 1.2)+
    theme_classic() +
+  draw_image("bs.png", x = 3, y = -1.5, scale = 1.2)+
+    draw_image("cestode.png", x = 3, y = 0, scale = 1.2) +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
-    theme(legend.position="none") + labs(x = TeX("Parasite load"), y = TeX("$Activity_{log_{2}}$ load"), title = "")
-    
-ggplot(data=dat_parasite)+
-  geom_smooth(mapping = aes(x = z_pl, y = exploration), color = "red")+
-  geom_smooth(mapping = aes(x = z_ces, y = exploration), color = "green")+
-  geom_smooth(mapping = aes(x = z_bs, y = exploration))+
-  geom_point(mapping = aes(x = z_pl, y = exploration))+
-   theme_classic() +
-    theme(strip.background = element_rect(fill = "white", colour = "white")) +
-    theme(legend.position="none") + labs(x = TeX("Parasite load"), y = TeX("Exploration"), title = "")
-    
+    theme(legend.position="none") + labs(x = TeX("Parasite load"), y = TeX("$Boldness_{log_{2}}$"), title = "") +
+      annotate("text", x = -1, y = 3.2, label = TeX(paste0("$beta_{bs}$ = ", " -0.08 ", " 95%CI: -0.28, 0.12")), size =3, color = "darkgoldenrod4") + 
+  annotate("text", x = -1, y = 3, label = TeX(paste0("$beta_{ces}$ = "," 0.11 ", " 95%CI: -0.10,0.31")), size=3, color = "aquamarine4")
 
+n2<-ggplot(data=dat_parasite)+
+ geom_point(mapping = aes(x = z_ces, y = exploration),shape = 19, color = "aquamarine3")+
+  geom_abline(intercept=0.24, slope=-0.10, color = "aquamarine3", size = 1)+
+ geom_point(mapping = aes(x = z_bs, y = exploration), shape = 18, color ="darkgoldenrod")+
+geom_abline(intercept=0.24, slope=0.15, color ="darkgoldenrod", size = 1)+
+   theme_classic() +
+    theme(strip.background = element_rect(fill = "white", colour = "white")) +
+    theme(legend.position="none") + labs(x = TeX("Parasite load"), y = TeX("Exploration"), title = "") +
+    annotate("text", x = -1.7, y = 0.7, label = TeX(paste0("Number of cestodes")), size =3.5, color = "aquamarine4", fontface = "bold") +
+  annotate("text", x = -1.7, y = -0.2, label = TeX(paste0("Number of trematodes")), size =3.5, color = "darkgoldenrod4") +
+      annotate("text", x = -1, y = 3.2, label = TeX(paste0("$beta_{bs}$ = ", " 0.15 ", " 95%CI: -0.03, 0.32")), size =3, color = "darkgoldenrod4") + 
+  annotate("text", x = -1, y = 3, label = TeX(paste0("$beta_{ces}$ = "," -0.10 ", " 95%CI: -0.27, 0.08")), size=3, color = "aquamarine4")
+
+
+n3<-ggplot(data=dat_parasite)+
+ geom_point(mapping = aes(x = z_ces, y = log_activity), color = "aquamarine3")+
+  geom_abline(intercept=-0.14, slope=0.0, color = "aquamarine3", size = 1.2)+
+ geom_point(mapping = aes(x = z_bs, y = log_activity), color ="darkgoldenrod")+
+geom_abline(intercept=-0.14, slope=-0.23, color ="darkgoldenrod", size = 1.2)+
+   theme_classic() +
+    theme(strip.background = element_rect(fill = "white", colour = "white")) +
+    theme(legend.position="none") + labs(x = TeX("Parasite load"), y = TeX("$Activity_{log_{2}}$"), title = "")+
+  annotate("text", x = -1.7, y = 0.5, label = TeX(paste0("Number of trematodes")), size =3.5, color = "darkgoldenrod4", fontface = "bold") +
+  annotate("text", x = -1.7, y = -0.2, label = TeX(paste0("Number of cestodes")), size =3.5, color = "aquamarine4") +
+      annotate("text", x = -1, y = 3.2, label = TeX(paste0("$beta_{bs}$ = ", " -0.23 ", " 95%CI: -0.41, -0.06 **")), size =3, color = "darkgoldenrod4") + 
+  annotate("text", x = -1, y = 3, label = TeX(paste0("$beta_{ces}$ = "," 0.00 ", " 95%CI: -0.18, 0.18")), size=3, color = "aquamarine4")
+    
+plot_grid(
+  n1, n2, n3,
+  labels = "AUTO", ncol = 3)
 ```
 
 ```{r}
 #| label: fig-fig4
+#| fig-cap: Effect of body condition (model6)
+#| out-width: 100%
+#| fig-width: 7
+#| fig-height: 8
+
+
+  posterior <- as_draws_df(model6, vars = "^b")
+  logact_pl <- data.frame(posterior[,grep("b_logactivity_z_pl", colnames(posterior))])
+  logact_bc <- data.frame(posterior[,grep("b_logactivity_z_bc", colnames(posterior))])
+  
+mean_logact_pl <- apply(logact_pl,2, function(x) mean(x))
+se_log_act_pl <- apply(logact_bc,2, function(x) sd(x))
+test <- cbind(mean_logact_pl,se_log_act_pl)
+
+exp_E<-df(exploration_treatmentE_blup,exploration_treatmentE_b) #function works
+
+dat_parasite <- read.table("./output/dat_models_parasite.csv",header=T, sep=",")
+
+  ggplot(data=dat_parasite)+
+  geom_point(mapping = aes(x = z_bc, y = log_activity), color = "lightcoral")+
+  geom_abline(intercept=-0.14, slope=0.25, color = "lightcoral", size=1.2)+
+ geom_point(mapping = aes(x = z_pl, y = log_activity), color ="darkgoldenrod")+
+geom_abline(intercept=-0.14, slope=-0.18, color ="darkgoldenrod", size = 1.2)+
+   theme_classic() +
+    theme(strip.background = element_rect(fill = "white", colour = "white")) +
+    theme(legend.position="none") + labs(x = TeX("Parasite load"), y = TeX("$Boldness_{log_{2}}$"), title = "")+
+  annotate("text", x = -2, y = 0.5, label = TeX(paste0("Parasite load")), size =3.5, color = "darkgoldenrod4", fontface = "bold") +
+  annotate("text", x = -2, y = -1, label = TeX(paste0("Body condition")), size =3.5, color = "lightcoral") +
+      annotate("text", x = -1, y = 3.2, label = TeX(paste0("$beta_{pl}$ = ", " -0.18 ", " 95%CI: -0.37, 0.01")), size =3, color = "darkgoldenrod4") + 
+  annotate("text", x = -1, y = 3, label = TeX(paste0("$beta_{bc}$ = "," 0.25 ", " 95%CI: 0.08, 0.41**")), size=3, color = "lightcoral")
+
+  
+      
+    
+
+```
+
+
+
+```{r}
+#| label: fig-fig5
 #| fig-cap: Random slopes
 #| out-width: 100%
 #| fig-width: 7
 #| fig-height: 4
 
-#Create data frame with posterior distribution from model2
+#Create data frame with posterior distribution from model3
 
 #exploration treatment E
  test  <- ranef(model3, summary = FALSE)$ID_fish
@@ -1166,9 +1229,11 @@ k1<-ggplot(data= dat_slopes)+
                aes(x=bold_E, xend=bold_E-se_b_E, y=exp_E, yend=exp_E), size = 0.0025,
                color="paleturquoise4"
                ) +
+  geom_vline(xintercept=0, color = "red2")+
+  geom_hline(yintercept=0, color = "red2") +
       labs(y = TeX(paste0("Exploration", " ", "$\\beta_{id}$")),
-           x = TeX(paste0("log Boldness", " ", "$\\beta_{id}$")))
- 
+           x = TeX(paste0("$Boldness_{log_{2}}$", " ", "$\\beta_{id}$")))+
+  annotate("text", x = -1, y = -0.25, label = TeX(paste0("$cor_{id}$ = ", " -0.14 ", " 95%CI: -0.76, 0.59")), size =3, color = "red3")
 #boldness and activity E
 k2<-ggplot(data= dat_slopes)+
   theme_classic()+
@@ -1189,8 +1254,11 @@ k2<-ggplot(data= dat_slopes)+
                aes(x=bold_E, xend=bold_E-se_b_E, y=act_E, yend=act_E), size = 0.0025,
                color="paleturquoise4"
                ) +
-      labs(y = TeX(paste0("log Activity", " ", "$\\beta_{id}$")),
-           x = TeX(paste0("log Boldness", " ", "$\\beta_{id}$")))
+  geom_vline(xintercept=0, color = "red2")+
+  geom_hline(yintercept=0, color = "red2") +
+      labs(y = TeX(paste0("$Activity_{log_{2}}$", " ", "$\\beta_{id}$")),
+           x = TeX(paste0("$Boldness_{log_{2}}$", " ", "$\\beta_{id}$")))+
+    annotate("text", x = -1, y = -1.5, label = TeX(paste0("$cor_{id}$ = ", " -0.31 ", " 95%CI: -0.82, 0.42")), size =3, color = "red3")
 
 #activity and exploration E
 k3<-ggplot(data= dat_slopes)+
@@ -1212,8 +1280,11 @@ k3<-ggplot(data= dat_slopes)+
                aes(x=exp_E, xend=exp_E-se_exp_E, y=act_E, yend=act_E), size = 0.0025,
                color="paleturquoise4"
                )+
-      labs(y = TeX(paste0("log Activity", " ", "$\\beta_{id}$")),
-           x = TeX(paste0("Exploration", " ", "$\\beta_{id}$")))
+  geom_vline(xintercept=0, color = "red2")+
+  geom_hline(yintercept=0, color = "red2") +
+      labs(y = TeX(paste0("$Activity_{log_{2}}$", " ", "$\\beta_{id}$")),
+           x = TeX(paste0("Exploration", " ", "$\\beta_{id}$")))+
+  annotate("text", x = 0.8, y = -1.5, label = TeX(paste0("$cor_{id}$ = ", " 0.25 ", " 95%CI: -0.51, 0.80")), size =3, color = "red3")
 
   plot_grid(
   k1, k2, k3,
@@ -1236,8 +1307,11 @@ k4<-ggplot(data= dat_slopes)+
      geom_segment(data =dat_slopes,
                aes(x=bold_I, xend=bold_I-se_b_I, y=bold_E, yend=bold_E), size = 0.0025,color ="lemonchiffon4"
                ) +
-     labs(x = TeX(paste0("Boldness Behaviour", " (personality - intercept)")),
-           y = TeX(paste0("Boldness", " Slope ", " $\\beta_{id}$")))
+  geom_vline(xintercept=0, color = "red2")+
+  geom_hline(yintercept=0, color = "red2") +
+     labs(x = TeX(paste0("$Boldness_{log_{2}}$ Behaviour", " (personality - intercept)")),
+           y = TeX(paste0("$Boldness_{log_{2}}$", " Slope ", " $\\beta_{id}$")))+
+  annotate("text", x = 0.6, y = -1.3, label = TeX(paste0("$cor_{id}$ = ", " -0.20 ", " 95%CI: -0.74, 0.54")), size =3, color = "red3")
 
 #Exp I  vs Exp E
 k5<-ggplot(data= dat_slopes)+
@@ -1259,8 +1333,11 @@ k5<-ggplot(data= dat_slopes)+
                aes(x=exp_I, xend=exp_I-se_exp_I, y=exp_E, yend=exp_E), size = 0.0025,
                color ="lemonchiffon4"
                ) +
+  geom_vline(xintercept=0, color = "red2")+
+  geom_hline(yintercept=0, color = "red2") +
       labs(x = TeX(paste0("Exploratory Behaviour", " (personality - intercept)")),
-           y = TeX(paste0("Exploration", " Slope ", " $\\beta_{id}$")))
+           y = TeX(paste0("Exploration", " Slope ", " $\\beta_{id}$")))+
+  annotate("text", x = -1.0, y = -0.1, label = TeX(paste0("$cor_{id}$ = ", " -0.27 ", " 95%CI: -0.80, 0.51")), size =3, color = "red3")
 
 #act I  vs act E
 k6<-ggplot(data= dat_slopes)+
@@ -1282,8 +1359,12 @@ k6<-ggplot(data= dat_slopes)+
                aes(x=act_I, xend=act_I-se_act_I, y=act_E, yend=act_E), size = 0.0025,
                color ="lemonchiffon4"
                ) +
-      labs(x = TeX(paste0("Activity Behaviour", " (personality - intercept)")),
-           y = TeX(paste0("Activity", " Slope ", " $\\beta_{id}$")))
+  geom_vline(xintercept=0, color = "red2")+
+  geom_hline(yintercept=0, color = "red2") +
+      labs(x = TeX(paste0("$Activity_{log_{2}}$ Behaviour", " (personality - intercept)")),
+           y = TeX(paste0("$Activity_{log_{2}}$", " Slope ", " $\\beta_{id}$")))+
+   annotate("text", x = -0.8, y = -1, label = TeX(paste0("$cor_{id}$ = ", " -0.49 ", " 95%CI: -0.81, 0.11")), size =3, color = "red3")
+
 
   plot_grid(
   k4, k5, k6,
