@@ -1078,7 +1078,16 @@ dat_parasite <- read.table("./output/dat_models_parasite.csv",header=T, sep=",")
   # Now create the dataframe
   boldness_ces_dat <- cbind(newdat, logbold = sum_pred, logbold_L95 = sum_predL95, logboldU95 = sum_predU95)
 
+  # You can check we're doing things correct. Turns out brms has a function to do this, but it's not the 'nomral' predcit function
+
+  pred_ces_brms <- posterior_epred(model7, re_formula = NA, newdata = newdat)
+  boldness <- pred_ces_brms[,,"logboldness"]
+  summ_bold <- apply(boldness, 2, function(x) mean(x))
+  summ_boldL95 <- apply(boldness, 2, function(x) quantile(x, 0.025))
   
+  # Now, chekc the following is true
+  all(sum_pred == summ_bold)
+
   #For bs now
    newdat2 <- data.frame(intercept = 1, z_ces = 0,
                         z_bs = seq(min(dat_parasite$z_bs), max(dat_parasite$z_bs), length.out = 100),
@@ -1095,9 +1104,9 @@ dat_parasite <- read.table("./output/dat_models_parasite.csv",header=T, sep=",")
   boldness_bs_dat <- cbind(newdat2, logbold = sum_pred, logbold_L95 = sum_predL95, logboldU95 = sum_predU95)
   
   predict(post,trait = "b_logboldness",newdat) #function works
-  
-  
-  # Second way to do this, but you need to know that this is producting PREDICTION INTERVALS not confidence intervals....which is why these are INSANELY wide.
+
+
+  # Another way to do this, but you need to know that this is producting PREDICTION INTERVALS not confidence intervals....which is why these are INSANELY wide.
   pred_ces <- predict(model7, re_formula = NA, newdata = newdat)
 
   # Now add the predcitions and ses to the new data
