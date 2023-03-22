@@ -1472,11 +1472,11 @@ k6<-ggplot(data= dat_slopes)+
 #| tbl-cap: Repeatbility estimates for traits
 #| 
 tab1 <- data.frame(Trait = c("Boldness (log)", "Exploration","Activity (log)"), 
-                "Group C" = c(mean(R_C_boldness[,1]), mean(R_C_exploration[,1]), mean(R_C_activity[,1])), 
-                  "2.5% CI (C)" = c((R_Blb_bold_C),(R_Blb_exp_C), (R_Blb_act_C)),
-              "97.5% CI (C)" = c((R_Bub_bold_C), (R_Bub_exp_C),(R_Bub_act_C)),
-                "Group E" = c(mean(R_E_boldness[,1]), mean(R_E_exploration[,1]), mean(R_E_activity[,1])),
-              "2.5% CI (E)" = c((R_Blb_bold_E), (R_Blb_exp_E), (R_Blb_act_E)), "97.5% CI (E)" = c((R_Bub_bold_E), (R_Bub_exp_E), (R_Bub_act_E)), check.names = FALSE)
+                "Uninfected" = c(mean(R_C_boldness[,1]), mean(R_C_exploration[,1]), mean(R_C_activity[,1])), 
+                  "2.5% CI (U)" = c((R_Blb_bold_C),(R_Blb_exp_C), (R_Blb_act_C)),
+              "97.5% CI (U)" = c((R_Bub_bold_C), (R_Bub_exp_C),(R_Bub_act_C)),
+                "Infected" = c(mean(R_E_boldness[,1]), mean(R_E_exploration[,1]), mean(R_E_activity[,1])),
+              "2.5% CI (I)" = c((R_Blb_bold_E), (R_Blb_exp_E), (R_Blb_act_E)), "97.5% CI (I)" = c((R_Bub_bold_E), (R_Bub_exp_E), (R_Bub_act_E)), check.names = FALSE)
 
 gt(tab1) 
 
