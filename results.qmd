@@ -25,7 +25,7 @@ editor_options:
 #| warning: false
 
     source("./R/func.R")
-    pacman::p_load(tidyverse, brms, glmmTMB, gt, latex2exp, posterior, gt, glue, dplyr,magrittr, ggplot2, cowplot)
+    pacman::p_load(tidyverse, brms, glmmTMB, gt, latex2exp, posterior, gt, glue, dplyr,magrittr, ggplot2, cowplot, jpeg, magick)
     options(digits = 3, scipen = 2)
     
 ```
@@ -907,15 +907,17 @@ m1<-
 ggplot(all_data, aes(x = trt, y = log_boldness, group = trt, color = trt)) +
 geom_violin(aes(), trim = FALSE) +
 geom_jitter(aes(colour = trt),shape=16, position=position_jitter(0.1))+
-scale_color_manual(labels = c("Uninfected", "Infected"), values = c("lightgreen", "turquoise"))+
-geom_errorbar(data = dat1,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth =0.7, color = "black", inherit.aes = FALSE)+
+scale_color_manual(labels = c("Uninfected", "Infected"), values = c("darkgoldenrod", "darkseagreen3"))+
+geom_errorbar(data = dat1,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth =0.9, color = "black", inherit.aes = FALSE)+
 labs(x = (""), 
 y = TeX("$Boldness_{log_{2}}$")) +
 theme_classic() +
+  draw_image("parasite.png", x= 1.5,y = 3, scale = 0.6)+
+  draw_image("no_parasite.png", x= 0.5,y = 3, scale = 0.6)+
 theme(legend.position = "none",
  legend.title = element_blank()) +
 geom_segment(aes(x = 1, xend = 2, y = 3.85, yend = 3.85)) +
-annotate("text",  x = 1.5, y = 4, label = TeX(paste0("$pMCMC_{\\alpha = 0.05}$ = 0.0005")), size =2.5)
+annotate("text",  x = 1.5, y = 4, label = TeX(paste0("$pMCMC_{\\alpha = 0.05}$ = 0.0005***")), size =2.5)
 
 
 dat2<-dat_model %>% 
@@ -926,15 +928,17 @@ trt <- as.factor(all_data$treatment)
 m2<-ggplot(all_data, aes(x = trt, y = exploration, group = trt, col = trt)) +
 geom_violin(aes(), trim = FALSE) +
 geom_jitter(aes(colour = trt),shape=16, position=position_jitter(0.1)) +
-scale_color_manual(labels = c("Uninfected", "Infected"), values = c("lightgreen", "turquoise"))+
-geom_errorbar(data = dat2,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth = 0.7, color = "black", inherit.aes = FALSE)+
+scale_color_manual(labels = c("Uninfected", "Infected"), values = c("darkgoldenrod", "darkseagreen3"))+
+geom_errorbar(data = dat2,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth = 0.9, color = "black", inherit.aes = FALSE)+
 labs(x = "Treatment", 
 y = "Exploration") +
 theme_classic() +
+  draw_image("parasite.png", x= 1.5,y = 3, scale = 0.6)+
+  draw_image("no_parasite.png", x= 0.5,y = 3, scale = 0.6)+
 theme(legend.position = "none",
  legend.title = element_blank()) +
 geom_segment(aes(x = 1, xend = 2, y = 3.85, yend = 3.85)) +
-annotate("text",  x = 1.5, y = 4, label = TeX(paste0("$pMCMC_{\\alpha = 0.05}$ = 0.0015")), size =2.5)
+annotate("text",  x = 1.5, y = 4, label = TeX(paste0("$pMCMC_{\\alpha = 0.05}$ = 0.0015**")), size =2.5)
 
 #activity
 dat3<-dat_model %>% 
@@ -943,12 +947,13 @@ dat3<-dat_model %>%
 m3<-ggplot(all_data, aes(x = trt, y = log_activity, group = trt, col = trt)) +
 geom_violin(aes(), trim = FALSE) +
 geom_jitter(aes(colour = trt), shape=16, position=position_jitter(0.1)) +
-geom_point(position = position_dodge(width = 0.1))+
-scale_color_manual(labels = c("Uninfected", "Infected"), values = c("lightgreen", "turquoise"))+
-geom_errorbar(data = dat3,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth =0.7, color = "black", inherit.aes = FALSE)+
+scale_color_manual(labels = c("Uninfected", "Infected"), values = c("darkgoldenrod", "darkseagreen3"))+
+geom_errorbar(data = dat3,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth =0.9, color = "black", inherit.aes = FALSE)+
 labs(x = "", 
 y = TeX("$Activity_{log_{2}}$")) +
 theme_classic() +
+  draw_image("parasite.png", x= 1.5,y = 3, scale = 0.6)+
+    draw_image("no_parasite.png", x= 0.5,y = 3, scale = 0.6)+
 theme(legend.position = "none",
  legend.title = element_blank()) +
 geom_segment(aes(x = 1, xend = 2, y = 3.85, yend = 3.85)) +
@@ -1051,15 +1056,6 @@ annotate("text",  x = 1.5, y = 4, label = TeX(paste0("$pMCMC_{\\alpha = 0.05}$ =
 #| fig-height: 8
 
 dat_parasite <- read.table("./output/dat_models_parasite.csv",header=T, sep=",")
-install.packages("jpeg")
-require(jpeg)
-install.packages("magick")
-require(magick)
-img<-readJPEG("crapet_1.jpg")
-#now open a plot window with coordinates
-plot(1:10,ty="n")
-#specify the position of the image through bottom-left and top-right coords
-rasterImage(img,2,2,4,4)
 
   n1<- ggplot(data=dat_parasite)+
   geom_point(mapping = aes(x = z_ces, y = log_boldness), color = "aquamarine3")+
@@ -1067,10 +1063,10 @@ rasterImage(img,2,2,4,4)
  geom_point(mapping = aes(x = z_bs, y = log_boldness), color ="darkgoldenrod")+
 geom_abline(intercept=-0.26, slope=-0.08, color ="darkgoldenrod", size = 1.2)+
    theme_classic() +
-  draw_image("bs.png", x = 3, y = -1.5, scale = 1.2)+
-    draw_image("cestode.png", x = 3, y = 0, scale = 1.2) +
+  draw_image("blackspots.png", x = 3, y = -1.5, scale = 1.2)+
+    draw_image("cestodes.png", x = 3, y = 0, scale = 1.2) +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
-    theme(legend.position="none") + labs(x = TeX("Parasite load"), y = TeX("$Boldness_{log_{2}}$"), title = "") +
+    theme(legend.position="none") + labs(x = TeX("Parasite load (no)"), y = TeX("$Boldness_{log_{2}}$"), title = "") +
       annotate("text", x = -1, y = 3.2, label = TeX(paste0("$beta_{bs}$ = ", " -0.08 ", " 95%CI: -0.28, 0.12")), size =3, color = "darkgoldenrod4") + 
   annotate("text", x = -1, y = 3, label = TeX(paste0("$beta_{ces}$ = "," 0.11 ", " 95%CI: -0.10,0.31")), size=3, color = "aquamarine4")
 
@@ -1080,24 +1076,28 @@ n2<-ggplot(data=dat_parasite)+
  geom_point(mapping = aes(x = z_bs, y = exploration), shape = 18, color ="darkgoldenrod")+
 geom_abline(intercept=0.24, slope=0.15, color ="darkgoldenrod", size = 1)+
    theme_classic() +
+  draw_image("blackspots.png", x = 2.8, y = 0.5, scale = 1.2)+
+    draw_image("cestodes.png", x = 2.8, y = -1, scale = 1.2) +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
-    theme(legend.position="none") + labs(x = TeX("Parasite load"), y = TeX("Exploration"), title = "") +
-    annotate("text", x = -1.7, y = 0.7, label = TeX(paste0("Number of cestodes")), size =3.5, color = "aquamarine4", fontface = "bold") +
-  annotate("text", x = -1.7, y = -0.2, label = TeX(paste0("Number of trematodes")), size =3.5, color = "darkgoldenrod4") +
+    theme(legend.position="none") + labs(x = TeX("Parasite load (no)"), y = TeX("Exploration"), title = "") +
       annotate("text", x = -1, y = 3.2, label = TeX(paste0("$beta_{bs}$ = ", " 0.15 ", " 95%CI: -0.03, 0.32")), size =3, color = "darkgoldenrod4") + 
   annotate("text", x = -1, y = 3, label = TeX(paste0("$beta_{ces}$ = "," -0.10 ", " 95%CI: -0.27, 0.08")), size=3, color = "aquamarine4")
 
 
 n3<-ggplot(data=dat_parasite)+
  geom_point(mapping = aes(x = z_ces, y = log_activity), color = "aquamarine3")+
-  geom_abline(intercept=-0.14, slope=0.0, color = "aquamarine3", size = 1.2)+
+  geom_abline(intercept=-0.14, slope=0.0, color = "aquamarine3", size = 1)+
+  geom_abline(intercept=-0.38, slope=-0.18, color = "aquamarine3", size = 1, linetype = "dashed")+
+geom_abline(intercept=0.10, slope=0.18, color = "aquamarine3", size = 1, linetype = "dashed") +
  geom_point(mapping = aes(x = z_bs, y = log_activity), color ="darkgoldenrod")+
-geom_abline(intercept=-0.14, slope=-0.23, color ="darkgoldenrod", size = 1.2)+
+geom_abline(intercept=-0.14, slope=-0.23, color ="darkgoldenrod", size = 1)+
+  geom_abline(intercept=-0.38, slope=-0.41 , color = "darkgoldenrod", size = 1, linetype = "dashed")+
+geom_abline(intercept=0.10, slope=-0.06, color = "darkgoldenrod", size = 1, linetype = "dashed") +
    theme_classic() +
+  draw_image("blackspots.png", x = 2.8, y = -1.5, scale = 1.2)+
+    draw_image("cestodes.png", x = 2.8, y = -0.2, scale = 1.2) +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
-    theme(legend.position="none") + labs(x = TeX("Parasite load"), y = TeX("$Activity_{log_{2}}$"), title = "")+
-  annotate("text", x = -1.7, y = 0.5, label = TeX(paste0("Number of trematodes")), size =3.5, color = "darkgoldenrod4", fontface = "bold") +
-  annotate("text", x = -1.7, y = -0.2, label = TeX(paste0("Number of cestodes")), size =3.5, color = "aquamarine4") +
+    theme(legend.position="none") + labs(x = TeX("Parasite load (no)"), y = TeX("$Activity_{log_{2}}$"), title = "")+
       annotate("text", x = -1, y = 3.2, label = TeX(paste0("$beta_{bs}$ = ", " -0.23 ", " 95%CI: -0.41, -0.06 **")), size =3, color = "darkgoldenrod4") + 
   annotate("text", x = -1, y = 3, label = TeX(paste0("$beta_{ces}$ = "," 0.00 ", " 95%CI: -0.18, 0.18")), size=3, color = "aquamarine4")
     
@@ -1113,16 +1113,6 @@ plot_grid(
 #| fig-width: 7
 #| fig-height: 8
 
-
-  posterior <- as_draws_df(model6, vars = "^b")
-  logact_pl <- data.frame(posterior[,grep("b_logactivity_z_pl", colnames(posterior))])
-  logact_bc <- data.frame(posterior[,grep("b_logactivity_z_bc", colnames(posterior))])
-  
-mean_logact_pl <- apply(logact_pl,2, function(x) mean(x))
-se_log_act_pl <- apply(logact_bc,2, function(x) sd(x))
-test <- cbind(mean_logact_pl,se_log_act_pl)
-
-exp_E<-df(exploration_treatmentE_blup,exploration_treatmentE_b) #function works
 
 dat_parasite <- read.table("./output/dat_models_parasite.csv",header=T, sep=",")
 
