@@ -104,3 +104,24 @@ df <- function(blup, b){
   
   return(fishid_slope)                                              
   }
+
+#' @title Create dataframe of predictions from a model
+#' @description Will create a dataframe using the posterior distribution from a model
+#' @param blup posterior distribution of the deviation for each ID
+#' @param b posterior distribution at the population level
+
+predict <- function(post, trait, dat){
+  
+  #Grab posterior distribution for the trait
+  post <- post[,grep(trait, colnames(post))]
+  
+  pred_ces <- apply(t(post), 2, function(x) as.matrix(dat) %*% x)
+
+  sum_pred <- apply(pred_ces, 1, function(x) mean(x))
+  sum_predL95 <- apply(pred_ces, 1, function(x) quantile(x, 0.025))
+  sum_predU95 <- apply(pred_ces, 1, function(x) quantile(x, 0.975))
+
+  trait_dat <- cbind(dat,sum_pred, sum_predL95, sum_predU95)
+  
+return(trait_dat)                                              
+}
