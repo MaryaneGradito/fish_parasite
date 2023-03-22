@@ -1058,11 +1058,41 @@ annotate("text",  x = 1.5, y = 4, label = TeX(paste0("$pMCMC_{\\alpha = 0.05}$ =
 
 dat_parasite <- read.table("./output/dat_models_parasite.csv",header=T, sep=",")
 
+# Lets create the predictions with the posterior for each variable. Here, we want to vary ces, but keep the other varibles at the mean
+
+  # First we want to create a design matrix. 
+  newdat <- data.frame(intrecept = 1, z_ces = seq(min(dat_parasite$z_ces), max(dat_parasite$z_ces), length.out = 100),
+                        z_bs = 0,
+                        z_bc = 0)
+
+  # Now extract the posterior dist for each parameter for boldness 
+    post <- as_draws_df(model7, variables = "^b", regex = TRUE)
+    post <- post[,grep("b_logboldness", colnames(post))]
+
+  # Make the predcitions. Here, each column is now a different combination of parameters, i.e., 1 MCMC iteration), and each row is the values you want to predcit, only z_ces varies
+  pred_ces <- apply(t(post), 2, function(x) as.matrix(newdat) %*% x)
+  
+     sum_pred <- apply(pred_ces, 1, function(x) mean(x))
+  sum_predL95 <- apply(pred_ces, 1, function(x) quantile(x, 0.025))
+  sum_predU95 <- apply(pred_ces, 1, function(x) quantile(x, 0.975))
+
+  # Now create the dataframe
+  boldness_ces_dat <- cbind(newdat, logbold = sum_pred, logbold_L95 = sum_predL95, logboldU95 = sum_predU95)
+  
+  
+  # Second way to do this, but you need to know that this is producting PREDICTION INTERVALS not confidence intervals....which is why these are INSANELY wide.
+  pred_ces <- predict(model7, re_formula = NA, newdata = newdat)
+
+  # Now add the predcitions and ses to the new data
+  newdat2 <- cbind(newdat, logbold = pred_ces[,1,"logboldness"], logboldlCI = pred_ces[,3,"logboldness"], logbolduCI = pred_ces[,4,"logboldness"],
+                           logact = pred_ces[,1,"logactivity"], loglogactlCI = pred_ces[,3,"logactivity"], loglogactUCI = pred_ces[,4,"logactivity"],
+                           explore = pred_ces[,1,"exploration"], explorelCI = pred_ces[,3,"exploration"], exploreUCI = pred_ces[,4,"exploration"])
+
   n1<- ggplot(data=dat_parasite)+
   geom_point(mapping = aes(x = z_ces, y = log_boldness), color = "aquamarine3")+
-  geom_abline(intercept=-0.26, slope=0.11, color = "aquamarine3", size=1.2)+
- geom_point(mapping = aes(x = z_bs, y = log_boldness), color ="darkgoldenrod")+
-geom_abline(intercept=-0.26, slope=-0.08, color ="darkgoldenrod", size = 1.2)+
+  geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = z_ces, y = logbold), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "aquamarine3", size=1.2) +
+  geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = z_ces, y = logbold_L95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "aquamarine3", size=1.2)+
+  geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = z_ces, y = logboldU95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "aquamarine3", size=1.2) +
    theme_classic() +
   draw_image("blackspots.png", x = 3, y = -1.5, scale = 1.2)+
     draw_image("cestodes.png", x = 3, y = 0, scale = 1.2) +
