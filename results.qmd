@@ -1080,8 +1080,8 @@ dat_parasite <- read.table("./output/dat_models_parasite.csv",header=T, sep=",")
 
   
   #For bs now
-   newdat2 <- data.frame(intercept = 1, z_bs = seq(min(dat_parasite$z_bs), max(dat_parasite$z_bs), length.out = 100),
-                        z_ces = 0,
+   newdat2 <- data.frame(intercept = 1, z_ces = 0,
+                        z_bs = seq(min(dat_parasite$z_bs), max(dat_parasite$z_bs), length.out = 100),
                         z_bc = 0)
 
   # Make the predictions. Here, each column is now a different combination of parameters, i.e., 1 MCMC iteration), and each row is the values you want to predict, only z_ces varies
