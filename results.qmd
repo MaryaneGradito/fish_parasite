@@ -378,9 +378,11 @@ Exploration was distributed normally visually. Activity and boldness were log-tr
 To test if we find evidence of personality and behavioural syndromes between traits, we built a multi-responses model (n = 264) with traits as response variables, treatment (uninfected vs infected) as a fixed effect, fish ID and cage number as random effects. Model 1 had tank effect as a fixed factor compared to Model 2. We compared the models using the loo package. Model 2 was better fitted than model 1 and we decided not to include tank effect in our models.
 Repeatability (R) was calculated as:
 
-$R = \displaystyle \frac{\sd(ID^{2})}{\sd(ID^{2}) + sd(cage^{2}) +  exp(sd(sigma^{2}))}$
+$$
+R = \displaystyle \frac{\sd(ID^{2})}{\sd(ID^{2}) + sd(cage^{2}) +  exp(sd(sigma^{2}))}
+$$ {#eq-eq1}
 
-where sd is the standard deviation from the posterior distribution from the model, ID is fish ID, cage is the cage number and sigma is distributed for each group. We also calculated repeatability across groups by pooling the posterior distribution of sigma and ID. To estimate if repeatability was different from 0, we choose 0.05 as a threshold since the values can't be 0 in the distribution. Correlation between traits were extracted from the posterior distribution of the model to determine if there was a behavioural syndrome between traits. To measure the average correlation for each group, we pooled together the two MCMC chains for both group.
+from @eq-eq1, sd is the standard deviation from the posterior distribution from the model, ID is fish ID, cage is the cage number and sigma is distributed for each group. We also calculated repeatability across groups by pooling the posterior distribution of sigma and ID. To estimate if repeatability was different from 0, we choose 0.05 as a threshold since the values can't be 0 in the distribution. Correlation between traits were extracted from the posterior distribution of the model to determine if there was a behavioural syndrome between traits. To measure the average correlation for each group, we pooled together the two MCMC chains for both group.
 
 To test if the experimental infection had an effect on personality, we sublet the data set according to the treatment (uninfected/pre-infection: n = 144; infected/post-infection: n = 120). We built Model 3 to see if parasite load have an effect on the traits. Parasite load was included as a fixed factor, fish ID and cage number as random factors. Model 3 assume than parasite load effect is linear, so we included parasite $load^2$ as a fixed factor in model 4. Our sample was too small to estimate model 4. 
 
