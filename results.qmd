@@ -1110,10 +1110,10 @@ dat_parasite <- read.table("./output/dat_models_parasite.csv",header=T, sep=",")
   geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = z_ces, y = logbold), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "aquamarine3", size=1.2) +
   geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = z_ces, y = logbold_L95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "aquamarine3", size=1.2)+
   geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = z_ces, y = logboldU95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "aquamarine3", size=1.2)+
-    geom_point(mapping = aes(x = z_bs, y = log_boldness), color = "darkgoldenrod")+
-  geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = z_bs, y = logbold), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "darkgoldenrod", size=1.2) +
-  geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = z_bs, y = logbold_L95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "darkgoldenrod", size=1.2)+
-  geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = z_bs, y = logboldU95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "darkgoldenrod", size=1.2)+
+    geom_point(mapping = aes(x = z_bs, y = log_boldness), color = "darkgoldenrod", inherit.aes = FALSE)+
+  geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = z_bs, y = logbold), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "darkgoldenrod", size=1.2, inherit.aes = FALSE) +
+  geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = z_bs, y = logbold_L95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "darkgoldenrod", size=1.2, inherit.aes = FALSE)+
+  geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = z_bs, y = logboldU95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "darkgoldenrod", size=1.2, inherit.aes = FALSE)+
    theme_classic() +
   draw_image("blackspots.png", x = 3, y = -1.5, scale = 1.2)+
     draw_image("cestodes.png", x = 3, y = 0, scale = 1.2) +
