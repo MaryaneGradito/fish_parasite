@@ -110,7 +110,7 @@ df <- function(blup, b){
 #' @param blup posterior distribution of the deviation for each ID
 #' @param b posterior distribution at the population level
 
-predict <- function(post, trait, dat){
+prediction <- function(post, trait, dat){
   
   #Grab posterior distribution for the trait
   post <- post[,grep(trait, colnames(post))]
@@ -125,3 +125,4 @@ predict <- function(post, trait, dat){
   
 return(trait_dat)                                              
 }
+
