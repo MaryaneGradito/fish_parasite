@@ -1067,64 +1067,65 @@ dat_parasite <- read.table("./output/dat_models_parasite.csv",header=T, sep=",")
                         z_bc = 0)
 
   # Now extract the posterior dist for each parameter for boldness 
-    post <- as_draws_df(model7, variables = "^b", regex = TRUE)
-    post <- post[,grep("b_logboldness", colnames(post))]
+    #post <- as_draws_df(model7, variables = "^b", regex = TRUE)
+    #post <- post[,grep("b_logboldness", colnames(post))]
 
   # Make the predictions. Here, each column is now a different combination of parameters, i.e., 1 MCMC iteration), and each row is the values you want to predict, only z_ces varies
-  pred_ces <- apply(t(post), 2, function(x) as.matrix(newdat) %*% x)
+  #pred_ces <- apply(t(post), 2, function(x) as.matrix(newdat) %*% x)
   
-     sum_pred <- apply(pred_ces, 1, function(x) mean(x))
-  sum_predL95 <- apply(pred_ces, 1, function(x) quantile(x, 0.025))
-  sum_predU95 <- apply(pred_ces, 1, function(x) quantile(x, 0.975))
-
+     #sum_pred <- apply(pred_ces, 1, function(x) mean(x))
+  #sum_predL95 <- apply(pred_ces, 1, function(x) quantile(x, 0.025))
+  #sum_predU95 <- apply(pred_ces, 1, function(x) quantile(x, 0.975))
+  
   # Now create the dataframe
-  boldness_ces_dat <- cbind(newdat, logbold = sum_pred, logbold_L95 = sum_predL95, logboldU95 = sum_predU95)
+  #boldness_ces_dat <- cbind(newdat, logbold = sum_pred, logbold_L95 = sum_predL95, logboldU95 = sum_predU95)
 
-  # You can check we're doing things correct. Turns out brms has a function to do this, but it's not the 'nomral' predcit function
+  #Make predictions from our model to build slope and confidence intervals
+  #FOR CESTODES
 
   pred_ces_brms <- posterior_epred(model7, re_formula = NA, newdata = newdat)
-  boldness <- pred_ces_brms[,,"logboldness"]
-  summ_bold <- apply(boldness, 2, function(x) mean(x))
-  summ_boldL95 <- apply(boldness, 2, function(x) quantile(x, 0.025))
+  bold_ces <- pred_ces_brms[,,"logboldness"]
+  summ_bold_ces <- apply(bold_ces, 2, function(x) mean(x))
+  summ_boldL95_ces <- apply(bold_ces, 2, function(x) quantile(x, 0.025))
+  summ_boldU95_ces <- apply(bold_ces, 2, function(x) quantile(x, 0.975))
+  
+  #create dataframe
+boldness_ces_dat <- cbind(newdat, summ_bold_ces, summ_boldL95_ces, summ_boldU95_ces)
   
   # Now, chekc the following is true
-  all(sum_pred == summ_bold)
+ all(sum_pred == summ_bold)
 
-  #For bs now
+  #FOR BS NOW
    newdat2 <- data.frame(intercept = 1, z_ces = 0,
                         z_bs = seq(min(dat_parasite$z_bs), max(dat_parasite$z_bs), length.out = 100),
                         z_bc = 0)
 
-  # Make the predictions. Here, each column is now a different combination of parameters, i.e., 1 MCMC iteration), and each row is the values you want to predict, only z_ces varies
-  pred_bs <- apply(t(post), 2, function(x) as.matrix(newdat2) %*% x)
+pred_bs_brms <- posterior_epred(model7, re_formula = NA, newdata = newdat2)
+  boldness_bs <- pred_bs_brms[,,"logboldness"]
+  summ_bold_bs <- apply(boldness_bs, 2, function(x) mean(x))
+  summ_boldL95_bs <- apply(boldness_bs, 2, function(x) quantile(x, 0.025))
+  summ_boldU95_bs <- apply(boldness_bs, 2, function(x) quantile(x, 0.975))
   
-     sum_pred <- apply(pred_bs, 1, function(x) mean(x))
-  sum_predL95 <- apply(pred_bs, 1, function(x) quantile(x, 0.025))
-  sum_predU95 <- apply(pred_bs, 1, function(x) quantile(x, 0.975))
-
-  # Now create the dataframe
-  boldness_bs_dat <- cbind(newdat2, logbold = sum_pred, logbold_L95 = sum_predL95, logboldU95 = sum_predU95)
+boldness_bs_dat <- cbind(newdat2, summ_bold_bs, summ_boldL95_bs, summ_boldU95_bs)
   
-  predict(post,trait = "b_logboldness",newdat) #function works
-
-
   # Another way to do this, but you need to know that this is producting PREDICTION INTERVALS not confidence intervals....which is why these are INSANELY wide.
-  pred_ces <- predict(model7, re_formula = NA, newdata = newdat)
+ # pred_ces <- predict(model7, re_formula = NA, newdata = newdat)
 
   # Now add the predcitions and ses to the new data
-  newdat2 <- cbind(newdat, logbold = pred_ces[,1,"logboldness"], logboldlCI = pred_ces[,3,"logboldness"], logbolduCI = pred_ces[,4,"logboldness"],
-                           logact = pred_ces[,1,"logactivity"], loglogactlCI = pred_ces[,3,"logactivity"], loglogactUCI = pred_ces[,4,"logactivity"],
-                           explore = pred_ces[,1,"exploration"], explorelCI = pred_ces[,3,"exploration"], exploreUCI = pred_ces[,4,"exploration"])
+  #newdat2 <- cbind(newdat, logbold = pred_ces[,1,"logboldness"], logboldlCI = pred_ces[,3,"logboldness"], logbolduCI = pred_ces[,4,"logboldness"],
+                           #logact = pred_ces[,1,"logactivity"], loglogactlCI = #pred_ces[,3,"logactivity"], loglogactUCI = pred_ces[,4,"logactivity"],
+                           #explore = pred_ces[,1,"exploration"], explorelCI = pred_ces[,3,"exploration"], exploreUCI = pred_ces[,4,"exploration"])
 
+  #figure 1
   n1<- ggplot(data=dat_parasite)+
   geom_point(mapping = aes(x = z_ces, y = log_boldness), color = "aquamarine3")+
-  geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = z_ces, y = logbold), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "aquamarine3", size=1.2) +
-  geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = z_ces, y = logbold_L95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "aquamarine3", size=1.2)+
-  geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = z_ces, y = logboldU95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "aquamarine3", size=1.2)+
-    geom_point(mapping = aes(x = z_bs, y = log_boldness), color = "darkgoldenrod", inherit.aes = FALSE)+
-  geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = z_bs, y = logbold), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "darkgoldenrod", size=1.2, inherit.aes = FALSE) +
-  geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = z_bs, y = logbold_L95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "darkgoldenrod", size=1.2, inherit.aes = FALSE)+
-  geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = z_bs, y = logboldU95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "darkgoldenrod", size=1.2, inherit.aes = FALSE)+
+  geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = z_ces, y = summ_bold_ces), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "aquamarine3", size=1) +
+  geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = z_ces, y = summ_boldL95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "aquamarine3", size=1)+
+  geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = z_ces, y = summ_boldU95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "aquamarine3", size=1) + 
+    geom_point(mapping = aes(x = z_bs, y = log_boldness), color = "darkgoldenrod")+
+  geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = z_bs, y = summ_bold_bs), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "darkgoldenrod", size=1) +
+  geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = z_bs, y = summ_boldL95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "darkgoldenrod", size=1)+
+  geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = z_bs, y = summ_boldU95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "darkgoldenrod", size=1)+
    theme_classic() +
   draw_image("blackspots.png", x = 3, y = -1.5, scale = 1.2)+
     draw_image("cestodes.png", x = 3, y = 0, scale = 1.2) +
@@ -1134,39 +1135,35 @@ dat_parasite <- read.table("./output/dat_models_parasite.csv",header=T, sep=",")
   annotate("text", x = -1, y = 3, label = TeX(paste0("$beta_{ces}$ = "," 0.11 ", " 95%CI: -0.10,0.31")), size=3, color = "aquamarine4")
   
   #exploration for cestode
-    post <- post[,grep("b_exploration", colnames(post))]
-
-  # Make the predictions. Here, each column is now a different combination of parameters, i.e., 1 MCMC iteration), and each row is the values you want to predict, only z_ces varies
-  pred_ces <- apply(t(post), 2, function(x) as.matrix(newdat) %*% x)
+    pred_ces_brms <- posterior_epred(model7, re_formula = NA, newdata = newdat)
+  exp_ces <- pred_ces_brms[,,"exploration"]
+  summ_exp_ces <- apply(exp_ces, 2, function(x) mean(x))
+  summ_expL95_ces <- apply(exp_ces, 2, function(x) quantile(x, 0.025))
+  summ_expU95_ces <- apply(exp_ces, 2, function(x) quantile(x, 0.975))
   
-     sum_pred <- apply(pred_ces, 1, function(x) mean(x))
-  sum_predL95 <- apply(pred_ces, 1, function(x) quantile(x, 0.025))
-  sum_predU95 <- apply(pred_ces, 1, function(x) quantile(x, 0.975))
-
-  # Now create the dataframe
-  exploration_ces_dat <- cbind(newdat, exp = sum_pred, exp_L95 = sum_predL95, exp_U95 = sum_predU95)
+  #create dataframe
+exp_ces_dat <- cbind(newdat, summ_exp_ces, summ_expL95_ces, summ_expU95_ces)
   
-    
-
- #exploration for bs
-  # Make the predictions. Here, each column is now a different combination of parameters, i.e., 1 MCMC iteration), and each row is the values you want to predict, only z_ces varies
-       
-       pred_bs <- apply(t(post), 2, function(x) as.matrix(newdat2) %*% x)
+  #exploration for bs
+   pred_bs_brms <- posterior_epred(model7, re_formula = NA, newdata = newdat2)
+  exp_bs <- pred_bs_brms[,,"exploration"]
+  summ_exp_bs <- apply(exp_bs, 2, function(x) mean(x))
+  summ_expL95_bs <- apply(exp_bs, 2, function(x) quantile(x, 0.025))
+  summ_expU95_bs <- apply(exp_bs, 2, function(x) quantile(x, 0.975))
   
-     sum_pred <- apply(pred_bs, 1, function(x) mean(x))
-  sum_predL95 <- apply(pred_bs, 1, function(x) quantile(x, 0.025))
-  sum_predU95 <- apply(pred_bs, 1, function(x) quantile(x, 0.975))
-
-  # Now create the dataframe
-  exploration_bs_dat <- cbind(newdat2, exp = sum_pred, exp_L95 = sum_predL95, exp_U95 = sum_predU95)
-
+  #create dataframe
+exp_bs_dat <- cbind(newdat2, summ_exp_bs, summ_expL95_bs, summ_expU95_bs)
+  
+  #figure 2
 n2<-ggplot(data=dat_parasite)+
- geom_smooth(data = exploration_ces_dat, ggplot2::aes(x = z_ces, y = exp), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "aquamarine3", size=1.2) +
-  geom_smooth(data = exploration_ces_dat, ggplot2::aes(x = z_ces, y = exp_L95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "aquamarine3", size=1.2)+
-  geom_smooth(data = exploration_ces_dat, ggplot2::aes(x = z_ces, y = exp_U95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "aquamarine3", size=1.2)+
-   geom_smooth(data = exploration_bs_dat, ggplot2::aes(x = z_bs, y = exp), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "darkgoldenrod", size=1.2) +
-  geom_smooth(data = exploration_bs_dat, ggplot2::aes(x = z_bs, y = exp_L95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "darkgoldenrod", size=1.2)+
-  geom_smooth(data = exploration_bs_dat, ggplot2::aes(x = z_bs, y = exp_U95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "darkgoldenrod", size=1.2)+
+  geom_point(mapping = aes(x = z_ces, y = exploration), color = "aquamarine3")+
+ geom_smooth(data = exp_ces_dat, ggplot2::aes(x = z_ces, y = summ_exp_ces), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "aquamarine3", size=1.2) +
+  geom_smooth(data = exp_ces_dat, ggplot2::aes(x = z_ces, y = summ_expL95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "aquamarine3", size=1.2)+
+  geom_smooth(data = exp_ces_dat, ggplot2::aes(x = z_ces, y = summ_expU95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "aquamarine3", size=1.2)+
+  geom_point(mapping = aes(x = z_bs, y = exploration), color = "darkgoldenrod") +
+   geom_smooth(data = exp_bs_dat, ggplot2::aes(x = z_bs, y = summ_exp_bs), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "darkgoldenrod", size=1.2) +
+  geom_smooth(data = exp_bs_dat, ggplot2::aes(x = z_bs, y = summ_expL95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "darkgoldenrod", size=1.2)+
+  geom_smooth(data = exp_bs_dat, ggplot2::aes(x = z_bs, y = summ_expU95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "darkgoldenrod", size=1.2)+
    theme_classic() +
   draw_image("blackspots.png", x = 2.8, y = 0.5, scale = 1.2)+
     draw_image("cestodes.png", x = 2.8, y = -1, scale = 1.2) +
@@ -1175,16 +1172,36 @@ n2<-ggplot(data=dat_parasite)+
       annotate("text", x = -1, y = 3.2, label = TeX(paste0("$beta_{bs}$ = ", " 0.15 ", " 95%CI: -0.03, 0.32")), size =3, color = "darkgoldenrod4") + 
   annotate("text", x = -1, y = 3, label = TeX(paste0("$beta_{ces}$ = "," -0.10 ", " 95%CI: -0.27, 0.08")), size=3, color = "aquamarine4")
 
+  #activity for cestode
+    pred_ces_brms <- posterior_epred(model7, re_formula = NA, newdata = newdat)
+  act_ces <- pred_ces_brms[,,"logactivity"]
+  summ_act_ces <- apply(act_ces, 2, function(x) mean(x))
+  summ_actL95_ces <- apply(act_ces, 2, function(x) quantile(x, 0.025))
+  summ_actU95_ces <- apply(act_ces, 2, function(x) quantile(x, 0.975))
+  
+  #create dataframe
+act_ces_dat <- cbind(newdat, summ_act_ces, summ_actL95_ces, summ_actU95_ces)
 
+  #activity for bs
+   pred_bs_brms <- posterior_epred(model7, re_formula = NA, newdata = newdat2)
+  act_bs <- pred_bs_brms[,,"logactivity"]
+  summ_act_bs <- apply(act_bs, 2, function(x) mean(x))
+  summ_actL95_bs <- apply(act_bs, 2, function(x) quantile(x, 0.025))
+  summ_actU95_bs <- apply(act_bs, 2, function(x) quantile(x, 0.975))
+  
+  #create dataframe
+act_bs_dat <- cbind(newdat2, summ_act_bs, summ_actL95_bs, summ_actU95_bs)
+  
+  #figure 3
 n3<-ggplot(data=dat_parasite)+
- geom_point(mapping = aes(x = z_ces, y = log_activity), color = "aquamarine3")+
-  geom_abline(intercept=-0.14, slope=0.0, color = "aquamarine3", size = 1)+
-  geom_abline(intercept=-0.38, slope=-0.18, color = "aquamarine3", size = 1, linetype = "dashed")+
-geom_abline(intercept=0.10, slope=0.18, color = "aquamarine3", size = 1, linetype = "dashed") +
- geom_point(mapping = aes(x = z_bs, y = log_activity), color ="darkgoldenrod")+
-geom_abline(intercept=-0.14, slope=-0.23, color ="darkgoldenrod", size = 1)+
-  geom_abline(intercept=-0.38, slope=-0.41 , color = "darkgoldenrod", size = 1, linetype = "dashed")+
-geom_abline(intercept=0.10, slope=-0.06, color = "darkgoldenrod", size = 1, linetype = "dashed") +
+geom_point(mapping = aes(x = z_ces, y = log_activity), color = "aquamarine3")+
+ geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_ces, y = summ_act_ces), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "aquamarine3", size=1.2) +
+  geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_ces, y = summ_actL95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "aquamarine3", size=1.2)+
+  geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_ces, y = summ_actU95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "aquamarine3", size=1.2)+
+  geom_point(mapping = aes(x = z_bs, y = log_activity), color = "darkgoldenrod") +
+   geom_smooth(data = exp_bs_dat, ggplot2::aes(x = z_bs, y = summ_act_bs), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "darkgoldenrod", size=1.2) +
+  geom_smooth(data = exp_bs_dat, ggplot2::aes(x = z_bs, y = summ_actL95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "darkgoldenrod", size=1.2)+
+  geom_smooth(data = exp_bs_dat, ggplot2::aes(x = z_bs, y = summ_actU95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "darkgoldenrod", size=1.2)+
    theme_classic() +
   draw_image("blackspots.png", x = 2.8, y = -1.5, scale = 1.2)+
     draw_image("cestodes.png", x = 2.8, y = -0.2, scale = 1.2) +
