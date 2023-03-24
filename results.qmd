@@ -2,6 +2,8 @@
 format:
   docx: 
     reference-doc: "./bib/template.docx"
+    bibliography: "./bib/bib.ref.bib"
+    csl: "./bib/behavioral-ecology.csl"
 execute:
   echo: false
   error: false
@@ -371,15 +373,16 @@ q_act_exp<-quantile(bsyn_act_exp, c(0.025, 0.975))
 ### Methods
 #### *Statistical analysis*
 
-All statistical analyses were performed with the software R (version 4.2.2). Adjusted fish mass was calculated as the fish mass minus parasite mass (Lagrue and Poulin, 2015). Parasite mass was estimated with the mean mass of 20 parasites (Vic, in prep). For bass tapeworm, adult average mass was 0.003g and larval form was 0.0008g. We decided to exclude nematodes since the mass varies grandly between individuals and is found rarely in our fish. Blackspots mass was considered too small to be subtracted from total mass ($10^{-7}g$). Body condition was calculated with the Fulton index ($mass/length^3$) (Jakob, 1996). We had 4 measures of body condition, one for each trial. We used the adjusted fish mass for the 2 measures of body condition after the experimental infection (we assume there is no parasite before the experimental infection). We used standard length of the fish in centimeters. We calculated parasite load by adding the total number of blackspots post-infection with the total number of cestodes found alive (adult and larvae form). We could not determine if larvae form was alive or not visually, but we assumed it can have an effect if the larva is developping in the fish. 
+All statistical analyses were performed in R (vers. `r paste0(R.Version()$major, ".", R.Version()$minor)`). Adjusted fish mass was calculated as the fish mass minus parasite mass (Lagrue and Poulin, 2015). Parasite mass was estimated with the mean mass of 20 parasites (Vic, in prep). For bass tapeworm, adult average mass was 0.003g and the larval form was 0.0008g. We decided to exclude nematodes since the mass varied greatly between individuals, and was rarely found in our fish. Blackspot mass was considered too small to be subtracted from total mass ($10^{-7}g$). Body condition was calculated with the Fulton index ($mass/length^3$) (Jakob, 1996). We had 4 measures of body condition, one for each trial. We used the adjusted fish mass for the 2 measures of body condition after the experimental infection (we assume there was no parasites before the experimental infection). We used standard length of the fish in centimeters. We calculated parasite load by adding the total number of blackspots post-infection with the total number of cestodes found alive (adult and larvae form). We could not determine if larvae form was alive or not visually, but we assumed it can have an effect if the larva is developping in the fish. 
 
-Exploration was distributed normally visually. Activity and boldness were log-transformed to impose normality. All variable were z-scaled before fitting the models. We fitted our models with a Bayesian statistical inference using 4 chains with an iteration of 6000 and a warm up of 2000. We visually inspected the MCMC sampling to see if the sampling ...(?) 
+Exploration was normally distributed while activity and boldness were log-transformed to better approximate normality. All variable were z-scaled (i.e., $\left(x - \bar{x} \right) / \sigma$) before fitting the models to ease model interpretation and improve paramater estimation. We fitted our models within a Bayesian statistical framework using the *brms* [vers. `r utils::packageVersion("brms")` [@Burkner2017-wg] package and *rstan* [vers. `r utils::packageVersion("rstan")`] [@noauthor_2021-az].  We ran four MCMC chains each with 6000 iterations, sampling every iteration. We discareded the first 2000 iterations as a warmup. We visually inspected chains to ensure that they were mixing well and that chains had converged (i.e., Rhat < 1.02), and ensured that we have an effective sample size >1000 for all parameters. 
 
-To test if we find evidence of personality and behavioural syndromes between traits, we built a multi-responses model (n = 264) with traits as response variables, treatment (uninfected vs infected) as a fixed effect, fish ID and cage number as random effects. Model 1 had tank effect as a fixed factor compared to Model 2. We compared the models using the loo package. Model 2 was better fitted than model 1 and we decided not to include tank effect in our models.
+To test if traits were repeatabile (i.e., we had personality) and if they formed behavioural syndromes, we built a multi-responses model (n = 264, observations) with each of the three traits as response variables. Treatment (uninfected vs infected) was included as a fixed effect for each trait because we were interested in whether infection changed fish behvaiour. Fish ID and cage number were included as random effects. Model 1 had tank effect as a fixed factor compared to Model 2. We compared the models using the *loo* package [vers. `r utils::packageVersion("loo")`]. Model 2 was better fitted than model 1 and we decided not to include tank effect in our models.
+
 Repeatability (R) was calculated as:
 
 $$
-R = \displaystyle \frac{\sd(ID^{2})}{\sd(ID^{2}) + sd(cage^{2}) +  exp(sd(sigma^{2}))}
+R = \frac{\sigma^{2}_{ID}}{\sigma^{2}_{ID} + \sigma^{2}_{cage} +  exp(\sigma_{R})^{2}}
 $$ {#eq-eq1}
 
 from @eq-eq1, sd is the standard deviation from the posterior distribution from the model, ID is fish ID, cage is the cage number and sigma is distributed for each group. We also calculated repeatability across groups by pooling the posterior distribution of sigma and ID. To estimate if repeatability was different from 0, we choose 0.05 as a threshold since the values can't be 0 in the distribution. Correlation between traits were extracted from the posterior distribution of the model to determine if there was a behavioural syndrome between traits. To measure the average correlation for each group, we pooled together the two MCMC chains for both group.
@@ -391,7 +394,7 @@ To test if body condition as an effect on traits, we fitted model 5 with body co
 ### Results
 #### *Experimental infection*
 
-The caging experiment successfully infected our fish. Uninfected fish that stayed in the laboratory had no alive parasite, which indicate that the praziquantel treatment was effective. The two most abundant species found in the experimentally infected fish were trematodes causing the blackspot disease (Trematoda: *Apophallus sp.* and *Uvulifer sp.*; min-max: `r BS_min`- `r BS_max`; median: `r BS_median`) and the bass tapeworm (Cestoda: *Proteocephalus ambloplites*; min-max: `r cestode_min` - `r cestode_max` ; median: `r cestode_median`). The most abundant species of trematode causing blackspots was *Apophallus sp*. (Binning, Lanthier, unpublished data), but *Uvulifer sp.* was found more frequently inside the muscles (MG, personal observations).Experimentally fish gained in mean `r gain_mean` blackspots, and were found on the fines, body, gills and inside the muscles. Bass tapeworm were mostly found in the liver, stomach and digestive tract, occasionally around the spleen (parasite count: 9), and rarely on the gills (parasite count: 3) or the heart (parasite count: 2). Unknown nematode species were found rarely in the body cavity (alive parasite count: 4).
+The caging experiment successfully infected our fish. Uninfected fish that stayed in the laboratory had no living parasites, which indicated that the praziquantel treatment was effective. The two most abundant species found in the experimentally infected fish were trematodes causing the blackspot disease (Trematoda: *Apophallus sp.* and *Uvulifer sp.*; min-max: `r BS_min`- `r BS_max`; median: `r BS_median`) and the bass tapeworm (Cestoda: *Proteocephalus ambloplites*; min-max: `r cestode_min` - `r cestode_max` ; median: `r cestode_median`). The most abundant species of trematode causing blackspots was *Apophallus sp*. (Binning, Lanthier, unpublished data), but *Uvulifer sp.* was found more frequently inside the muscles (MG, personal observations). Experimental fish gained, on average, `r gain_mean` blackspots, and were found on the fins, body, gills and inside the muscles. Bass tapeworm were mostly found in the liver, stomach and digestive tract, and occasionally around the spleen (parasite count: 9), and rarely on the gills (parasite count: 3) or the heart (parasite count: 2). Other unknown nematode species were found rarely in the body cavity (alive parasite count: 4).
 
 #### *Evidence of personality and behavioural syndromes*
 
@@ -408,7 +411,14 @@ tab1 <- data.frame(Trait = c("Boldness (log)", "Exploration","Activity (log)"),
                 "Infected" = c(mean(R_E_boldness[,1]), mean(R_E_exploration[,1]), mean(R_E_activity[,1])),
               "2.5% CI (I)" = c((R_Blb_bold_E), (R_Blb_exp_E), (R_Blb_act_E)), "97.5% CI (I)" = c((R_Bub_bold_E), (R_Bub_exp_E), (R_Bub_act_E)), check.names = FALSE)
 
-gt(tab1) 
+   gt(tab1)  %>% 
+    tab_style(style = list(cell_text(weight = "bold")),
+          locations = list(cells_column_labels())) %>% 
+    opt_table_lines(extent = "none")  %>% 
+    tab_style(style = cell_borders(sides = c("top", "bottom")),
+          locations = list(cells_column_labels()))  %>% 
+    tab_style(style = cell_borders(sides = "bottom", weight = px(2)),
+         locations =  cells_body(rows = 3))
 
 ```
 
@@ -506,7 +516,7 @@ p2<-
 pp<-plot_grid(
   p_1, p_2, p_3,
   labels = "AUTO", ncol = 1)
-
+pp
 ggsave("fig1.png", plot = pp, width = 28, height = 30, units = "cm")
 ```
 
@@ -680,7 +690,7 @@ annotate("text",  x = 1.5, y = 4, label = TeX(paste0("$pMCMC_{\\alpha = 0.05}$ =
  m<-plot_grid(
   m1,m2,m3,
   labels = "AUTO", ncol = 3)
- 
+ m
  ggsave("fig2.png", plot = m, width = 28, height = 13, units = "cm")
  
 #Extract post sd from model 2 for each traits and treatment
@@ -1165,7 +1175,8 @@ x2<- ggplot(data=dat_parasite)+
  x<- plot_grid(
   x1,x2,
   labels = "AUTO", ncol = 2)
-      
+
+  x    
     ggsave("fig3.png", plot = x, width = 28, height = 16, units = "cm")
 
 ```
@@ -1339,6 +1350,9 @@ p<-plot_grid(
   labels = "AUTO", ncol = 3)
 
 ggsave("fig4.png", plot = p, width = 40, height = 15, units = "cm")
+
+fig4 <- image_read("fig4.png")
+fig4
 ```
 
 
@@ -1571,7 +1585,7 @@ k6<-ggplot(data= dat_slopes)+
  w<-plot_grid(
   kk,kkk,
   labels = "AUTO", ncol = 1)
- 
+ w
 # ggsave("fig5.png", plot = w, width = 30, height = 20, units = "cm")
   
 #y = test[,1,"logboldness_Intercept"] + 0.22
@@ -1591,4 +1605,4 @@ k6<-ggplot(data= dat_slopes)+
 
 ```
 
-
+## References
