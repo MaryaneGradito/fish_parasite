@@ -432,8 +432,8 @@ p1<-
    theme_classic() +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX("$Boldness_{log_{2}}$"), y = TeX("$Activity_{log_{2}}$"), title = "Uninfected") +
-  annotate("text", x = -1.3, y = 2.8, label = TeX(paste0("$r_{b}$ = "," -0.52 ", " 95%CI: -0.87, -0.03")), size =3, color = "darkblue") + 
-  annotate("text", x = -1.3, y = 2.4, label = TeX(paste0("$r_{w}$ = ", " 0.18 ", " 95%CI: -0.06, 0.40")), size=3, color = "darkgreen")
+  annotate("text", x = -1.3, y = 2.8, label = TeX(paste0("$r_{b}$ = "," -0.52 ", " 95%CI: -0.87, -0.03")), size =3, color = "black") + 
+  annotate("text", x = -1.3, y = 2.4, label = TeX(paste0("$r_{w}$ = ", " 0.18 ", " 95%CI: -0.06, 0.40")), size=3, color = "black")
 
 p2<-
   ggplot(data=dat_E)+
@@ -442,8 +442,8 @@ p2<-
    theme_classic() +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX("$Boldness_{log_{2}}$"), y = TeX("$Activity_{log_{2}}$"), title = "Infected") +
-  annotate("text", x = -1.5, y = 2.8, label = TeX(paste0("$r_{b}$ = ", " -0.43 ", " 95%CI: -0.84, 0.13 ")), size =3, color = "darkblue") + 
-  annotate("text", x = -1.5, y = 2.4, label = TeX(paste0("$r_{w}$ = ", " 0.17 ", " 95%CI: -0.07, 0.39")), size=3, color = "darkgreen")
+  annotate("text", x = -1.5, y = 2.8, label = TeX(paste0("$r_{b}$ = ", " -0.43 ", " 95%CI: -0.84, 0.13 ")), size =3, color = "black") + 
+  annotate("text", x = -1.5, y = 2.4, label = TeX(paste0("$r_{w}$ = ", " 0.17 ", " 95%CI: -0.07, 0.39")), size=3, color = "black")
  
  p_1<- plot_grid(
   p1, p2, ncol = 2)
@@ -457,8 +457,8 @@ p2<-
    theme_classic() +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX("$Boldness_{log_{2}}$"), y = TeX("Exploration"), title = "Uninfected") +
-  annotate("text", x = -1.3, y = 2.8, label = TeX(paste0("$r_{b}$ = ", " -0.41 ", " 95%CI: -0.83, 0.11 ")), size =3, color = "darkblue") + 
-  annotate("text", x = -1.3, y = 2.4, label = TeX(paste0("$r_{w}$ = ", " -0.06 ", " 95%CI: -0.27, 0.17")), size=3, color = "darkgreen")
+  annotate("text", x = -1.3, y = 2.8, label = TeX(paste0("$r_{b}$ = ", " -0.41 ", " 95%CI: -0.83, 0.11 ")), size =3, color = "black") + 
+  annotate("text", x = -1.3, y = 2.4, label = TeX(paste0("$r_{w}$ = ", " -0.06 ", " 95%CI: -0.27, 0.17")), size=3, color = "black")
   
 
   p4<-
@@ -468,8 +468,8 @@ p2<-
    theme_classic() +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX("$Boldness_{log_{2}}$"), y = TeX("Exploration"), title = "Infected") +
-  annotate("text", x = 1, y = 2.8, label = TeX(paste0("$r_{b}$ = ", " -0.42 ", " 95%CI: -0.85, 0.25 ")), size =3, color = "darkblue") + 
-  annotate("text", x = 1, y = 2.4, label = TeX(paste0("$r_{w}$ = ", " -0.12 ", " 95%CI: -0.33, 0.09")), size=3, color = "darkgreen")
+  annotate("text", x = 1, y = 2.8, label = TeX(paste0("$r_{b}$ = ", " -0.42 ", " 95%CI: -0.85, 0.25 ")), size =3, color = "black") + 
+  annotate("text", x = 1, y = 2.4, label = TeX(paste0("$r_{w}$ = ", " -0.12 ", " 95%CI: -0.33, 0.09")), size=3, color = "black")
     
   
    p_2<- plot_grid(
@@ -480,13 +480,14 @@ p2<-
 
     p5<-
  ggplot(data=dat_C)+
-  geom_point(mapping = aes(x = log_activity, y = exploration, color = factor(ID_fish)))+ scale_color_viridis_d(option = "mako") +
+  geom_point(mapping = aes(x = log_activity, y = exploration, color = factor(ID_fish))) +
   geom_line(mapping = aes(x = log_activity, y = exploration, color = factor(ID_fish))) + 
+  scale_color_viridis_d(option = "mako")+
    theme_classic() +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX("$Activity_{log_{2}}$"), y = TeX("Exploration"), title = "Uninfected") +
-  annotate("text", x = -1.3, y = 2.8, label = TeX(paste0("$r_{b}$ = ", " 0.70 ", " 95%CI: 0.37, 0.93")), size =3, color = "darkblue") + 
-  annotate("text", x = -1.3, y = 2.4, label = TeX(paste0("$r_{w}$ = ", " 0.19 ", " 95%CI: -0.04, 0.40")), size=3, color = "darkgreen")
+  annotate("text", x = -1.3, y = 2.8, label = TeX(paste0("$r_{b}$ = ", " 0.70 ", " 95%CI: 0.37, 0.93")), size =3, color = "black") + 
+  annotate("text", x = -1.3, y = 2.4, label = TeX(paste0("$r_{w}$ = ", " 0.19 ", " 95%CI: -0.04, 0.40")), size=3, color = "black")
   
   p6<-
     ggplot(data=dat_E)+
@@ -495,8 +496,8 @@ p2<-
    theme_classic() +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX("$Activity_{log_{2}}$"), y = TeX("Exploration"), title = "Infected") +
-  annotate("text", x = -1, y = 2.8, label = TeX(paste0("$r_{b}$ = ", " 0.14 ", " 95%CI: -0.43, 0.66 ")), size =3, color = "darkblue") + 
-  annotate("text", x = -1, y = 2.4, label = TeX(paste0("$r_{w}$ = ", " -0.14 ", " 95%CI: -0.35, 0.08")), size=3, color = "darkgreen")
+  annotate("text", x = -1, y = 2.8, label = TeX(paste0("$r_{b}$ = ", " 0.14 ", " 95%CI: -0.43, 0.66 ")), size =3, color = "black") + 
+  annotate("text", x = -1, y = 2.4, label = TeX(paste0("$r_{w}$ = ", " -0.14 ", " 95%CI: -0.35, 0.08")), size=3, color = "black")
     
 
   p_3<-plot_grid(
@@ -624,7 +625,7 @@ m1<-
 ggplot(all_data, aes(x = trt, y = log_boldness, group = trt, color = trt)) +
 geom_violin(aes(), trim = FALSE) +
 geom_jitter(aes(colour = trt),shape=16, position=position_jitter(0.1))+
-scale_color_manual(labels = c("Uninfected", "Infected"), values = c("darkgoldenrod", "darkseagreen3"))+
+scale_color_manual(labels = c("Uninfected", "Infected"), values = c("darkgoldenrod", "aquamarine3"))+
 geom_errorbar(data = dat1,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth =0.9, color = "black", inherit.aes = FALSE)+
 labs(x = (""), 
 y = TeX("$Boldness_{log_{2}}$ (sec)")) +
@@ -633,7 +634,7 @@ theme_classic() +
   draw_image("no_parasite.png", x= 0.5,y = 3, scale = 0.6)+
 theme(legend.position = "none",
  legend.title = element_blank()) +
-geom_segment(aes(x = 1, xend = 2, y = 3.85, yend = 3.85)) +
+geom_segment(aes(x = 1, xend = 2, y = 3.85, yend = 3.85), color = "black") +
 annotate("text",  x = 1.5, y = 4, label = TeX(paste0("$pMCMC_{\\alpha = 0.05}$ = 0.0005***")), size =2.5)
 
 
@@ -645,7 +646,7 @@ trt <- as.factor(all_data$treatment)
 m2<-ggplot(all_data, aes(x = trt, y = exploration, group = trt, col = trt)) +
 geom_violin(aes(), trim = FALSE) +
 geom_jitter(aes(colour = trt),shape=16, position=position_jitter(0.1)) +
-scale_color_manual(labels = c("Uninfected", "Infected"), values = c("darkgoldenrod", "darkseagreen3"))+
+scale_color_manual(labels = c("Uninfected", "Infected"), values = c("darkgoldenrod", "aquamarine3"))+
 geom_errorbar(data = dat2,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth = 0.9, color = "black", inherit.aes = FALSE)+
 labs(x = "Treatment", 
 y = "Exploration (%)") +
@@ -654,7 +655,7 @@ theme_classic() +
   draw_image("no_parasite.png", x= 0.5,y = 3, scale = 0.6)+
 theme(legend.position = "none",
  legend.title = element_blank()) +
-geom_segment(aes(x = 1, xend = 2, y = 3.85, yend = 3.85)) +
+geom_segment(aes(x = 1, xend = 2, y = 3.85, yend = 3.85),color = "black") +
 annotate("text",  x = 1.5, y = 4, label = TeX(paste0("$pMCMC_{\\alpha = 0.05}$ = 0.0015**")), size =2.5)
 
 #activity
@@ -664,7 +665,7 @@ dat3<-dat_model %>%
 m3<-ggplot(all_data, aes(x = trt, y = log_activity, group = trt, col = trt)) +
 geom_violin(aes(), trim = FALSE) +
 geom_jitter(aes(colour = trt), shape=16, position=position_jitter(0.1)) +
-scale_color_manual(labels = c("Uninfected", "Infected"), values = c("darkgoldenrod", "darkseagreen3"))+
+scale_color_manual(labels = c("Uninfected", "Infected"), values = c("darkgoldenrod", "aquamarine3"))+
 geom_errorbar(data = dat3,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth =0.9, color = "black", inherit.aes = FALSE)+
 labs(x = "", 
 y = TeX("$Activity_{log_{2}}$(cm)")) +
@@ -673,7 +674,7 @@ theme_classic() +
     draw_image("no_parasite.png", x= 0.5,y = 3, scale = 0.6)+
 theme(legend.position = "none",
  legend.title = element_blank()) +
-geom_segment(aes(x = 1, xend = 2, y = 3.85, yend = 3.85)) +
+geom_segment(aes(x = 1, xend = 2, y = 3.85, yend = 3.85), color = "black") +
 annotate("text",  x = 1.5, y = 4, label = TeX(paste0("$pMCMC_{\\alpha = 0.05}$ = 0.0666")), size =2.5)
 
  m<-plot_grid(
@@ -1091,16 +1092,16 @@ newdat4 <- data.frame(intercept = 1,
 act_bc_c_dat <- cbind(newdat4, summ_act_bc_c, summ_actL95_bc_c, summ_actU95_bc_c)
 
 #plot
- x1<- ggplot(data=dat_C)+
-  geom_point(mapping = aes(x = z_bc, y = log_activity), shape = 21,color = "pink3")+
- geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = z_bc, y = summ_act_bc_c), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "pink3", size=1) +
-  geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = z_bc, y = summ_actL95_bc_c), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "pink3", size=0.8)+
-  geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = z_bc, y = summ_actU95_bc_c), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "pink3", size=0.8)+
+   x1<- ggplot(data=dat_C)+
+  geom_point(mapping = aes(x = z_bc, y = log_activity), shape = 21,color = "mediumorchid4")+
+ geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = z_bc, y = summ_act_bc_c), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "mediumorchid4", size=1) +
+  geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = z_bc, y = summ_actL95_bc_c), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "mediumorchid4", size=0.8)+
+  geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = z_bc, y = summ_actU95_bc_c), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "mediumorchid4", size=0.8)+
    theme_classic() +
     draw_image("no_parasite.png", x= 2,y = 2.1, scale = 0.9)+
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX("Body condition $(g/cm^{3})$"), y = TeX("$Activity_{log_{2}}$ (cm)"), title = "")+
-      annotate("text", x = 0, y = 2.6, label = TeX(paste0("$beta_{bc}$ = ", " 0.21 ", " 95%CI: 0.04, 0.39**")), size =3, color = "pink4") 
+      annotate("text", x = 0, y = 2.6, label = TeX(paste0("$beta_{bc}$ = ", " 0.21 ", " 95%CI: 0.04, 0.39**")), size =3, color = "mediumorchid4") 
 
 
 #################################
@@ -1143,24 +1144,23 @@ act_pl_dat <- cbind(newdat5, summ_act_pl, summ_actL95_pl, summ_actU95_pl)
 
 #plot
 x2<- ggplot(data=dat_parasite)+
-  geom_point(mapping = aes(x = z_bc, y = log_activity), shape = 21,color = "pink3")+
- geom_smooth(data = act_bc_dat, ggplot2::aes(x = z_bc, y = summ_act_bc), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "pink3", size=1) +
-  geom_smooth(data = act_bc_dat, ggplot2::aes(x = z_bc, y = summ_actL95_bc), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "pink3", size=0.8)+
-  geom_smooth(data = act_bc_dat, ggplot2::aes(x = z_bc, y = summ_actU95_bc), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "pink3", size=0.8)+
-    geom_point(mapping = aes(x = z_pl, y = log_activity), shape = 21,color = "aquamarine3")+
- geom_smooth(data = act_pl_dat, ggplot2::aes(x = z_pl, y = summ_act_pl), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "aquamarine3", size=1) +
-  geom_smooth(data = act_pl_dat, ggplot2::aes(x = z_pl, y = summ_actL95_pl), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "aquamarine3", size=0.8)+
-  geom_smooth(data = act_pl_dat, ggplot2::aes(x = z_pl, y = summ_actU95_pl), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "aquamarine3", size=0.8)+
+  geom_point(mapping = aes(x = z_bc, y = log_activity), shape = 21,color = "mediumorchid4")+
+ geom_smooth(data = act_bc_dat, ggplot2::aes(x = z_bc, y = summ_act_bc), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "mediumorchid4", size=1) +
+  geom_smooth(data = act_bc_dat, ggplot2::aes(x = z_bc, y = summ_actL95_bc), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "mediumorchid4", size=0.8)+
+  geom_smooth(data = act_bc_dat, ggplot2::aes(x = z_bc, y = summ_actU95_bc), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "mediumorchid4", size=0.8)+
+    geom_point(mapping = aes(x = z_pl, y = log_activity), shape = 21,color = "darkgoldenrod")+
+ geom_smooth(data = act_pl_dat, ggplot2::aes(x = z_pl, y = summ_act_pl), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "darkgoldenrod", size=1) +
+  geom_smooth(data = act_pl_dat, ggplot2::aes(x = z_pl, y = summ_actL95_pl), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "darkgoldenrod", size=0.8)+
+  geom_smooth(data = act_pl_dat, ggplot2::aes(x = z_pl, y = summ_actU95_pl), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "darkgoldenrod", size=0.8)+
    theme_classic() +
   draw_image("parasite.png", x= 2,y = 2, scale = 1.2)+
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX("Body condition $(g/cm^{3})$"), y = TeX("$Activity_{log_{2}}$ (cm)"), title = "")+
-  annotate("text", x = 3, y = -1.5, label = TeX(paste0("Parasite load")), size =3.5, color = "aquamarine4", fontface = "bold") +
-  annotate("text", x = -2, y = 0, label = TeX(paste0("Body condition")), size =3.5, color = "pink4") +
-      annotate("text", x = 0, y = 2.5, label = TeX(paste0("$beta_{pl}$ = ", " -0.18 ", " 95%CI: -0.37, 0.01")), size =3, color = "aquamarine4") + 
-  annotate("text", x = 0, y = 2.3, label = TeX(paste0("$beta_{bc}$ = "," 0.25 ", " 95%CI: 0.08, 0.41**")), size=3, color = "pink4")
+  annotate("text", x = 3, y = -1.5, label = TeX(paste0("Parasite load")), size =3.5, color = "darkgoldenrod4", fontface = "bold") +
+  annotate("text", x = -2, y = 0, label = TeX(paste0("Body condition")), size =3.5, color = "mediumorchid4") +
+      annotate("text", x = 0, y = 2.5, label = TeX(paste0("$beta_{pl}$ = ", " -0.18 ", " 95%CI: -0.37, 0.01")), size =3, color = "darkgoldenrod4") + 
+  annotate("text", x = 0, y = 2.3, label = TeX(paste0("$beta_{bc}$ = "," 0.25 ", " 95%CI: 0.08, 0.41**")), size=3, color = "mediumorchid4")
 
-  
   
  x<- plot_grid(
   x1,x2,
@@ -1485,14 +1485,15 @@ k3<-ggplot(data= dat_slopes)+
            x = TeX(paste0("Exploration", " ", "$\\beta_{id}$")))+
   annotate("text", x = 0.8, y = -1.5, label = TeX(paste0("$cor_{id}$ = ", " 0.25 ", " 95%CI: -0.51, 0.80")), size =2.5, color = "red3")
 
- kk<- plot_grid(
+ 
+kk<- plot_grid(
   k1, k2, k3, ncol = 3)
 
 
 #Boldness I  vs Bold E
 k4<-ggplot(data= dat_slopes)+
   theme_classic()+
-  geom_point(aes(x=bold_I,y=bold_E), color ="darkolivegreen4", size = 3)+
+  geom_point(aes(x=bold_I,y=bold_E), color ="darkgoldenrod", size = 3)+
   geom_segment(data =dat_slopes,
                aes(x=bold_I, xend=bold_I, y=bold_E, yend=bold_E+se_b_E), size = 0.0025, color ="lemonchiffon3"
                ) +
@@ -1514,7 +1515,7 @@ k4<-ggplot(data= dat_slopes)+
 #Exp I  vs Exp E
 k5<-ggplot(data= dat_slopes)+
   theme_classic()+
-  geom_point(aes(x=exp_I,y=exp_E), color ="darkolivegreen4", size = 3)+
+  geom_point(aes(x=exp_I,y=exp_E), color ="darkgoldenrod", size = 3)+
   geom_segment(data =dat_slopes,
                aes(x=exp_I, xend=exp_I, y=exp_E, yend=exp_E+se_exp_E), size = 0.0025,
                color ="lemonchiffon3"
@@ -1540,7 +1541,7 @@ k5<-ggplot(data= dat_slopes)+
 #act I  vs act E
 k6<-ggplot(data= dat_slopes)+
   theme_classic()+
-  geom_point(aes(x=act_I,y=act_E), color ="darkolivegreen4", size = 3)+
+  geom_point(aes(x=act_I,y=act_E), color ="darkgoldenrod", size = 3)+
   geom_segment(data =dat_slopes,
                aes(x=act_I, xend=act_I, y=act_E, yend=act_E+se_act_E), size = 0.0025,
                color ="lemonchiffon3"
