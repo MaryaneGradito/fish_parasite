@@ -517,7 +517,7 @@ pp<-plot_grid(
   p_1, p_2, p_3,
   labels = "AUTO", ncol = 1)
 pp
-ggsave("fish_parasite/output/figures/fig1.png", plot = pp, width = 28, height = 30, units = "cm")
+ggsave("./output/figures/fig1.png", plot = pp, width = 28, height = 30, units = "cm")
 ```
 
 #### *Boldness and exploration responses differ between uninfected and infected group*
@@ -640,8 +640,8 @@ geom_errorbar(data = dat1,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=H
 labs(x = (""), 
 y = TeX("$Boldness_{log_{2}}$ (sec)")) +
 theme_classic() +
-  draw_image("parasite.png", x= 1.5,y = 3, scale = 0.6)+
-  draw_image("no_parasite.png", x= 0.5,y = 3, scale = 0.6)+
+  draw_image("./img/parasite.png", x= 1.5,y = 3, scale = 0.6)+
+  draw_image("./img/no_parasite.png", x= 0.5,y = 3, scale = 0.6)+
 theme(legend.position = "none",
  legend.title = element_blank()) +
 geom_segment(aes(x = 1, xend = 2, y = 3.85, yend = 3.85), color = "black") +
@@ -661,8 +661,8 @@ geom_errorbar(data = dat2,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=H
 labs(x = "Treatment", 
 y = "Exploration (%)") +
 theme_classic() +
-  draw_image("parasite.png", x= 1.5,y = 3, scale = 0.6)+
-  draw_image("no_parasite.png", x= 0.5,y = 3, scale = 0.6)+
+  draw_image("./img/parasite.png", x= 1.5,y = 3, scale = 0.6)+
+  draw_image("./img/no_parasite.png", x= 0.5,y = 3, scale = 0.6)+
 theme(legend.position = "none",
  legend.title = element_blank()) +
 geom_segment(aes(x = 1, xend = 2, y = 3.85, yend = 3.85),color = "black") +
@@ -680,8 +680,8 @@ geom_errorbar(data = dat3,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=H
 labs(x = "", 
 y = TeX("$Activity_{log_{2}}$(cm)")) +
 theme_classic() +
-  draw_image("parasite.png", x= 1.5,y = 3, scale = 0.6)+
-    draw_image("no_parasite.png", x= 0.5,y = 3, scale = 0.6)+
+  draw_image("./img/parasite.png", x= 1.5,y = 3, scale = 0.6)+
+    draw_image("./img/no_parasite.png", x= 0.5,y = 3, scale = 0.6)+
 theme(legend.position = "none",
  legend.title = element_blank()) +
 geom_segment(aes(x = 1, xend = 2, y = 3.85, yend = 3.85), color = "black") +
@@ -690,91 +690,11 @@ annotate("text",  x = 1.5, y = 4, label = TeX(paste0("$pMCMC_{\\alpha = 0.05}$ =
  m<-plot_grid(
   m1,m2,m3,
   labels = "AUTO", ncol = 3)
- m
- ggsave("fig2.png", plot = m, width = 28, height = 13, units = "cm")
- 
-#Extract post sd from model 2 for each traits and treatment
-# AT ID LEVEL HERE
-#post_sd_2 <- as_draws_df(model2, variable = "^sd", regex = TRUE)
-#Control
-#post_b_c<-post_sd_C_2[,grep("logboldness", colnames(post_sd_C_2))]
-#post_exp_c<-post_sd_C_2[,grep("exploration", colnames(post_sd_C_2))]
-#post_act_c<-post_sd_C_2[,grep("logactivity", colnames(post_sd_C_2))]
 
-#Experimental
-#post_b_e<-post_sd_E_2[,grep("logboldness", colnames(post_sd_E_2))]
-#post_exp_e<-post_sd_E_2[,grep("exploration", colnames(post_sd_E_2))]
-#post_act_e<-post_sd_E_2[,grep("logactivity", colnames(post_sd_E_2))]
+ ggsave("./output/figures/fig2.png", plot = m, width = 28, height = 13, units = "cm")
 
-#unlist the data to be able to use the data as numeric
-#Control
-#post_b_c_num<- as.numeric(unlist(post_b_c))
-#post_exp_c_num<- as.numeric(unlist(post_exp_c))
-#post_act_c_num<- as.numeric(unlist(post_act_c))
-
-#Experimental
-#post_b_e_num<- as.numeric(unlist(post_b_e))
-#post_exp_e_num<- as.numeric(unlist(post_exp_e))
-#post_act_e_num<- as.numeric(unlist(post_act_e))
-
-#calculate mean estimate
-#Control
-#mean_b_c<-mean(post_b_c_num)
-#mean_exp_c<-mean(post_exp_c_num)
-#mean_act_c<-mean(post_act_c_num)
-
-#Experimental
-#mean_b_e<-mean(post_b_e_num)
-#mean_exp_e<-mean(post_exp_e_num)
-#mean_act_e<-mean(post_act_e_num)
-
-#95% IC
-#Boldness
-  #Control
-#blb_b_c <- round(quantile(post_b_c_num, c(0.025, 0.975))[1], 3)
-#bub_b_c <- round(quantile(post_b_c_num, c(0.025, 0.975))[2], 3)
-  #Experimental
-#blb_b_e<- round(quantile(post_b_e_num, c(0.025, 0.975))[1], 3)
-#bub_b_e<- round(quantile(post_b_e_num, c(0.025, 0.975))[2], 3)
-
-#Exploration
-  #Control
-#blb_exp_c <- round(quantile(post_exp_c_num, c(0.025, 0.975))[1], 3)
-#bub_exp_c <- round(quantile(post_exp_c_num, c(0.025, 0.975))[2], 3)
-  #Experimental
-#blb_exp_e <- round(quantile(post_exp_e_num, c(0.025, 0.975))[1], 3)
-#bub_exp_e <- round(quantile(post_exp_e_num, c(0.025, 0.975))[2], 3)
-
-#Activity
-  #Control
-#blb_act_c <- round(quantile(post_act_c_num, c(0.025, 0.975))[1], 3)
-#bub_act_c <- round(quantile(post_act_c_num, c(0.025, 0.975))[2], 3)
-  #Experimental
-#blb_act_e <- round(quantile(post_act_e_num, c(0.025, 0.975))[1], 3)
-#bub_act_e <- round(quantile(post_act_e_num, c(0.025, 0.975))[2], 3)
-
-#create data frame with metrics from posterior distribution from model2
-#dat_model2<-data.frame(
-  #trait=c("logboldness","logboldness","exploration","exploration","logactivity","logactivity"),
-  #treatment=c("uninfected","infected","uninfected","infected","uninfected","infected"), 
-  #estimate = c(mean_b_c,mean_b_e,mean_exp_c,mean_exp_e, mean_act_c,mean_act_e), 
-  #Lower_CI = c(blb_b_c, blb_b_e, blb_exp_c, blb_exp_e, blb_act_c, blb_act_e),
- # Higher_CI = c(bub_b_c,bub_b_e,bub_exp_c,bub_exp_e,bub_act_c,bub_act_e))
-
-      
-#plot model2      
-#w1<-ggplot(data = dat_model2) +
-#geom_point(mapping = aes(x = treatment, y = estimate, color = trait))
-  
-#w2<-ggplot(data = all_data) + 
-#geom_point(mapping = aes(x = treatment, y = log_activity))
-
-#w3<-ggplot(data = all_data) + 
-#geom_point(mapping = aes(x = treatment, y = exploration))
-
- #plot_grid(
-  #w1, w2, w3,
-  #labels = "AUTO", ncol = 1)
+fig2 <- image_read("./output/figures/fig2.png") 
+fig2
 
 ```
 
@@ -1108,7 +1028,7 @@ act_bc_c_dat <- cbind(newdat4, summ_act_bc_c, summ_actL95_bc_c, summ_actU95_bc_c
   geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = z_bc, y = summ_actL95_bc_c), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "mediumorchid4", size=0.8)+
   geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = z_bc, y = summ_actU95_bc_c), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "mediumorchid4", size=0.8)+
    theme_classic() +
-    draw_image("no_parasite.png", x= 2,y = 2.1, scale = 0.9)+
+    draw_image("./img/no_parasite.png", x= 2,y = 2.1, scale = 0.9)+
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX("Body condition $(g/cm^{3})$"), y = TeX("$Activity_{log_{2}}$ (cm)"), title = "")+
       annotate("text", x = 0, y = 2.6, label = TeX(paste0("$beta_{bc}$ = ", " 0.21 ", " 95%CI: 0.04, 0.39**")), size =3, color = "mediumorchid4") 
@@ -1163,7 +1083,7 @@ x2<- ggplot(data=dat_parasite)+
   geom_smooth(data = act_pl_dat, ggplot2::aes(x = z_pl, y = summ_actL95_pl), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "darkgoldenrod", size=0.8)+
   geom_smooth(data = act_pl_dat, ggplot2::aes(x = z_pl, y = summ_actU95_pl), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "darkgoldenrod", size=0.8)+
    theme_classic() +
-  draw_image("parasite.png", x= 2,y = 2, scale = 1.2)+
+  draw_image("./img/parasite.png", x= 2,y = 2, scale = 1.2)+
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX("Body condition $(g/cm^{3})$"), y = TeX("$Activity_{log_{2}}$ (cm)"), title = "")+
   annotate("text", x = 3, y = -1.5, label = TeX(paste0("Parasite load")), size =3.5, color = "darkgoldenrod4", fontface = "bold") +
@@ -1176,9 +1096,9 @@ x2<- ggplot(data=dat_parasite)+
   x1,x2,
   labels = "AUTO", ncol = 2)
 
-  x    
-    ggsave("fig3.png", plot = x, width = 28, height = 16, units = "cm")
-
+  ggsave("./output/figures/fig3.png", plot = x, width = 28, height = 16, units = "cm")
+  fig3 <- image_read("./output/figures/fig3.png")
+  fig3
 ```
 
 #### *Acivity decrease with parasite load following the experimental infection*
@@ -1262,8 +1182,8 @@ boldness_bs_dat <- cbind(newdat2, summ_bold_bs, summ_boldL95_bs, summ_boldU95_bs
   geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = z_bs, y = summ_boldL95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "darkgoldenrod", size=0.8)+
   geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = z_bs, y = summ_boldU95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "darkgoldenrod", size=0.8)+
    theme_classic() +
-  draw_image("blackspots.png", x = 3, y = -1.2, scale = 0.8)+
-    draw_image("cestodes.png", x = 3, y = -0.3, scale = 0.8) +
+  draw_image("./img/blackspots.png", x = 3, y = -1.2, scale = 0.8)+
+    draw_image("./img/cestodes.png", x = 3, y = -0.3, scale = 0.8) +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX(""), y = TeX("$Boldness_{log_{2}}$ (sec)"), title = "") +
       annotate("text", x = 1.5, y = 3.2, label = TeX(paste0("$beta_{bs}$ = ", " -0.08 ", " 95%CI: -0.28, 0.12")), size =3, color = "darkgoldenrod4") + 
@@ -1300,8 +1220,8 @@ n2<-ggplot(data=dat_parasite)+
   geom_smooth(data = exp_bs_dat, ggplot2::aes(x = z_bs, y = summ_expL95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "darkgoldenrod", size=0.8)+
   geom_smooth(data = exp_bs_dat, ggplot2::aes(x = z_bs, y = summ_expU95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "darkgoldenrod", size=0.8)+
    theme_classic() +
-  draw_image("blackspots.png", x = 2.8, y = 0.2, scale = 0.8)+
-    draw_image("cestodes.png", x = 2.8, y = -0.7, scale = 0.8) +
+  draw_image("./img/blackspots.png", x = 2.8, y = 0.2, scale = 0.8)+
+    draw_image("./img/cestodes.png", x = 2.8, y = -0.7, scale = 0.8) +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX("Parasite load (no)"), y = TeX("Exploration (%)"), title = "") +
       annotate("text", x = 1.5, y = 3.2, label = TeX(paste0("$beta_{bs}$ = ", " 0.15 ", " 95%CI: -0.03, 0.32")), size =3, color = "darkgoldenrod4") + 
@@ -1338,8 +1258,8 @@ geom_point(mapping = aes(x = z_ces, y = log_activity), shape = 21,color = "aquam
   geom_smooth(data = exp_bs_dat, ggplot2::aes(x = z_bs, y = summ_actL95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "darkgoldenrod", size=0.8)+
   geom_smooth(data = exp_bs_dat, ggplot2::aes(x = z_bs, y = summ_actU95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "darkgoldenrod", size=0.8)+
    theme_classic() +
-  draw_image("blackspots.png", x = 2.8, y = -1.4, scale = 0.8)+
-    draw_image("cestodes.png", x = 2.8, y = -0.6, scale = 0.8) +
+  draw_image("./img/blackspots.png", x = 2.8, y = -1.4, scale = 0.8)+
+    draw_image("./img/cestodes.png", x = 2.8, y = -0.6, scale = 0.8) +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX(""), y = TeX("$Activity_{log_{2}} (cm)$"), title = "")+
       annotate("text", x = 1, y = 3.2, label = TeX(paste0("$beta_{bs}$ = ", " -0.23 ", " 95%CI: -0.41, -0.06 **")), size =3, color = "darkgoldenrod4") + 
@@ -1349,9 +1269,9 @@ p<-plot_grid(
   n1, n2, n3,
   labels = "AUTO", ncol = 3)
 
-ggsave("fig4.png", plot = p, width = 40, height = 15, units = "cm")
+ggsave("./output/figures/fig4.png", plot = p, width = 40, height = 15, units = "cm")
 
-fig4 <- image_read("fig4.png")
+fig4 <- image_read("./output/figures/fig4.png")
 fig4
 ```
 
@@ -1585,23 +1505,11 @@ k6<-ggplot(data= dat_slopes)+
  w<-plot_grid(
   kk,kkk,
   labels = "AUTO", ncol = 1)
- w
-# ggsave("fig5.png", plot = w, width = 30, height = 20, units = "cm")
-  
-#y = test[,1,"logboldness_Intercept"] + 0.22
-#x = test[,1,"logactivity_treatmentE"]+-0.26
-#sey <- test[,2,"logboldness_Intercept"]
-#sex <- test[,2,"logactivity_treatmentE"]
+ 
+ggsave("./output/figures/fig5.png", plot = w, width = 30, height = 20, units = "cm")
 
- # plot(dat_slopes$bold_E~dat_slopes$exp_E, xlab = "Slope for exp", ylab = "slope for bold", pch = 2, ylim = c(-0.5, 1), xlim=c(-1.2, 1)) 
-  #arrows(x0 = x, x1 = x, y0 = y, y1 = y+sey, length 
-  #= 0.025, angle = 90)
-  #arrows(x0 = x, x1 = x, y0 = y, y1 = y-sey, length 
-  #= 0.025, angle = 90)
-  #arrows(x0 = x, x1 = x+sex, y0 = y, y1 = y, length 
-  #= 0.025, angle = 90)
-  #arrows(x0 = x, x1 = x-sex, y0 = y, y1 = y, length 
-  #= 0.025, angle = 90)
+fig5 <- image_read("./output/figures/fig5.png")  
+fig5
 
 ```
 
