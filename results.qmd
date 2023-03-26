@@ -373,7 +373,7 @@ q_act_exp<-quantile(bsyn_act_exp, c(0.025, 0.975))
 ### Methods
 #### *Statistical analysis*
 
-All statistical analyses were performed in R (vers. `r paste0(R.Version()$major, ".", R.Version()$minor)`). Adjusted fish mass was calculated as the fish mass minus parasite mass (Lagrue and Poulin, 2015). Parasite mass was estimated with the mean mass of 20 parasites (Vic, in prep). For bass tapeworm, adult average mass was 0.003g and the larval form was 0.0008g. We decided to exclude nematodes since the mass varied greatly between individuals, and was rarely found in our fish. Blackspot mass was considered too small to be subtracted from total mass ($10^{-7}g$). Body condition was calculated with the Fulton index ($mass/length^3$) (Jakob, 1996). We had 4 measures of body condition, one for each trial. We used the adjusted fish mass for the 2 measures of body condition after the experimental infection (we assume there was no parasites before the experimental infection). We used standard length of the fish in centimeters. We calculated parasite load by adding the total number of blackspots post-infection with the total number of cestodes found alive (adult and larvae form). We could not determine if larvae form was alive or not visually, but we assumed it can have an effect if the larva is developping in the fish. 
+All statistical analyses were performed in R (vers. `r paste0(R.Version()$major, ".", R.Version()$minor)`). Adjusted fish mass was calculated as the fish mass minus parasite mass (Lagrue and Poulin, 2015). Parasite mass was estimated with the mean mass of 20 parasites (Vic, in prep). For bass tapeworm, adult average mass was 0.003g and the larval form was 0.0008g. We decided to exclude nematodes since the mass varied greatly between individuals, and was rarely found in our fish. Blackspot mass was considered too small to be subtracted from total mass ($10^{-7}g$). Body condition was calculated with the Fulton index ($mass/length^3$) (Jakob, 1996). We had 4 measures of body condition, one for each trial. We used the adjusted fish mass for the 2 measures of body condition after the experimental infection (we assume there was no parasites before the experimental infection). We used standard length of the fish in centimeters. We calculated parasite load by adding the total number of blackspots post-infection with the total number of cestodes found alive (adult and larvae form). We could not determine if larvae form was alive or not visually, but we assumed it can have an effect if the larva is developing in the fish. 
 
 Exploration was normally distributed while activity and boldness were log-transformed to better approximate normality. All variable were z-scaled (i.e., $\left(x - \bar{x} \right) / \sigma$) before fitting the models to ease model interpretation and improve parameter estimation. We fitted our models within a Bayesian statistical framework using the *brms* [vers. `r utils::packageVersion("brms")` [@Burkner2017-wg] package and *rstan* [vers. `r utils::packageVersion("rstan")`] [@noauthor_2021-az].  We ran four MCMC chains each with 6000 iterations, sampling every iteration. We discarded the first 2000 iterations as a warm up. We visually inspected chains to ensure that they were mixing well and that chains had converged (i.e., Rhat < 1.02), and ensured that we have an effective sample size >1000 for all parameters. 
 
@@ -385,11 +385,11 @@ $$
 R = \frac{\sigma^{2}_{ID}}{\sigma^{2}_{ID} + \sigma^{2}_{cage} +  exp(\sigma_{R})^{2}}
 $$ {#eq-eq1}
 
-from @eq-eq1, sd is the standard deviation from the posterior distribution from the model, ID is fish ID, cage is the cage number and sigma is distributed for each group. We also calculated repeatability across groups by pooling the posterior distribution of sigma and ID. To estimate if repeatability was different from 0, we choose 0.05 as a threshold since the values can't be 0 in the distribution. Correlation between traits were extracted from the posterior distribution of the model to determine if there was a behavioural syndrome between traits. To measure the average correlation for each group, we pooled together the two MCMC chains for both group.
+from @eq-eq1, $\sigma^{2}$ is the standard deviation from the posterior distribution from the model, ID is fish ID, cage is the cage number and sigma is distributed for each group. We also calculated repeatability across groups by pooling the posterior distribution of sigma and ID. To estimate if repeatability was different from 0, we choose 0.05 as a threshold since the values can't be 0 in the distribution. Correlation between traits were extracted from the posterior distribution of the model to determine if there was a behavioural syndrome between traits. To measure the average correlation for each group, we pooled together the two MCMC chains for both group.
 
 To test if the experimental infection had an effect on personality, we sublet the data set according to the treatment (uninfected/pre-infection: n = 144; infected/post-infection: n = 120). We built Model 3 to see if parasite load have an effect on the traits. Parasite load was included as a fixed factor, fish ID and cage number as random factors. Model 3 assume than parasite load effect is linear, so we included parasite $load^2$ as a fixed factor in model 4. Our sample was too small to estimate model 4. 
 
-To test if body condition as an effect on traits, we fitted model 5 with body condition as a fixed factor, ID and cage number as random effects for our uninfected group. Model 6 was fitted with parasite load and body condition for our infected group. Finally, to see if the parasite species have different effects on the traits, we built model 7 with total of cestodes, total of blackspots and body condition as fixed factors; ID and cage number as random factors. We suspected an interaction between body condition and parasite load and so we fitted a new model to test this. We also wanted to see if there was an interaction between the two species of parasites and we built a new model with that interaction. Both interactions were not significant and so we decided not to include them in our models. 
+To test if body condition as an effect on traits, we fitted model 5 with body condition as a fixed factor, ID and cage number as random effects for our uninfected group. Model 6 was fitted with parasite load and body condition for our infected group. Finally, to see if the parasite species have different effects on the traits, we built model 7 with numer of cestodes, numer of blackspots and body condition as fixed factors; ID and cage number as random factors. We suspected an interaction between body condition and parasite load and so we fitted a new model to test this. We also wanted to see if there was an interaction between the two species of parasites and we built a new model with that interaction. Both interactions were not significant and so we decided not to include them in our models. 
 
 ### Results
 #### *Experimental infection*
@@ -402,7 +402,7 @@ Exploration and activity were repeatable across trials (Exploration: R = `r R_ex
 
 ```{r}
 #| label: tbl-tab1
-#| tbl-cap: Repeatbility for uninfected and infected group
+#| tbl-cap: Repeatbility of boldness, exploration and activity between the uninfected and experimentally infected group
 #| 
 tab1 <- data.frame(Trait = c("Boldness (log)", "Exploration","Activity (log)"), 
                 "Uninfected" = c(mean(R_C_boldness[,1]), mean(R_C_exploration[,1]), mean(R_C_activity[,1])), 
@@ -424,7 +424,7 @@ tab1 <- data.frame(Trait = c("Boldness (log)", "Exploration","Activity (log)"),
 
 ```{r}
 #| label: fig-fig1
-#| fig-cap: Correlation between traits
+#| fig-cap: Behavioural syndromes between activity-boldness (A), exploration-boldness (B) and exploration-activity (C) for the uninfected and experimentally infected group
 #| out-width: 100%
 #| fig-width: 7
 #| fig-height: 8
@@ -437,7 +437,7 @@ dat_C <- read.table("./output/dat_models_C.csv",header=T, sep=",")
 #Boldness activity 
 p1<-
    ggplot(data=dat_C)+
-  geom_point(mapping = aes(x = log_boldness, y = log_activity, color = factor(ID_fish)))+ scale_color_viridis_d(option = "mako") +
+  geom_point(mapping = aes(x = log_boldness, y = log_activity, color = factor(ID_fish)))+ scale_color_viridis_d(option = "viridis") +
   geom_line(mapping = aes(x = log_boldness, y = log_activity, color = factor(ID_fish))) +
    theme_classic() +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
@@ -447,7 +447,7 @@ p1<-
 
 p2<-
   ggplot(data=dat_E)+
-  geom_point(mapping = aes(x = log_boldness, y = log_activity, color = factor(ID_fish)))+ scale_color_viridis_d(option = "mako") +
+  geom_point(mapping = aes(x = log_boldness, y = log_activity, color = factor(ID_fish)))+ scale_color_viridis_d(option = "viridis") +
   geom_line(mapping = aes(x = log_boldness, y = log_activity, color = factor(ID_fish))) + 
    theme_classic() +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
@@ -462,7 +462,7 @@ p2<-
             
   p3<-
  ggplot(data=dat_C)+
-  geom_point(mapping = aes(x = log_boldness, y = exploration, color = factor(ID_fish)))+ scale_color_viridis_d(option = "mako") +
+  geom_point(mapping = aes(x = log_boldness, y = exploration, color = factor(ID_fish)))+ scale_color_viridis_d(option = "viridis") +
   geom_line(mapping = aes(x = log_boldness, y = exploration, color = factor(ID_fish))) + 
    theme_classic() +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
@@ -473,7 +473,7 @@ p2<-
 
   p4<-
     ggplot(data=dat_E)+
-  geom_point(mapping = aes(x = log_boldness, y = exploration, color = factor(ID_fish)))+ scale_color_viridis_d(option = "mako") +
+  geom_point(mapping = aes(x = log_boldness, y = exploration, color = factor(ID_fish)))+ scale_color_viridis_d(option = "viridis") +
   geom_line(mapping = aes(x = log_boldness, y = exploration, color = factor(ID_fish))) + 
    theme_classic() +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
@@ -492,7 +492,7 @@ p2<-
  ggplot(data=dat_C)+
   geom_point(mapping = aes(x = log_activity, y = exploration, color = factor(ID_fish))) +
   geom_line(mapping = aes(x = log_activity, y = exploration, color = factor(ID_fish))) + 
-  scale_color_viridis_d(option = "mako")+
+  scale_color_viridis_d(option = "viridis")+
    theme_classic() +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX("$Activity_{log_{2}}$"), y = TeX("Exploration"), title = "Uninfected") +
@@ -501,7 +501,7 @@ p2<-
   
   p6<-
     ggplot(data=dat_E)+
-  geom_point(mapping = aes(x = log_activity, y = exploration, color = factor(ID_fish)))+ scale_color_viridis_d(option = "mako") +
+  geom_point(mapping = aes(x = log_activity, y = exploration, color = factor(ID_fish)))+ scale_color_viridis_d(option = "viridis") +
   geom_line(mapping = aes(x = log_activity, y = exploration, color = factor(ID_fish))) + 
    theme_classic() +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
@@ -522,11 +522,12 @@ ggsave("./output/figures/fig1.png", plot = pp, width = 28, height = 30, units = 
 
 #### *Boldness and exploration responses differ between uninfected and infected group*
 
-Mean boldness and exploration responses in the population were significantly different between the uninfected and experimentally group, but not for activity (@fig-fig2).
+Mean boldness and exploration responses in the population were significantly different between the uninfected and experimentally infected group, but not for activity (@fig-fig2). For boldness, we observe a significant decrease in the mean response in the population, meaning that fish tend to get bolder after the experimental infection. Fish are also significantly more exploratory in the infected group. Fish tend to decrease their activity in the infected group compared to the uninfected group. 
+
 
 ```{r}
 #| label: fig-fig2
-#| fig-cap: Effect of treatment on trait responses
+#| fig-cap: Difference in the mean responses of boldness (A), exploration (B) and activity (C) between the uninfected and experimentally infected group
 #| out-width: 100%
 #| fig-width: 8
 #| fig-height: 5
@@ -635,10 +636,10 @@ m1<-
 ggplot(all_data, aes(x = trt, y = log_boldness, group = trt, color = trt)) +
 geom_violin(aes(), trim = FALSE) +
 geom_jitter(aes(colour = trt),shape=16, position=position_jitter(0.1))+
-scale_color_manual(labels = c("Uninfected", "Infected"), values = c("darkgoldenrod", "aquamarine3"))+
-geom_errorbar(data = dat1,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth =0.9, color = "black", inherit.aes = FALSE)+
+scale_color_manual(labels = c("Uninfected", "Infected"), values = c("#472a7a", "#1f978b"))+
+geom_errorbar(data = dat1,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth =0.9, color = "red", inherit.aes = FALSE)+
 labs(x = (""), 
-y = TeX("$Boldness_{log_{2}}$ (sec)")) +
+y = TeX("$Boldness_{log_{2}}$")) +
 theme_classic() +
   draw_image("./img/parasite.png", x= 1.5,y = 3, scale = 0.6)+
   draw_image("./img/no_parasite.png", x= 0.5,y = 3, scale = 0.6)+
@@ -656,10 +657,10 @@ trt <- as.factor(all_data$treatment)
 m2<-ggplot(all_data, aes(x = trt, y = exploration, group = trt, col = trt)) +
 geom_violin(aes(), trim = FALSE) +
 geom_jitter(aes(colour = trt),shape=16, position=position_jitter(0.1)) +
-scale_color_manual(labels = c("Uninfected", "Infected"), values = c("darkgoldenrod", "aquamarine3"))+
-geom_errorbar(data = dat2,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth = 0.9, color = "black", inherit.aes = FALSE)+
+scale_color_manual(labels = c("Uninfected", "Infected"), values = c("#472a7a", "#1f978b"))+
+geom_errorbar(data = dat2,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth = 0.9, color = "red", inherit.aes = FALSE)+
 labs(x = "Treatment", 
-y = "Exploration (%)") +
+y = "Exploration") +
 theme_classic() +
   draw_image("./img/parasite.png", x= 1.5,y = 3, scale = 0.6)+
   draw_image("./img/no_parasite.png", x= 0.5,y = 3, scale = 0.6)+
@@ -675,10 +676,10 @@ dat3<-dat_model %>%
 m3<-ggplot(all_data, aes(x = trt, y = log_activity, group = trt, col = trt)) +
 geom_violin(aes(), trim = FALSE) +
 geom_jitter(aes(colour = trt), shape=16, position=position_jitter(0.1)) +
-scale_color_manual(labels = c("Uninfected", "Infected"), values = c("darkgoldenrod", "aquamarine3"))+
-geom_errorbar(data = dat3,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth =0.9, color = "black", inherit.aes = FALSE)+
+scale_color_manual(labels = c("Uninfected", "Infected"), values = c("#472a7a", "#1f978b"))+
+geom_errorbar(data = dat3,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth =0.9, color = "red", inherit.aes = FALSE)+
 labs(x = "", 
-y = TeX("$Activity_{log_{2}}$(cm)")) +
+y = TeX("$Activity_{log_{2}}$")) +
 theme_classic() +
   draw_image("./img/parasite.png", x= 1.5,y = 3, scale = 0.6)+
     draw_image("./img/no_parasite.png", x= 0.5,y = 3, scale = 0.6)+
@@ -993,11 +994,11 @@ act_ces<-post_sd_2_p[,grep("b_logactivity_z_ces", colnames(post_sd_2_p))]
 
 #### *Activity is positively influence by body condition*
 
-Body condition had a positive effect on activity in both the uninfected and experimentally infected group (Uninfected: $\beta$ = `r act_bc_mean`, 95% CI = `r act_bc_Blb`, `r act_bc_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_bc`, $R_{m}^{2}$ = `r R2_act_5_m`, $R_{c}^{2}$ = `r R2_act_5_c`, Infected: $\beta$ = `r act_bc_mean_6`, 95% CI = `r act_bc_Blb_6`, `r act_bc_Bub_6`, $pMCMC_{\alpha = 0.05}$ = `r p_act_bc_6`, $R_{m}^{2}$ = `r R2_act_6_m`, $R_{c}^{2}$ = `r R2_act_6_c`). Body condition did not have a significant effect on exploration or boldness in the uninfected group (Exploration: $\beta$ = `r exp_bc_mean`, 95% CI = `r exp_bc_Blb`, `r exp_bc_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_exp_bc`; Boldness: $\beta$ = `r bold_bc_mean`, 95% CI = `r bold_bc_Blb`, `r bold_bc_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_bold_bc`) and infected group (Exploration: $\beta$ = `r exp_bc_mean_6`, 95% CI = `r exp_bc_Blb_6`, `r exp_bc_Bub_6`, $pMCMC_{\alpha = 0.05}$ = `r p_exp_bc_6`; Boldness: $\beta$ = `r bold_bc_mean_6`, 95% CI = `r bold_bc_Blb_6`, `r bold_bc_Bub_6`, $pMCMC_{\alpha = 0.05}$ = `r p_bold_bc_6`).
+Body condition had a positive effect on activity in both the uninfected and experimentally infected group (Uninfected: $\beta$ = `r act_bc_mean`, 95% CI = `r act_bc_Blb`, `r act_bc_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_bc`, $R_{m}^{2}$ = `r R2_act_5_m`, $R_{c}^{2}$ = `r R2_act_5_c`, Infected: $\beta$ = `r act_bc_mean_6`, 95% CI = `r act_bc_Blb_6`, `r act_bc_Bub_6`, $pMCMC_{\alpha = 0.05}$ = `r p_act_bc_6`, $R_{m}^{2}$ = `r R2_act_6_m`, $R_{c}^{2}$ = `r R2_act_6_c`). Body condition did not have a significant effect on exploration or boldness in the uninfected group (Exploration: $\beta$ = `r exp_bc_mean`, 95% CI = `r exp_bc_Blb`, `r exp_bc_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_exp_bc`; Boldness: $\beta$ = `r bold_bc_mean`, 95% CI = `r bold_bc_Blb`, `r bold_bc_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_bold_bc`) and infected group (Exploration: $\beta$ = `r exp_bc_mean_6`, 95% CI = `r exp_bc_Blb_6`, `r exp_bc_Bub_6`, $pMCMC_{\alpha = 0.05}$ = `r p_exp_bc_6`; Boldness: $\beta$ = `r bold_bc_mean_6`, 95% CI = `r bold_bc_Blb_6`, `r bold_bc_Bub_6`, $pMCMC_{\alpha = 0.05}$ = `r p_bold_bc_6`) (@fig-fig3).
 
 ```{r}
 #| label: fig-fig3
-#| fig-cap: Effect of body condition on traits
+#| fig-cap: Effect of body condition on activity in the uninfected group (A) and experimentally infected group (B)
 #| out-width: 100%
 #| fig-width: 8
 #| fig-height: 5
@@ -1023,15 +1024,15 @@ act_bc_c_dat <- cbind(newdat4, summ_act_bc_c, summ_actL95_bc_c, summ_actU95_bc_c
 
 #plot
    x1<- ggplot(data=dat_C)+
-  geom_point(mapping = aes(x = z_bc, y = log_activity), shape = 21,color = "mediumorchid4")+
- geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = z_bc, y = summ_act_bc_c), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "mediumorchid4", size=1) +
-  geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = z_bc, y = summ_actL95_bc_c), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "mediumorchid4", size=0.8)+
-  geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = z_bc, y = summ_actU95_bc_c), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "mediumorchid4", size=0.8)+
+  geom_point(mapping = aes(x = z_bc, y = log_activity), shape = 21,color = "#472a7a")+
+ geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = z_bc, y = summ_act_bc_c), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#472a7a", size=1) +
+  geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = z_bc, y = summ_actL95_bc_c), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#472a7a", size=0.8)+
+  geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = z_bc, y = summ_actU95_bc_c), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#472a7a", size=0.8)+
    theme_classic() +
     draw_image("./img/no_parasite.png", x= 2,y = 2.1, scale = 0.9)+
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
-    theme(legend.position="none") + labs(x = TeX("Body condition $(g/cm^{3})$"), y = TeX("$Activity_{log_{2}}$ (cm)"), title = "")+
-      annotate("text", x = 0, y = 2.6, label = TeX(paste0("$beta_{bc}$ = ", " 0.21 ", " 95%CI: 0.04, 0.39**")), size =3, color = "mediumorchid4") 
+    theme(legend.position="none") + labs(x = TeX("Body condition"), y = TeX("$Activity_{log_{2}}$"), title = "")+
+      annotate("text", x = 0, y = 2.6, label = TeX(paste0("$beta_{bc}$ = ", " 0.21 ", " 95%CI: 0.04, 0.39**")), size =3, color = "black") 
 
 
 #################################
@@ -1056,40 +1057,18 @@ newdat4 <- data.frame(intercept = 1,
   #create dataframe
 act_bc_dat <- cbind(newdat4, summ_act_bc, summ_actL95_bc, summ_actU95_bc)
 
- #Predictive values for parasite load
- # matrix.
-newdat5 <- data.frame(intercept = 1,
-                        z_bc = 0,
-                        z_pl = seq(min(dat_parasite$z_pl), max(dat_parasite$z_pl), length.out = 100))
-
-  #activity for parasite load
-    pred_pl_brms <- posterior_epred(model6, re_formula = NA, newdata = newdat5)
-  act_pl <- pred_pl_brms[,,"logactivity"]
-  summ_act_pl <- apply(act_pl, 2, function(x) mean(x))
-  summ_actL95_pl <- apply(act_pl, 2, function(x) quantile(x, 0.025))
-  summ_actU95_pl <- apply(act_pl, 2, function(x) quantile(x, 0.975))
   
-  #create dataframe
-act_pl_dat <- cbind(newdat5, summ_act_pl, summ_actL95_pl, summ_actU95_pl)
-
 #plot
 x2<- ggplot(data=dat_parasite)+
-  geom_point(mapping = aes(x = z_bc, y = log_activity), shape = 21,color = "mediumorchid4")+
- geom_smooth(data = act_bc_dat, ggplot2::aes(x = z_bc, y = summ_act_bc), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "mediumorchid4", size=1) +
-  geom_smooth(data = act_bc_dat, ggplot2::aes(x = z_bc, y = summ_actL95_bc), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "mediumorchid4", size=0.8)+
-  geom_smooth(data = act_bc_dat, ggplot2::aes(x = z_bc, y = summ_actU95_bc), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "mediumorchid4", size=0.8)+
-    geom_point(mapping = aes(x = z_pl, y = log_activity), shape = 21,color = "darkgoldenrod")+
- geom_smooth(data = act_pl_dat, ggplot2::aes(x = z_pl, y = summ_act_pl), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "darkgoldenrod", size=1) +
-  geom_smooth(data = act_pl_dat, ggplot2::aes(x = z_pl, y = summ_actL95_pl), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "darkgoldenrod", size=0.8)+
-  geom_smooth(data = act_pl_dat, ggplot2::aes(x = z_pl, y = summ_actU95_pl), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "darkgoldenrod", size=0.8)+
+  geom_point(mapping = aes(x = z_bc, y = log_activity), shape = 21,color = "#1f978b")+
+ geom_smooth(data = act_bc_dat, ggplot2::aes(x = z_bc, y = summ_act_bc), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#1f978b", size=1) +
+  geom_smooth(data = act_bc_dat, ggplot2::aes(x = z_bc, y = summ_actL95_bc), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#1f978b", size=0.8)+
+  geom_smooth(data = act_bc_dat, ggplot2::aes(x = z_bc, y = summ_actU95_bc), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#1f978b", size=0.8)+
    theme_classic() +
-  draw_image("./img/parasite.png", x= 2,y = 2, scale = 1.2)+
+  draw_image("./img/parasite.png", x= 0.8,y = 1.7, scale = 0.9)+
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
-    theme(legend.position="none") + labs(x = TeX("Body condition $(g/cm^{3})$"), y = TeX("$Activity_{log_{2}}$ (cm)"), title = "")+
-  annotate("text", x = 3, y = -1.5, label = TeX(paste0("Parasite load")), size =3.5, color = "darkgoldenrod4", fontface = "bold") +
-  annotate("text", x = -2, y = 0, label = TeX(paste0("Body condition")), size =3.5, color = "mediumorchid4") +
-      annotate("text", x = 0, y = 2.5, label = TeX(paste0("$beta_{pl}$ = ", " -0.18 ", " 95%CI: -0.37, 0.01")), size =3, color = "darkgoldenrod4") + 
-  annotate("text", x = 0, y = 2.3, label = TeX(paste0("$beta_{bc}$ = "," 0.25 ", " 95%CI: 0.08, 0.41**")), size=3, color = "mediumorchid4")
+    theme(legend.position="none") + labs(x = TeX("Body condition"), y = TeX("$Activity_{log_{2}}$"), title = "")+
+  annotate("text", x = -1, y = 2.3, label = TeX(paste0("$beta_{bc}$ = "," 0.25 ", " 95%CI: 0.08, 0.41**")), size=3, color = "black")
 
   
  x<- plot_grid(
@@ -1103,11 +1082,12 @@ x2<- ggplot(data=dat_parasite)+
 
 #### *Acivity decrease with parasite load following the experimental infection*
 
-When looking at the experimentally infected fish, parasite load had a negative effect on activity ($\beta$ = `r act_pl_mean`, 95% CI = `r act_pl_Blb`, `r act_pl_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_pl`, $R_{^2}$ = 0.068). We did not capture an effect of parasite load on exploration and boldness (Exploration: $\beta$ = `r exp_pl_mean`, 95% CI = `r exp_pl_Blb`, `r exp_pl_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_exp_pl`; Boldness: $\beta$ = `r bold_pl_mean`, 95% CI = `r bold_pl_Blb`, `r bold_pl_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_bold_pl`). When looking at both parasites separately,surprisingly we found an effect of the number of blackspots on activity ($\beta$ = `r act_bs_mean`, 95% CI = `r act_bs_Blb`, `r act_bs_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_bs`, $R_{m}^{2}$ = `r R2_act_7_m`, $R_{c}^{2}$ = `r R2_act_7_c`), but not for exploration and boldness (Exploration: $\beta$ = `r exp_bs_mean`, 95% CI = `r exp_bs_Blb`, `r exp_bs_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_exp_bs`; Boldness: $\beta$ = `r bold_bs_mean`, 95% CI = `r bold_bs_Blb`, `r bold_bs_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_bold_bs`). We find worth mentioning the negative effect of cestodes on exploration ($\beta$ = `r exp_ces_mean`, 95% CI = `r exp_ces_Blb`, `r exp_ces_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_exp_ces`) and positive effect on boldness ($\beta$ = `r bold_ces_mean`, 95% CI = `r bold_ces_Blb`, `r bold_ces_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_bold_ces`) even though it was not significant. Activity was not impacted at all by cestodes ($\beta$ = `r act_ces_mean`, 95% CI = `r act_ces_Blb`, `r act_ces_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_ces`).
+When looking at the experimentally infected fish, parasite load had a significant negative effect on activity ($\beta$ = `r act_pl_mean`, 95% CI = `r act_pl_Blb`, `r act_pl_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_pl`, $R_{^2}$ = 0.068). We did not capture a significant effect of parasite load on exploration and boldness (Exploration: $\beta$ = `r exp_pl_mean`, 95% CI = `r exp_pl_Blb`, `r exp_pl_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_exp_pl`; Boldness: $\beta$ = `r bold_pl_mean`, 95% CI = `r bold_pl_Blb`, `r bold_pl_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_bold_pl`). When looking at both parasites separately,surprisingly we found a significant negative effect of the number of blackspots on activity ($\beta$ = `r act_bs_mean`, 95% CI = `r act_bs_Blb`, `r act_bs_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_bs`, $R_{m}^{2}$ = `r R2_act_7_m`, $R_{c}^{2}$ = `r R2_act_7_c`). We find worth mentioning that the parasite species seem to have an opposite effect on each trait: cestodes tend to decrease exploration ($\beta$ = `r exp_ces_mean`, 95% CI = `r exp_ces_Blb`, `r exp_ces_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_exp_ces`) and boldness ($\beta$ = `r bold_ces_mean`, 95% CI = `r bold_ces_Blb`, `r bold_ces_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_bold_ces`), while blackspots tend to increase exploration ($\beta$ = `r exp_bs_mean`, 95% CI = `r exp_bs_Blb`, `r exp_bs_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_exp_bs`) and boldness ($\beta$ = `r bold_bs_mean`, 95% CI = `r bold_bs_Blb`, `r bold_bs_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_bold_bs`) (@fig-fig4). Activity was not impacted at all by cestodes ($\beta$ = `r act_ces_mean`, 95% CI = `r act_ces_Blb`, `r act_ces_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_ces`). 
+
 
 ```{r}
 #| label: fig-fig4
-#| fig-cap: Parasite species effect on traits
+#| fig-cap: Effect of cestodes, blackspots and total parasite load on boldness (A), exploration (B) and activity (C) after the experimental infection
 #| out-width: 100%
 #| fig-width: 4
 #| fig-height: 10
@@ -1163,6 +1143,13 @@ pred_bs_brms <- posterior_epred(model7, re_formula = NA, newdata = newdat2)
   
 boldness_bs_dat <- cbind(newdat2, summ_bold_bs, summ_boldL95_bs, summ_boldU95_bs)
   
+#for parasite load
+ #Predictive values for parasite load
+ # matrix.
+newdat5 <- data.frame(intercept = 1,
+                        z_bc = 0,
+                        z_pl = seq(min(dat_parasite$z_pl), max(dat_parasite$z_pl), length.out = 100))
+
   # Another way to do this, but you need to know that this is producting PREDICTION INTERVALS not confidence intervals....which is why these are INSANELY wide.
  # pred_ces <- predict(model7, re_formula = NA, newdata = newdat)
 
@@ -1185,7 +1172,7 @@ boldness_bs_dat <- cbind(newdat2, summ_bold_bs, summ_boldL95_bs, summ_boldU95_bs
   draw_image("./img/blackspots.png", x = 3, y = -1.2, scale = 0.8)+
     draw_image("./img/cestodes.png", x = 3, y = -0.3, scale = 0.8) +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
-    theme(legend.position="none") + labs(x = TeX(""), y = TeX("$Boldness_{log_{2}}$ (sec)"), title = "") +
+    theme(legend.position="none") + labs(x = TeX(""), y = TeX("$Boldness_{log_{2}}$"), title = "") +
       annotate("text", x = 1.5, y = 3.2, label = TeX(paste0("$beta_{bs}$ = ", " -0.08 ", " 95%CI: -0.28, 0.12")), size =3, color = "darkgoldenrod4") + 
   annotate("text", x = 1.5, y = 3, label = TeX(paste0("$beta_{ces}$ = "," 0.11 ", " 95%CI: -0.10,0.31")), size=3, color = "aquamarine4")
   
@@ -1223,7 +1210,7 @@ n2<-ggplot(data=dat_parasite)+
   draw_image("./img/blackspots.png", x = 2.8, y = 0.2, scale = 0.8)+
     draw_image("./img/cestodes.png", x = 2.8, y = -0.7, scale = 0.8) +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
-    theme(legend.position="none") + labs(x = TeX("Parasite load (no)"), y = TeX("Exploration (%)"), title = "") +
+    theme(legend.position="none") + labs(x = TeX("Parasite load"), y = TeX("Exploration"), title = "") +
       annotate("text", x = 1.5, y = 3.2, label = TeX(paste0("$beta_{bs}$ = ", " 0.15 ", " 95%CI: -0.03, 0.32")), size =3, color = "darkgoldenrod4") + 
   annotate("text", x = 1.5, y = 3, label = TeX(paste0("$beta_{ces}$ = "," -0.10 ", " 95%CI: -0.27, 0.08")), size=3, color = "aquamarine4")
 
@@ -1247,23 +1234,39 @@ act_ces_dat <- cbind(newdat, summ_act_ces, summ_actL95_ces, summ_actU95_ces)
   #create dataframe
 act_bs_dat <- cbind(newdat2, summ_act_bs, summ_actL95_bs, summ_actU95_bs)
   
+
+#activity for parasite load
+    pred_pl_brms <- posterior_epred(model6, re_formula = NA, newdata = newdat5)
+  act_pl <- pred_pl_brms[,,"logactivity"]
+  summ_act_pl <- apply(act_pl, 2, function(x) mean(x))
+  summ_actL95_pl <- apply(act_pl, 2, function(x) quantile(x, 0.025))
+  summ_actU95_pl <- apply(act_pl, 2, function(x) quantile(x, 0.975))
+  
+  #create dataframe
+act_pl_dat <- cbind(newdat5, summ_act_pl, summ_actL95_pl, summ_actU95_pl)
+
   #figure 3
 n3<-ggplot(data=dat_parasite)+
-geom_point(mapping = aes(x = z_ces, y = log_activity), shape = 21,color = "aquamarine3")+
- geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_ces, y = summ_act_ces), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "aquamarine3", size=1) +
-  geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_ces, y = summ_actL95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "aquamarine3", size=0.8)+
-  geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_ces, y = summ_actU95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "aquamarine3", size=0.8)+
-  geom_point(mapping = aes(x = z_bs, y = log_activity),shape = 21, color = "darkgoldenrod") +
-   geom_smooth(data = exp_bs_dat, ggplot2::aes(x = z_bs, y = summ_act_bs), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "darkgoldenrod", size=1) +
-  geom_smooth(data = exp_bs_dat, ggplot2::aes(x = z_bs, y = summ_actL95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "darkgoldenrod", size=0.8)+
-  geom_smooth(data = exp_bs_dat, ggplot2::aes(x = z_bs, y = summ_actU95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "darkgoldenrod", size=0.8)+
+geom_point(mapping = aes(x = z_ces, y = log_activity), shape = 21,color = "#fde725")+
+ geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_ces, y = summ_act_ces), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#fde725", size=1) +
+  geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_ces, y = summ_actL95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#fde725", size=0.8)+
+  geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_ces, y = summ_actU95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#fde725", size=0.8)+
+  geom_point(mapping = aes(x = z_bs, y = log_activity),shape = 21, color = "#23898e") +
+   geom_smooth(data = act_bs_dat, ggplot2::aes(x = z_bs, y = summ_act_bs), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#23898e", size=1) +
+  geom_smooth(data = act_bs_dat, ggplot2::aes(x = z_bs, y = summ_actL95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#23898e", size=0.8)+
+  geom_smooth(data = act_bs_dat, ggplot2::aes(x = z_bs, y = summ_actU95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#23898e", size=0.8)+
    theme_classic() +
+   geom_point(mapping = aes(x = z_pl, y = log_activity),shape = 21, color = "#A2A2A2") +
+   geom_smooth(data = act_pl_dat, ggplot2::aes(x = z_pl, y = summ_act_pl), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#A2A2A2", size=1) +
+  geom_smooth(data = act_pl_dat, ggplot2::aes(x = z_pl, y = summ_actL95_pl), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#A2A2A2", size=0.8)+
+  geom_smooth(data = act_pl_dat, ggplot2::aes(x = z_pl, y = summ_actU95_pl), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#A2A2A2", size=0.8)+
   draw_image("./img/blackspots.png", x = 2.8, y = -1.4, scale = 0.8)+
     draw_image("./img/cestodes.png", x = 2.8, y = -0.6, scale = 0.8) +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
-    theme(legend.position="none") + labs(x = TeX(""), y = TeX("$Activity_{log_{2}} (cm)$"), title = "")+
-      annotate("text", x = 1, y = 3.2, label = TeX(paste0("$beta_{bs}$ = ", " -0.23 ", " 95%CI: -0.41, -0.06 **")), size =3, color = "darkgoldenrod4") + 
-  annotate("text", x = 1, y = 3, label = TeX(paste0("$beta_{ces}$ = "," 0.00 ", " 95%CI: -0.18, 0.18")), size=3, color = "aquamarine4")
+    theme(legend.position="none") + labs(x = TeX(""), y = TeX("$Activity_{log_{2}}$"), title = "")+
+      annotate("text", x = 1, y = 3.2, label = TeX(paste0("$beta_{bs}$ = ", " -0.23 ", " 95%CI: -0.41, -0.06 **")), size =3, color = "#23898e") + 
+  annotate("text", x = 1, y = 3, label = TeX(paste0("$beta_{ces}$ = "," 0.00 ", " 95%CI: -0.18, 0.18")), size=3, color = "#fde725")+
+   annotate("text", x = 1, y = 2.8, label = TeX(paste0("$beta_{pl}$ = "," -0.18 ", " 95%CI: -0.37, 0.01**")), size=3, color = "black")
     
 p<-plot_grid(
   n1, n2, n3,
@@ -1278,7 +1281,7 @@ fig4
 
 #### *Individuals changes in traits across treatment*
 
-Individuals that increased the most in their exploratory behaviour tend to have the strongest change in boldness ($cor_{id}$ = `r cor_b_exp_mean`, 95% CI = `r Blb_cor_b_exp_E`, `r Bub_cor_b_exp_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_bold_exp_E`). Fish that tend to have strong negative change in their boldness behaviour tend to have positive change in their activity behaviour ($cor_{id}$ = `r cor_b_act_mean`, 95% CI = `r Blb_cor_b_act_E`, `r Bub_cor_b_act_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_bold_act_E`). We found that when a fish have a strong positive change in exploration, they tend to have a positive change in their activity as well ($cor_{id}$ = `r cor_act_exp_E_mean`, 95% CI = `r Blb_cor_act_exp_E`, `r Bub_cor_act_exp_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_act_exp_E`). Bolder fish had a bigger decrease in boldness than less bold fish ($cor_{id}$ = `r cor_bold_I_E_mean`, 95% CI = `r Blb_cor_bold_I_E`, `r Bub_cor_bold_I_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_bold_I_E`). Less exploratory fish had a larger increase in their exploratory behaviour after the experimental infection ($cor_{id}$ = `r cor_exp_I_E_mean`, 95% CI = `r Blb_cor_exp_I_E`, `r Bub_cor_exp_I_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_exp_I_E`). More active fish tend to have the strongest negative change, and the least active fish tend to have a bigger increase in activity after the experimental infection ($cor_{id}$ = `r cor_act_I_E_mean`, 95% CI = `r Blb_cor_act_I_E`, `r Bub_cor_act_I_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_act_I_E`). 
+Individuals that increased the most in their exploratory behaviour tend to have the strongest negative change in boldness ($cor_{id}$ = `r cor_b_exp_mean`, 95% CI = `r Blb_cor_b_exp_E`, `r Bub_cor_b_exp_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_bold_exp_E`). Fish that tend to have strong negative change in their boldness behaviour tend to have a positive change in their activity behaviour ($cor_{id}$ = `r cor_b_act_mean`, 95% CI = `r Blb_cor_b_act_E`, `r Bub_cor_b_act_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_bold_act_E`). We found that when a fish have a strong positive change in exploration, they tend to have a positive change in their activity as well ($cor_{id}$ = `r cor_act_exp_E_mean`, 95% CI = `r Blb_cor_act_exp_E`, `r Bub_cor_act_exp_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_act_exp_E`). Fish that were less bold (higher score in the test) tend to increase more their boldness behaviour (smaller score) compared to bolder fish ($cor_{id}$ = `r cor_bold_I_E_mean`, 95% CI = `r Blb_cor_bold_I_E`, `r Bub_cor_bold_I_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_bold_I_E`). Less exploratory fish had a larger increase in their exploratory behaviour after the experimental infection ($cor_{id}$ = `r cor_exp_I_E_mean`, 95% CI = `r Blb_cor_exp_I_E`, `r Bub_cor_exp_I_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_exp_I_E`). More active fish tend to have the strongest negative change, and the least active fish tend to have a bigger increase in activity after the experimental infection ($cor_{id}$ = `r cor_act_I_E_mean`, 95% CI = `r Blb_cor_act_I_E`, `r Bub_cor_act_I_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_act_I_E`). 
 
 ```{r}
 #| label: fig-fig5
