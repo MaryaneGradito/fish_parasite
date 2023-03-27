@@ -519,9 +519,105 @@ pp
 ggsave("./output/figures/fig1.png", plot = pp, width = 28, height = 30, units = "cm")
 ```
 
+```{r}
+#| label: difference between uninfected and infected
+#| output: false
+#| warning: false
+
+#Create dataframe with estimates and CI
+
+#Extract post sd from model 2 for each traits and treatment
+int_b <- as_draws_df(model2, variable = "^b", regex = TRUE)
+
+#intercept for control
+int_b_c<-int_b[,grep("logboldness_Intercept", colnames(int_b))]
+int_exp_c<-int_b[,grep("exploration_Intercept", colnames(int_b))]
+int_act_c<-int_b[,grep("logactivity_Intercept", colnames(int_b))]
+
+#mean estimates for control
+int_b_c_num<- as.numeric(unlist(int_b_c))
+mean_int_b_c<-mean(int_b_c_num)
+
+int_exp_c_num<- as.numeric(unlist(int_exp_c))
+mean_int_exp_c<-mean(int_exp_c_num)
+
+int_act_c_num<- as.numeric(unlist(int_act_c))
+mean_int_act_c<-mean(int_act_c_num)
+
+#contrast between intercept C and E
+int_b_con<-int_b[,grep("b_logboldness_treatmentE", colnames(int_b))]
+int_exp_con<-int_b[,grep("b_exploration_treatmentE", colnames(int_b))]
+int_act_con<-int_b[,grep("b_logactivity_treatmentE", colnames(int_b))]
+
+#mean estimates for contrast
+int_b_con_num<- as.numeric(unlist(int_b_con))
+mean_con_b<-mean(int_b_con_num)
+
+blb_b_con <- round(quantile(int_b_con_num, c(0.025, 0.975))[1], 3)
+bub_b_con <- round(quantile(int_b_con_num, c(0.025, 0.975))[2], 3)
+
+int_exp_con_num<- as.numeric(unlist(int_exp_con))
+mean_con_exp<-mean(int_exp_con_num)
+
+blb_exp_con <- round(quantile(mean_con_exp, c(0.025, 0.975))[1], 3)
+bub_exp_con <- round(quantile(mean_con_exp, c(0.025, 0.975))[2], 3)
+
+int_act_con_num<- as.numeric(unlist(int_act_con))
+mean_con_act<-mean(int_act_con_num)
+
+blb_act_con <- round(quantile(mean_con_act, c(0.025, 0.975))[1], 3)
+bub_act_con <- round(quantile(mean_con_act, c(0.025, 0.975))[2], 3)
+
+#subtract intercept for C - contrast to get intercept for E
+int_b_e<-(int_b_c_num + int_b_con_num)
+int_b_e_num<- as.numeric(unlist(int_b_e))
+mean_int_b_e<-mean(int_b_e_num)
+
+int_exp_e<-(int_exp_con_num + int_exp_c_num)
+int_exp_e_num<- as.numeric(unlist(int_exp_e))
+mean_int_exp_e<-mean(int_exp_e_num)
+
+int_act_e<-(int_act_con_num + int_act_c_num)
+int_act_e_num<- as.numeric(unlist(int_act_e))
+mean_int_act_e<-mean(int_act_e_num)
+
+ 
+#is E and C significantly different for each trait?
+pm_b<-pmcmc(int_b_c_num - int_b_e_num, twotail = TRUE) #significantly different
+pm_exp<-pmcmc(int_exp_c_num - int_exp_e_num, twotail = TRUE) #significantly different
+pm_act<-pmcmc(int_act_c_num - int_act_e_num, twotail = TRUE) #not significant
+
+
+#95% IC
+#Boldness
+  #Control
+blb_b_c <- round(quantile(int_b_c_num, c(0.025, 0.975))[1], 3)
+bub_b_c <- round(quantile(int_b_c_num, c(0.025, 0.975))[2], 3)
+  #Experimental
+blb_b_e<- round(quantile(int_b_e, c(0.025, 0.975))[1], 3)
+bub_b_e<- round(quantile(int_b_e, c(0.025, 0.975))[2], 3)
+
+#Exploration
+  #Control
+blb_exp_c <- round(quantile(int_exp_c_num, c(0.025, 0.975))[1], 3)
+bub_exp_c <- round(quantile(int_exp_c_num, c(0.025, 0.975))[2], 3)
+  #Experimental
+blb_exp_e <- round(quantile(int_exp_e, c(0.025, 0.975))[1], 3)
+bub_exp_e <- round(quantile(int_exp_e, c(0.025, 0.975))[2], 3)
+
+#Activity
+  #Control
+blb_act_c <- round(quantile(int_act_c_num, c(0.025, 0.975))[1], 3)
+bub_act_c <- round(quantile(int_act_c_num, c(0.025, 0.975))[2], 3)
+  #Experimental
+blb_act_e <- round(quantile(int_act_e, c(0.025, 0.975))[1], 3)
+bub_act_e <- round(quantile(int_act_e, c(0.025, 0.975))[2], 3)
+
+```
+
 #### *Boldness and exploration responses differ between uninfected and infected group*
 
-Mean boldness and exploration responses in the population were significantly different between the uninfected and experimentally infected group, but not for activity (@fig-fig2). For boldness, we observe a significant decrease in the mean response in the population, meaning that fish tend to get bolder after the experimental infection. Fish are also significantly more exploratory in the infected group. Fish tend to decrease their activity in the infected group compared to the uninfected group. 
+Mean boldness and exploration responses in the population were significantly different between the uninfected and experimentally infected group, but not for activity (@fig-fig2). For boldness, we observe a significant decrease in the mean response in the population (Contrast = `r mean_con_b`, 95% CI = `r blb_b_con`, `r bub_b_con`, $pMCMC_{\alpha = 0.05}$ = `r pm_b`), meaning that fish tend to get bolder after the experimental infection. Fish are also significantly more exploratory in the infected group (Contrast = `r mean_con_exp`, 95% CI = `r blb_exp_con`, `r bub_exp_con`, $pMCMC_{\alpha = 0.05}$ = `r pm_exp`). Fish tend to decrease their activity in the infected group compared to the uninfected group (Contrast = `r mean_con_act`, 95% CI = `r blb_act_con`, `r bub_act_con`, $pMCMC_{\alpha = 0.05}$ = `r pm_act`)
 
 
 ```{r}
@@ -560,11 +656,20 @@ int_act_con<-int_b[,grep("b_logactivity_treatmentE", colnames(int_b))]
 int_b_con_num<- as.numeric(unlist(int_b_con))
 mean_con_b<-mean(int_b_con_num)
 
+blb_b_con <- round(quantile(int_b_con_num, c(0.025, 0.975))[1], 3)
+bub_b_con <- round(quantile(int_b_con_num, c(0.025, 0.975))[2], 3)
+
 int_exp_con_num<- as.numeric(unlist(int_exp_con))
 mean_con_exp<-mean(int_exp_con_num)
 
+blb_exp_con <- round(quantile(mean_con_exp, c(0.025, 0.975))[1], 3)
+bub_exp_con <- round(quantile(mean_con_exp, c(0.025, 0.975))[2], 3)
+
 int_act_con_num<- as.numeric(unlist(int_act_con))
 mean_con_act<-mean(int_act_con_num)
+
+blb_act_con <- round(quantile(mean_con_act, c(0.025, 0.975))[1], 3)
+bub_act_con <- round(quantile(mean_con_act, c(0.025, 0.975))[2], 3)
 
 #subtract intercept for C - contrast to get intercept for E
 int_b_e<-(int_b_c_num + int_b_con_num)
@@ -630,6 +735,7 @@ trt <- as.factor(all_data$treatment)
 dat1<-dat_model %>% 
   filter(trait == "logboldness")
 
+ 
 #boldness
 m1<-
 ggplot(all_data, aes(x = trt, y = log_boldness, group = trt, color = trt)) +
@@ -637,6 +743,7 @@ geom_violin(aes(), trim = FALSE) +
 geom_jitter(aes(colour = trt),shape=16, position=position_jitter(0.1))+
 scale_color_manual(labels = c("Uninfected", "Infected"), values = c("#472a7a", "#1f978b"))+
 geom_errorbar(data = dat1,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth =0.9, color = "red", inherit.aes = FALSE)+
+geom_point(data=dat1, mapping=aes(x= treatment, y= estimate), size=2, shape=21, fill = "yellow", inherit.aes = FALSE)+
 labs(x = (""), 
 y = TeX("$Boldness_{log_{2}}$")) +
 theme_classic() +
@@ -645,7 +752,7 @@ theme_classic() +
 theme(legend.position = "none",
  legend.title = element_blank()) +
 geom_segment(aes(x = 1, xend = 2, y = 3.85, yend = 3.85), color = "black") +
-annotate("text",  x = 1.5, y = 4, label = TeX(paste0("$pMCMC_{\\alpha = 0.05}$ = 0.0005***")), size =2.5)
+annotate("text",  x = 1.5, y = 4, label = TeX(paste0("Contrast = -0.49, $pMCMC_{\\alpha = 0.05}$ = 0.0005***")), size =2.5)
 
 
 dat2<-dat_model %>% 
@@ -658,6 +765,7 @@ geom_violin(aes(), trim = FALSE) +
 geom_jitter(aes(colour = trt),shape=16, position=position_jitter(0.1)) +
 scale_color_manual(labels = c("Uninfected", "Infected"), values = c("#472a7a", "#1f978b"))+
 geom_errorbar(data = dat2,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth = 0.9, color = "red", inherit.aes = FALSE)+
+geom_point(data=dat2, mapping=aes(x= treatment, y= estimate), size=2, shape=21, fill = "yellow", inherit.aes = FALSE)+
 labs(x = "Treatment", 
 y = "Exploration") +
 theme_classic() +
@@ -666,7 +774,7 @@ theme_classic() +
 theme(legend.position = "none",
  legend.title = element_blank()) +
 geom_segment(aes(x = 1, xend = 2, y = 3.85, yend = 3.85),color = "black") +
-annotate("text",  x = 1.5, y = 4, label = TeX(paste0("$pMCMC_{\\alpha = 0.05}$ = 0.0015**")), size =2.5)
+annotate("text",  x = 1.5, y = 4, label = TeX(paste0("Contrast = 0.43, $pMCMC_{\\alpha = 0.05}$ = 0.0015**")), size =2.5)
 
 #activity
 dat3<-dat_model %>% 
@@ -677,6 +785,7 @@ geom_violin(aes(), trim = FALSE) +
 geom_jitter(aes(colour = trt), shape=16, position=position_jitter(0.1)) +
 scale_color_manual(labels = c("Uninfected", "Infected"), values = c("#472a7a", "#1f978b"))+
 geom_errorbar(data = dat3,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth =0.9, color = "red", inherit.aes = FALSE)+
+geom_point(data=dat3, mapping=aes(x= treatment, y= estimate), size=2, shape=21, fill = "yellow", inherit.aes = FALSE)+
 labs(x = "", 
 y = TeX("$Activity_{log_{2}}$")) +
 theme_classic() +
@@ -685,7 +794,7 @@ theme_classic() +
 theme(legend.position = "none",
  legend.title = element_blank()) +
 geom_segment(aes(x = 1, xend = 2, y = 3.85, yend = 3.85), color = "black") +
-annotate("text",  x = 1.5, y = 4, label = TeX(paste0("$pMCMC_{\\alpha = 0.05}$ = 0.0666")), size =2.5)
+annotate("text",  x = 1.5, y = 4, label = TeX(paste0("Contrast = -0.26, $pMCMC_{\\alpha = 0.05}$ = 0.0666")), size =2.5)
 
  m<-plot_grid(
   m1,m2,m3,
@@ -1091,11 +1200,11 @@ When looking at the experimentally infected fish, parasite load had a significan
 #| fig-width: 4
 #| fig-height: 10
 
+#import data
 dat_parasite <- read.table("./output/dat_models_parasite.csv",header=T, sep=",")
 
 # Lets create the predictions with the posterior for each variable. Here, we want to vary ces, but keep the other variables at the mean
-
-  # First we want to create a design matrix. 
+# First we want to create a design matrix. 
   newdat <- data.frame(intercept = 1, z_ces = seq(min(dat_parasite$z_ces), max(dat_parasite$z_ces), length.out = 100),
                         z_bs = 0,
                         z_bc = 0)
@@ -1114,6 +1223,9 @@ dat_parasite <- read.table("./output/dat_models_parasite.csv",header=T, sep=",")
   # Now create the dataframe
   #boldness_ces_dat <- cbind(newdat, logbold = sum_pred, logbold_L95 = sum_predL95, logboldU95 = sum_predU95)
 
+#################################
+# BOLDNESS PREDICTIONS
+#################################
   #Make predictions from our model to build slope and confidence intervals
   #FOR CESTODES
 
@@ -1126,7 +1238,7 @@ dat_parasite <- read.table("./output/dat_models_parasite.csv",header=T, sep=",")
   #create dataframe
 boldness_ces_dat <- cbind(newdat, summ_bold_ces, summ_boldL95_ces, summ_boldU95_ces)
   
-  # Now, chekc the following is true
+  # Now, check the following is true
  #all(sum_pred == summ_bold)
 
   #FOR BS NOW
@@ -1149,6 +1261,17 @@ newdat5 <- data.frame(intercept = 1,
                         z_bc = 0,
                         z_pl = seq(min(dat_parasite$z_pl), max(dat_parasite$z_pl), length.out = 100))
 
+#for parasite load
+    pred_pl_brms <- posterior_epred(model6, re_formula = NA, newdata = newdat5)
+  bold_pl <- pred_pl_brms[,,"logboldness"]
+  summ_bold_pl <- apply(bold_pl, 2, function(x) mean(x))
+  summ_boldL95_pl <- apply(bold_pl, 2, function(x) quantile(x, 0.025))
+  summ_boldU95_pl <- apply(bold_pl, 2, function(x) quantile(x, 0.975))
+  
+  #create dataframe
+bold_pl_dat <- cbind(newdat5, summ_bold_pl, summ_boldL95_pl, summ_boldU95_pl)
+  
+
   # Another way to do this, but you need to know that this is producting PREDICTION INTERVALS not confidence intervals....which is why these are INSANELY wide.
  # pred_ces <- predict(model7, re_formula = NA, newdata = newdat)
 
@@ -1159,23 +1282,31 @@ newdat5 <- data.frame(intercept = 1,
 
   #figure 1
   n1<- ggplot(data=dat_parasite)+
-  geom_point(mapping = aes(x = z_ces, y = log_boldness),shape = 21, color = "aquamarine3")+
-  geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = z_ces, y = summ_bold_ces), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "aquamarine3", size=1) +
-  geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = z_ces, y = summ_boldL95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "aquamarine3", size=0.8)+
-  geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = z_ces, y = summ_boldU95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "aquamarine3", size=0.8) + 
-    geom_point(mapping = aes(x = z_bs, y = log_boldness), shape = 21, color = "darkgoldenrod")+
-  geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = z_bs, y = summ_bold_bs), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "darkgoldenrod", size=1) +
-  geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = z_bs, y = summ_boldL95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "darkgoldenrod", size=0.8)+
-  geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = z_bs, y = summ_boldU95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "darkgoldenrod", size=0.8)+
+  geom_point(mapping = aes(x = z_ces, y = log_boldness),shape = 21, color = "#365c8d")+
+  geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = z_ces, y = summ_bold_ces), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#365c8d", size=1) +
+  geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = z_ces, y = summ_boldL95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#365c8d", size=0.8)+
+  geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = z_ces, y = summ_boldU95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#365c8d", size=0.8) + 
+    geom_point(mapping = aes(x = z_bs, y = log_boldness), shape = 21, color = "#56c667")+
+  geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = z_bs, y = summ_bold_bs), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#56c667", size=1) +
+  geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = z_bs, y = summ_boldL95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#56c667", size=0.8)+
+  geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = z_bs, y = summ_boldU95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#56c667", size=0.8)+
+    geom_point(mapping = aes(x = z_pl, y = log_boldness),shape = 21, color = "#A2A2A2") +
+   geom_smooth(data = bold_pl_dat, ggplot2::aes(x = z_pl, y = summ_bold_pl), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#A2A2A2", size=1) +
+  geom_smooth(data = bold_pl_dat, ggplot2::aes(x = z_pl, y = summ_boldL95_pl), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#A2A2A2", size=0.8)+
+  geom_smooth(data = bold_pl_dat, ggplot2::aes(x = z_pl, y = summ_boldU95_pl), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#A2A2A2", size=0.8)+
    theme_classic() +
   draw_image("./img/blackspots.png", x = 3, y = -1.2, scale = 0.8)+
     draw_image("./img/cestodes.png", x = 3, y = -0.3, scale = 0.8) +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX(""), y = TeX("$Boldness_{log_{2}}$"), title = "") +
-      annotate("text", x = 1.5, y = 3.2, label = TeX(paste0("$beta_{bs}$ = ", " -0.08 ", " 95%CI: -0.28, 0.12")), size =3, color = "darkgoldenrod4") + 
-  annotate("text", x = 1.5, y = 3, label = TeX(paste0("$beta_{ces}$ = "," 0.11 ", " 95%CI: -0.10,0.31")), size=3, color = "aquamarine4")
+      annotate("text", x = 1.5, y = 3.2, label = TeX(paste0("$beta_{bs}$ = ", " -0.08 ", " 95%CI: -0.28, 0.12")), size =3, color = "#56c667") + 
+  annotate("text", x = 1.5, y = 3, label = TeX(paste0("$beta_{ces}$ = "," 0.11 ", " 95%CI: -0.10,0.31")), size=3, color = "#365c8d")+
+   annotate("text", x = 1.5, y = 2.8, label = TeX(paste0("$beta_{pl}$ = "," -0.00 ", " 95%CI: -0.21, 0.21")), size=3, color = "black")
   
-  #exploration for cestode
+#################################
+# EXPLORATION PREDICTIONS
+#################################
+  #for cestode
     pred_ces_brms <- posterior_epred(model7, re_formula = NA, newdata = newdat)
   exp_ces <- pred_ces_brms[,,"exploration"]
   summ_exp_ces <- apply(exp_ces, 2, function(x) mean(x))
@@ -1185,7 +1316,7 @@ newdat5 <- data.frame(intercept = 1,
   #create dataframe
 exp_ces_dat <- cbind(newdat, summ_exp_ces, summ_expL95_ces, summ_expU95_ces)
   
-  #exploration for bs
+  #for bs
    pred_bs_brms <- posterior_epred(model7, re_formula = NA, newdata = newdat2)
   exp_bs <- pred_bs_brms[,,"exploration"]
   summ_exp_bs <- apply(exp_bs, 2, function(x) mean(x))
@@ -1195,25 +1326,43 @@ exp_ces_dat <- cbind(newdat, summ_exp_ces, summ_expL95_ces, summ_expU95_ces)
   #create dataframe
 exp_bs_dat <- cbind(newdat2, summ_exp_bs, summ_expL95_bs, summ_expU95_bs)
   
-  #figure 2
+    #for parasite load
+    pred_pl_brms <- posterior_epred(model6, re_formula = NA, newdata = newdat5)
+  exp_pl <- pred_pl_brms[,,"exploration"]
+  summ_exp_pl <- apply(exp_pl, 2, function(x) mean(x))
+  summ_expL95_pl <- apply(exp_pl, 2, function(x) quantile(x, 0.025))
+  summ_expU95_pl <- apply(exp_pl, 2, function(x) quantile(x, 0.975))
+  
+  #create dataframe
+exp_pl_dat <- cbind(newdat5, summ_exp_pl, summ_expL95_pl, summ_expU95_pl)
+  
+#figure 2
 n2<-ggplot(data=dat_parasite)+
-  geom_point(mapping = aes(x = z_ces, y = exploration), shape = 21, color = "aquamarine3")+
- geom_smooth(data = exp_ces_dat, ggplot2::aes(x = z_ces, y = summ_exp_ces), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "aquamarine3", size=1) +
-  geom_smooth(data = exp_ces_dat, ggplot2::aes(x = z_ces, y = summ_expL95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "aquamarine3", size=0.8)+
-  geom_smooth(data = exp_ces_dat, ggplot2::aes(x = z_ces, y = summ_expU95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "aquamarine3", size=0.8)+
-  geom_point(mapping = aes(x = z_bs, y = exploration), shape = 21, color = "darkgoldenrod") +
-   geom_smooth(data = exp_bs_dat, ggplot2::aes(x = z_bs, y = summ_exp_bs), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "darkgoldenrod", size=1) +
-  geom_smooth(data = exp_bs_dat, ggplot2::aes(x = z_bs, y = summ_expL95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "darkgoldenrod", size=0.8)+
-  geom_smooth(data = exp_bs_dat, ggplot2::aes(x = z_bs, y = summ_expU95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "darkgoldenrod", size=0.8)+
+  geom_point(mapping = aes(x = z_ces, y = exploration), shape = 21, color = "#365c8d")+
+ geom_smooth(data = exp_ces_dat, ggplot2::aes(x = z_ces, y = summ_exp_ces), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#365c8d", size=1) +
+  geom_smooth(data = exp_ces_dat, ggplot2::aes(x = z_ces, y = summ_expL95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#365c8d", size=0.8)+
+  geom_smooth(data = exp_ces_dat, ggplot2::aes(x = z_ces, y = summ_expU95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#365c8d", size=0.8)+
+  geom_point(mapping = aes(x = z_bs, y = exploration), shape = 21, color = "#56c667") +
+   geom_smooth(data = exp_bs_dat, ggplot2::aes(x = z_bs, y = summ_exp_bs), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#56c667", size=1) +
+  geom_smooth(data = exp_bs_dat, ggplot2::aes(x = z_bs, y = summ_expL95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#56c667", size=0.8)+
+  geom_smooth(data = exp_bs_dat, ggplot2::aes(x = z_bs, y = summ_expU95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#56c667", size=0.8)+
+     geom_point(mapping = aes(x = z_pl, y = exploration),shape = 21, color = "#A2A2A2") +
+   geom_smooth(data = exp_pl_dat, ggplot2::aes(x = z_pl, y = summ_exp_pl), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#A2A2A2", size=1) +
+  geom_smooth(data = exp_pl_dat, ggplot2::aes(x = z_pl, y = summ_expL95_pl), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#A2A2A2", size=0.8)+
+  geom_smooth(data = exp_pl_dat, ggplot2::aes(x = z_pl, y = summ_expU95_pl), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#A2A2A2", size=0.8)+
    theme_classic() +
   draw_image("./img/blackspots.png", x = 2.8, y = 0.2, scale = 0.8)+
     draw_image("./img/cestodes.png", x = 2.8, y = -0.7, scale = 0.8) +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX("Parasite load"), y = TeX("Exploration"), title = "") +
-      annotate("text", x = 1.5, y = 3.2, label = TeX(paste0("$beta_{bs}$ = ", " 0.15 ", " 95%CI: -0.03, 0.32")), size =3, color = "darkgoldenrod4") + 
-  annotate("text", x = 1.5, y = 3, label = TeX(paste0("$beta_{ces}$ = "," -0.10 ", " 95%CI: -0.27, 0.08")), size=3, color = "aquamarine4")
+      annotate("text", x = 1.5, y = 3.2, label = TeX(paste0("$beta_{bs}$ = ", " 0.15 ", " 95%CI: -0.03, 0.32")), size =3, color = "#56c667") + 
+  annotate("text", x = 1.5, y = 3, label = TeX(paste0("$beta_{ces}$ = "," -0.10 ", " 95%CI: -0.27, 0.08")), size=3, color = "#365c8d")+
+   annotate("text", x = 1.5, y = 2.8, label = TeX(paste0("$beta_{pl}$ = "," 0.06 ", " 95%CI: -0.12, 0.25")), size=3, color = "black")
 
-  #activity for cestode
+#################################
+# ACTIVITY PREDICTIONS
+#################################
+  #for cestode
     pred_ces_brms <- posterior_epred(model7, re_formula = NA, newdata = newdat)
   act_ces <- pred_ces_brms[,,"logactivity"]
   summ_act_ces <- apply(act_ces, 2, function(x) mean(x))
@@ -1223,7 +1372,7 @@ n2<-ggplot(data=dat_parasite)+
   #create dataframe
 act_ces_dat <- cbind(newdat, summ_act_ces, summ_actL95_ces, summ_actU95_ces)
 
-  #activity for bs
+  #for bs
    pred_bs_brms <- posterior_epred(model7, re_formula = NA, newdata = newdat2)
   act_bs <- pred_bs_brms[,,"logactivity"]
   summ_act_bs <- apply(act_bs, 2, function(x) mean(x))
@@ -1233,8 +1382,7 @@ act_ces_dat <- cbind(newdat, summ_act_ces, summ_actL95_ces, summ_actU95_ces)
   #create dataframe
 act_bs_dat <- cbind(newdat2, summ_act_bs, summ_actL95_bs, summ_actU95_bs)
   
-
-#activity for parasite load
+#for parasite load
     pred_pl_brms <- posterior_epred(model6, re_formula = NA, newdata = newdat5)
   act_pl <- pred_pl_brms[,,"logactivity"]
   summ_act_pl <- apply(act_pl, 2, function(x) mean(x))
@@ -1246,14 +1394,14 @@ act_pl_dat <- cbind(newdat5, summ_act_pl, summ_actL95_pl, summ_actU95_pl)
 
   #figure 3
 n3<-ggplot(data=dat_parasite)+
-geom_point(mapping = aes(x = z_ces, y = log_activity), shape = 21,color = "#fde725")+
- geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_ces, y = summ_act_ces), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#fde725", size=1) +
-  geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_ces, y = summ_actL95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#fde725", size=0.8)+
-  geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_ces, y = summ_actU95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#fde725", size=0.8)+
-  geom_point(mapping = aes(x = z_bs, y = log_activity),shape = 21, color = "#23898e") +
-   geom_smooth(data = act_bs_dat, ggplot2::aes(x = z_bs, y = summ_act_bs), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#23898e", size=1) +
-  geom_smooth(data = act_bs_dat, ggplot2::aes(x = z_bs, y = summ_actL95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#23898e", size=0.8)+
-  geom_smooth(data = act_bs_dat, ggplot2::aes(x = z_bs, y = summ_actU95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#23898e", size=0.8)+
+geom_point(mapping = aes(x = z_ces, y = log_activity), shape = 21,color = "#365c8d")+
+ geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_ces, y = summ_act_ces), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#365c8d", size=1) +
+  geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_ces, y = summ_actL95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#365c8d", size=0.8)+
+  geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_ces, y = summ_actU95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#365c8d", size=0.8)+
+  geom_point(mapping = aes(x = z_bs, y = log_activity),shape = 21, color = "#56c667") +
+   geom_smooth(data = act_bs_dat, ggplot2::aes(x = z_bs, y = summ_act_bs), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#56c667", size=1) +
+  geom_smooth(data = act_bs_dat, ggplot2::aes(x = z_bs, y = summ_actL95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#56c667", size=0.8)+
+  geom_smooth(data = act_bs_dat, ggplot2::aes(x = z_bs, y = summ_actU95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#56c667", size=0.8)+
    theme_classic() +
    geom_point(mapping = aes(x = z_pl, y = log_activity),shape = 21, color = "#A2A2A2") +
    geom_smooth(data = act_pl_dat, ggplot2::aes(x = z_pl, y = summ_act_pl), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#A2A2A2", size=1) +
@@ -1263,8 +1411,8 @@ geom_point(mapping = aes(x = z_ces, y = log_activity), shape = 21,color = "#fde7
     draw_image("./img/cestodes.png", x = 2.8, y = -0.6, scale = 0.8) +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX(""), y = TeX("$Activity_{log_{2}}$"), title = "")+
-      annotate("text", x = 1, y = 3.2, label = TeX(paste0("$beta_{bs}$ = ", " -0.23 ", " 95%CI: -0.41, -0.06 **")), size =3, color = "#23898e") + 
-  annotate("text", x = 1, y = 3, label = TeX(paste0("$beta_{ces}$ = "," 0.00 ", " 95%CI: -0.18, 0.18")), size=3, color = "#fde725")+
+      annotate("text", x = 1, y = 3.2, label = TeX(paste0("$beta_{bs}$ = ", " -0.23 ", " 95%CI: -0.41, -0.06 **")), size =3, color = "#56c667") + 
+  annotate("text", x = 1, y = 3, label = TeX(paste0("$beta_{ces}$ = "," 0.00 ", " 95%CI: -0.18, 0.18")), size=3, color = "#365c8d")+
    annotate("text", x = 1, y = 2.8, label = TeX(paste0("$beta_{pl}$ = "," -0.18 ", " 95%CI: -0.37, 0.01**")), size=3, color = "black")
     
 p<-plot_grid(
@@ -1278,7 +1426,7 @@ fig4
 ```
 
 
-#### *Individuals changes in traits across treatment*
+#### *Correlation of change between the traits*
 
 Individuals that increased the most in their exploratory behaviour tend to have the strongest negative change in boldness ($cor_{id}$ = `r cor_b_exp_mean`, 95% CI = `r Blb_cor_b_exp_E`, `r Bub_cor_b_exp_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_bold_exp_E`). Fish that tend to have strong negative change in their boldness behaviour tend to have a positive change in their activity behaviour ($cor_{id}$ = `r cor_b_act_mean`, 95% CI = `r Blb_cor_b_act_E`, `r Bub_cor_b_act_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_bold_act_E`). We found that when a fish have a strong positive change in exploration, they tend to have a positive change in their activity as well ($cor_{id}$ = `r cor_act_exp_E_mean`, 95% CI = `r Blb_cor_act_exp_E`, `r Bub_cor_act_exp_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_act_exp_E`). Fish that were less bold (higher score in the test) tend to increase more their boldness behaviour (smaller score) compared to bolder fish ($cor_{id}$ = `r cor_bold_I_E_mean`, 95% CI = `r Blb_cor_bold_I_E`, `r Bub_cor_bold_I_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_bold_I_E`). Less exploratory fish had a larger increase in their exploratory behaviour after the experimental infection ($cor_{id}$ = `r cor_exp_I_E_mean`, 95% CI = `r Blb_cor_exp_I_E`, `r Bub_cor_exp_I_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_exp_I_E`). More active fish tend to have the strongest negative change, and the least active fish tend to have a bigger increase in activity after the experimental infection ($cor_{id}$ = `r cor_act_I_E_mean`, 95% CI = `r Blb_cor_act_I_E`, `r Bub_cor_act_I_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_act_I_E`). 
 
