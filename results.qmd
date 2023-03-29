@@ -1437,59 +1437,8 @@ Individuals that increased the most in their exploratory behaviour tend to have 
 #| fig-width: 7
 #| fig-height: 4
 
-#Create data frame with posterior distribution from model3
+dat_slopes <- read.table("./output/dat_slopes.csv",header=T, sep=",")
 
-#exploration treatment E
- test  <- ranef(model3, summary = FALSE)$ID_fish
-
- exploration_treatmentE_blup <-  test[, , "exploration_treatmentE"]
-  posterior <- as_draws_df(model3, vars = "^b")
-  exploration_treatmentE_b <- data.frame(posterior[,grep("b_exploration_treatmentE", colnames(posterior))])
-
-fishid_slope <- apply(exploration_treatmentE_blup, 2, function(x) rowSums(exploration_treatmentE_b + x))
-fishid_slope_est <- apply(fishid_slope,2, function(x) mean(x))
-fishid_slope_se <- apply(fishid_slope,2, function(x) sd(x))
-fishid_slope <- cbind(fishid_slope_est,fishid_slope_se)
-
-exp_E<-df(exploration_treatmentE_blup,exploration_treatmentE_b) #function works
-
-#Boldness treatment E
- logboldness_treatmentE_blup <-  test[, , "logboldness_treatmentE"]
-  logboldness_treatmentE_b <- data.frame(posterior[,grep("b_logboldness_treatmentE", colnames(posterior))])
-  
-  bold_E<-df(logboldness_treatmentE_blup,logboldness_treatmentE_b)
-
-#Activity treatmentE
-   logactivity_treatmentE_blup <-  test[, , "logactivity_treatmentE"]
-  logactivity_treatmentE_b <- data.frame(posterior[,grep("b_logactivity_treatmentE", colnames(posterior))])
-  
-  act_E<-df(logactivity_treatmentE_blup,logactivity_treatmentE_b)
-
-  
-#Bold Intercept
-   logboldness_Intercept_blup <-  test[, , "logboldness_Intercept"]
-  logboldness_Intercept_b <- data.frame(posterior[,grep("b_logboldness_Intercept", colnames(posterior))])
-  
-  bold_I<-df(logboldness_Intercept_blup,logboldness_Intercept_b)
-
-#Exploration Intercept
-   exploration_Intercept_blup <-  test[, , "exploration_Intercept"]
-  exploration_Intercept_b <- data.frame(posterior[,grep("b_exploration_Intercept", colnames(posterior))])
-  
-  exp_I<-df(exploration_Intercept_blup,exploration_Intercept_b)
-
-#Activity Intercept
-   logactivity_Intercept_blup <-  test[, , "logactivity_Intercept"]
-  logactivity_Intercept_b <- data.frame(posterior[,grep("b_logactivity_Intercept", colnames(posterior))])
-  
-  act_I<-df(logactivity_Intercept_blup,logactivity_Intercept_b)
-  
-#combine data
-data_slopes<-cbind(bold_E,exp_E,act_E,bold_I,exp_I,act_I)
-dat_slopes<-as.data.frame(data_slopes)
-
-# assigning new names to the columns of the data frame
-colnames(dat_slopes) <- c('bold_E','se_b_E','exp_E','se_exp_E','act_E','se_act_E','bold_I','se_b_I','exp_I','se_exp_I','act_I','se_act_I')
 ###Plot dataframe
 #boldness and exploration E
 
@@ -1660,6 +1609,30 @@ ggsave("./output/figures/fig5.png", plot = w, width = 30, height = 20, units = "
 
 fig5 <- image_read("./output/figures/fig5.png")  
 fig5
+
+
+```
+
+```{r}
+#| label: fig-fig6
+#| fig-cap: Change in bs and bc for slope of chance in activity
+#| out-width: 100%
+#| fig-width: 7
+#| fig-height: 4
+
+new_data <- read.table("./output/new_data1.csv",header=T, sep=",")
+#plot model 10
+plot(new_data$bold_E,new_data$z_change_bs)
+plot(new_data$exp_E,new_data$z_change_bs)
+plot(new_data$z_change_bs, new_data$act_E)
+plot(new_data$z_change_bc, new_data$act_E)
+plot(new_data$bold_E,new_data$z_change_bc)
+plot(new_data$exp_E,new_data$z_change_bc)
+
+#plotting the change in bs with the change of activity, group with body condition change
+ggplot(data= new_data)+
+  geom_point(aes(x= z_change_bs,y=act_E, color = z_change_bc), size=3)+
+  scale_fill_gradient()
 
 ```
 
