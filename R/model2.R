@@ -1,7 +1,7 @@
 ### Script for MODEL 2
 
 ###This model is part of step 1 of the analysis plan
-###Using all data (60 fish and 4 measurements / fish)
+###Using all data (72 fish and 4 measurements / fish, 12 measures excluded for uninfected fish)
 ###Will allow us to answers these questions:
 ###Question 1: Do we find evidence of personality (i.e., consistent differences in behaviour among individuals)? Does boldness, exploration and activity form a beavioural syndrome?
 ###Question 2: Does parasitic infection impact the repeatability of each trait and the strength of behavioural syndromes?
@@ -53,7 +53,7 @@ summary(model2)
 ###############
 #Model 2.2 - looking at the distribution of E and C
 
-#Slipt treatment into two colums so we can use both in the model
+#Split treatment into two columns so we can use both in the model
 dat<-  all_data  %>%  
         select(ID_fish, trial, cage, treatment, log_boldness, log_activity, exploration)   %>% 
         mutate(trial = if_else(trial == 3, 1, if_else(trial == 4, 2, trial))) %>% 
