@@ -108,7 +108,7 @@ editor_options:
 ############################
 # Repeatability C vs E
 ############################
-
+#Extract posterior distribution for model 2, looking at repeatability
          post_sd_2 <- as_draws_df(model2, variable = "^sd", regex = TRUE)
        post_sd_C_2 <- post_sd_2[,grepl("C", colnames(post_sd_2))] #ID control
        post_sd_E_2 <- post_sd_2[,grepl("E", colnames(post_sd_2))] #ID experimental
@@ -300,7 +300,7 @@ editor_options:
 # Behavioural Syndromes
 #################################
   
-# Extract correlations from model
+# Extract correlations from model 2
   post_cor  <- as_draws_df(model2, variable = "^cor", regex= TRUE)
   head(post_cor)
 
@@ -309,7 +309,6 @@ editor_options:
   cor_bold_treatE <-   post_cor[,grep("treatmentE__[a-z]*_treatmentE", colnames(post_cor))]
 
 # See if syndromes differ in C and E
-  #how to you know if they are different? CI overlap?
   
   #Boldness and activity
   bsyn_b_act_C <- data.frame(cor_bold_treatC[,1]); mean(bsyn_b_act_C[,1]); quantile(bsyn_b_act_C[,1], c(0.025, 0.975))
@@ -372,7 +371,7 @@ q_act_exp<-quantile(bsyn_act_exp, c(0.025, 0.975))
 ### Methods
 #### *Statistical analysis*
 
-All statistical analyses were performed in R (vers. `r paste0(R.Version()$major, ".", R.Version()$minor)`). Adjusted fish mass was calculated as the fish mass minus parasite mass (Lagrue and Poulin, 2015). Parasite mass was estimated with the mean mass of 20 parasites (Vic, in prep). For bass tapeworm, adult average mass was 0.003g and the larval form was 0.0008g. We decided to exclude nematodes since the mass varied greatly between individuals, and was rarely found in our fish. Blackspot mass was considered too small to be subtracted from total mass ($10^{-7}g$). Body condition was calculated with the Fulton index ($mass/length^3$) (Jakob, 1996). We had 4 measures of body condition, one for each trial. We used the adjusted fish mass for the 2 measures of body condition after the experimental infection (we assume there was no parasites before the experimental infection). We used standard length of the fish in centimeters. We calculated parasite load by adding the total number of blackspots post-infection with the total number of cestodes found alive (adult and larvae form). We could not determine if larvae form was alive or not visually, but we assumed it can have an effect if the larva is developing in the fish. 
+All statistical analyses were performed in R (vers. `r paste0(R.Version()$major, ".", R.Version()$minor)`). Adjusted fish mass was calculated as the fish mass minus parasite mass [@Lagrue_2015-wg]. Parasite mass was estimated with the mean mass of 20 parasites (Vic, in prep). For bass tapeworm, adult average mass was 0.003g and the larval form was 0.0008g. We decided to exclude nematodes since the mass varied greatly between individuals, and was rarely found in our fish. Blackspot mass was considered too small to be subtracted from total mass ($10^{-7}g$). Body condition was calculated with the Fulton index ($mass/length^3$) [@Jakob_1996-wg]. We had 4 measures of body condition, one for each trial. We used the adjusted fish mass for the 2 measures of body condition after the experimental infection (we assume there was no parasites before the experimental infection). We used standard length of the fish in centimeters. We calculated parasite load by adding the total number of blackspots post-infection with the total number of cestodes found alive (adult and larvae form). We could not determine if larvae form was alive or not visually, but we assumed it can have an effect if the larva is developing in the fish. 
 
 Exploration was normally distributed while activity and boldness were log-transformed to better approximate normality. All variable were z-scaled (i.e., $\left(x - \bar{x} \right) / \sigma$) before fitting the models to ease model interpretation and improve parameter estimation. We fitted our models within a Bayesian statistical framework using the *brms* [vers. `r utils::packageVersion("brms")` [@Burkner2017-wg] package and *rstan* [vers. `r utils::packageVersion("rstan")`] [@noauthor_2021-az].  We ran four MCMC chains each with 6000 iterations, sampling every iteration. We discarded the first 2000 iterations as a warm up. We visually inspected chains to ensure that they were mixing well and that chains had converged (i.e., Rhat < 1.02), and ensured that we have an effective sample size >1000 for all parameters. 
 
