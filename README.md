@@ -69,19 +69,19 @@ We also have a folder with all the models and figures output
 
 ### Biological Hypotheses
 
-Analysis Step 1:
+**Analysis Step 1**:
 
-Question 1: Do we find evidence of personality (i.e., consistent differences in behaviour among individuals)? Does boldness, exploration and activity form a beavioural syndrome?
+*Question 1: Do we find evidence of personality (i.e., consistent differences in behaviour among individuals)? Does boldness, exploration and activity form a beavioural syndrome?*  
 
-Question 2: Does parasitic infection impact the repeatability of each trait and the strength of behavioural syndromes?
+*Question 2: Does parasitic infection impact the repeatability of each trait and the strength of behavioural syndromes?*  
 
 + Hypothesis 1: We expect that the repeatability of the traits to be reduced because parasites should reduce between individual variance to maximize transmission. Behavioural syndromes should be un-affected. 
 
 + Hypothesis 2: We expect that the repeatability of the traits to increase because different parasite and host genotypes / immune systems will result in some parasites being more or less affected which should increase between individual variance. Behavioural syndromes might be expected to become stronger (more correlated). 
 
-Analysis Step 2: 
+**Analysis Step 2**: 
 
-Question 2: How does behaviour change with parasite infection?  
+*Question 2: How does behaviour change with parasite infection?*  
 
 Hypothesis 1: Parasites increase boldness, exploration, and activity because fish are intermediate hosts and increased boldness, activity etc results in a higher probability of predation which facilitates parasite host transmission.  
     
@@ -93,7 +93,7 @@ Hypothesis 2: Parasites decrease boldness, exploration, and activity because it'
 
 ### Statistical hypotheses
 
-Analysis Step 1:
+**Analysis Step 1:**  
 
 **Behavioural syndrome**  
 H0: traits are not correlated  
@@ -103,7 +103,7 @@ H1: traits are positively correlated (which is often seen with these three trait
 H0: traits remain constant before and after infection (facilitates predictability of behaviors for future infection)   
 H1: traits do not remain constant before and after infection (infection changes trait constancy, making fish more vulnerable)  
 
-Analysis Step 2: 
+**Analysis Step 2:**  
 
 **Exploration**  
 H0: experimental infection has no effect on individuals' exploration  
@@ -158,11 +158,11 @@ Packages needed to run the models
   pacman::p_load(lme4, rstan, StanHeaders, jsonlite, rstantools, brms, Rcpp, dplyr, here, flextable, pander)
   ```
   
-Packages for the results (figures, tables)  
-    ```sh
+  Packages needed for the results     
+  ```sh
   pacman::p_load(tidyverse, brms, glmmTMB, gt, latex2exp, posterior, gt, glue, dplyr,magrittr, ggplot2, cowplot, jpeg, magick)
   ```
-  
+
 
 <!-- CONTACT -->
 ## Contact
