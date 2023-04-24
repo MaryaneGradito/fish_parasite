@@ -29,10 +29,6 @@ as.factor(all_data$gonade)
 #############################
 # Explore the data
 #############################
-# Need to install this package for the graph
-install.packages("ggplot2")
-library(ggplot2)
-
 ### Blackspots distribution
 hist(all_data$BS_post_tot)
 
@@ -127,7 +123,7 @@ all_data$parasite_load<- (all_data$BS_post_tot + (all_data$P04_alive + all_data$
 all_data$parasite_load #this will be useful later in the models
 
 ###Calculate adjusted fish mass (total fish mass - parasite mass)
-###Mean average for adult cestodes: 0.003g, larval form: 0.0008g, nematode ___g
+###Mean average for adult cestodes: 0.003g, larval form: 0.0008g
 ## P04_tot*0.003 / P06*0008
 ###I can't calculate the adjusted mass for when they arrive in the lab and before the caging experiment, since we don't know their internal parasite loads yet
 
@@ -147,7 +143,7 @@ all_data$fulton1
 all_data$fulton2<-(all_data$mass_2/(all_data$SL_2*0.1)^3)
 all_data$fulton2
 
-###Body condition after caging experiement
+###Body condition after caging experiment
 all_data$fulton3<-(all_data$adj_mass3/(all_data$SL_3*0.1)^3)
 all_data$fulton3
 
