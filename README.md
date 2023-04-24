@@ -18,7 +18,6 @@ Created on 06-02-2023
         <li><a href="#prerequisites">Prerequisites</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a></li>
     <li><a href="#contact">Contact</a></li>
   </ol>
 </details>
@@ -41,32 +40,32 @@ This type of data structure could apply to researchers working on a wide range o
 
 ### Key File Description
 
-In the main folder of the project **fish_parasite**, we find:
-a) **fish_parasite.Rproj**: the R project  
-b) **results.qmd** : all the written results and the figures/tables
-c) **results.docx** : template for the word doc version of the results
+In the main folder of the project **fish_parasite**, we find:  
+a) **fish_parasite.Rproj**: the R project    
+b) **results.qmd** : all the written results and the figures/tables  
+c) **results.docx** : template for the word doc version of the results  
 
 1. **Data_raw folder** contains:  
 a) **all_data.csv** : all the raw data collected for the Fish Parasite Project  
 b) **meta.data.csv** : all the variables explained with unit of measurement  
-c) **12_fish.csv** : some data for 12 fish that were excluded from the analysis
+c) **12_fish.csv** : some data for 12 fish that were excluded from the analysis  
 
-2. **R folder** contains:  
-b) **fish_parasite.R** :  the R script used in the project  
-c) **func** : functions used in the scripts
-d) **processing_data** : all the processing/transformations for the raw data
-e) **model** : we have model 1 to model 10, which are all the models we did during the analysis
+2. **R folder** contains:   
+b) **fish_parasite.R** :  the R script used in the project   
+c) **func** : functions used in the scripts  
+d) **processing_data** : all the processing/transformations for the raw data  
+e) **model** : we have model 1 to model 10, which are all the models we did during the analysis  
 
-3. **output folder** contains: 
-a) **all_data_p** : all the processing data
-b) **dat_models** : data used for models using all fish
-c) **dat_models_C** : data used for models using only control (or uninfected fish)
-d) **dat_models_E** : data used for models using only experimentally infected fish
-e) **dat_models_parasite** : data used for models looking at parasites
-f) **dat_slopes** : processed data for model 3
-g) **new_data** : processed data for model 10
-h) **new_data1** : merge of new_data and dat_slopes for model 10
-We also have a folder with all the models and figures output
+3. **output folder** contains:  
+a) **all_data_p** : all the processing data  
+b) **dat_models** : data used for models using all fish  
+c) **dat_models_C** : data used for models using only control (or uninfected fish)  
+d) **dat_models_E** : data used for models using only experimentally infected fish  
+e) **dat_models_parasite** : data used for models looking at parasites  
+f) **dat_slopes** : processed data for model 3  
+g) **new_data** : processed data for model 10  
+h) **new_data1** : merge of new_data and dat_slopes for model 10  
+We also have a folder with all the models and figures output  
 
 ### Biological Hypotheses
 
@@ -154,16 +153,16 @@ How to set the project...
 
 ### Prerequisites
 
-Softwares needed
+Packages needed to run the models   
   ```sh
   pacman::p_load(lme4, rstan, StanHeaders, jsonlite, rstantools, brms, Rcpp, dplyr, here, flextable, pander)
   ```
   
-
-<!-- USAGE EXAMPLES -->
-## Usage
-
-Examples
+Packages for the results (figures, tables)  
+    ```sh
+  pacman::p_load(tidyverse, brms, glmmTMB, gt, latex2exp, posterior, gt, glue, dplyr,magrittr, ggplot2, cowplot, jpeg, magick)
+  ```
+  
 
 <!-- CONTACT -->
 ## Contact
