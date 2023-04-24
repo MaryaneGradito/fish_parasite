@@ -42,8 +42,7 @@ This type of data structure could apply to researchers working on a wide range o
 
 1. In the main folder of the project **fish_parasite**, we find:  
 a) **fish_parasite.Rproj**: the R project    
-b) **results.qmd** : all the written results and the figures/tables  
-c) **results.docx** : template for the word doc version of the results  
+b) **results.qmd** : all the written results and the figures/tables   
 
 2. **Data_raw folder** contains:  
 a) **all_data.csv** : all the raw data collected for the Fish Parasite Project  
