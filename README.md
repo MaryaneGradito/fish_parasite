@@ -158,7 +158,7 @@ Packages needed to run the models
   pacman::p_load(lme4, rstan, StanHeaders, jsonlite, rstantools, brms, Rcpp, dplyr, here, flextable, pander)
   ```
   
-  Packages needed for the results     
+  Packages needed for the results (figures,tables...)      
   ```sh
   pacman::p_load(tidyverse, brms, glmmTMB, gt, latex2exp, posterior, gt, glue, dplyr,magrittr, ggplot2, cowplot, jpeg, magick)
   ```
