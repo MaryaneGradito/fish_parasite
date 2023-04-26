@@ -1636,3 +1636,21 @@ ggplot(data= new_data)+
 ```
 
 ## References
+
+```{r}
+#| label: tbl-tab2
+#| tbl-cap: Raw data
+#| 
+tab2 <- data.frame(Trait = c("Boldness", "Exploration","Activity"), 
+                "standard deviation" = c(), 
+                  "Mean value" = c(),
+              "" = c(),check.names = FALSE)
+
+   gt(tab2)  %>% 
+    tab_style(style = list(cell_text(weight = "bold")),
+          locations = list(cells_column_labels())) %>% 
+    opt_table_lines(extent = "none")  %>% 
+    tab_style(style = cell_borders(sides = c("top", "bottom")),
+          locations = list(cells_column_labels()))  %>% 
+    tab_style(style = cell_borders(sides = "bottom", weight = px(2)),
+         locations =  cells_body(rows = 3))
