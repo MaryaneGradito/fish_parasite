@@ -1640,11 +1640,72 @@ ggplot(data= new_data)+
 ```{r}
 #| label: tbl-tab2
 #| tbl-cap: Raw data
-#| 
-tab2 <- data.frame(Trait = c("Boldness", "Exploration","Activity"), 
-                "standard deviation" = c(), 
-                  "Mean value" = c(),
-              "" = c(),check.names = FALSE)
+
+all_data <- read.table("./output/all_data_p.csv",header=T, sep=",")#exploration is z transform here
+all_data2 <- read.table("./data_raw/all_data.csv",header=T, sep=";")#using this dataset for exploration
+
+#boldness uninfected
+dat_boldc <- all_data %>% filter(treatment == "C")
+raw_boldc_mean<-mean(dat_boldc$boldness)
+raw_boldc_sd<-sd(dat_boldc$boldness)
+
+#boldness infected
+dat_bolde <- all_data %>% filter(treatment == "E")
+raw_bolde_mean<-mean(dat_bolde$boldness)
+raw_bolde_sd<-sd(dat_bolde$boldness)
+
+#exploration uninfected
+dat_expc <- all_data2 %>% filter(treatment == "C")
+raw_expc_mean<-mean(dat_expc$exploration)
+raw_expc_sd<-sd(dat_expc$exploration)
+
+#exploration infected
+dat_expe <- all_data2 %>% filter(treatment == "E")
+raw_expe_mean<-mean(dat_expe$exploration)
+raw_expe_sd<-sd(dat_expe$exploration)
+
+#activity uninfected
+dat_actc <- all_data %>% filter(treatment == "C")
+raw_actc_mean<-mean(dat_actc$activity)
+raw_actc_sd<-sd(dat_actc$activity)
+
+#activity infected
+dat_acte <- all_data %>% filter(treatment == "E")
+raw_acte_mean<-mean(dat_acte$activity)
+raw_acte_sd<-sd(dat_acte$activity)
+
+#parasite load
+raw_pl_mean<-mean(all_data$parasite_load)
+raw_pl_sd<-sd(all_data$parasite_load)
+
+#BS post total
+raw_bs_mean<-mean(all_data$BS_post_tot)
+raw_bs_sd<-sd(all_data$BS_post_tot)
+
+#cestode total
+all_data$ces_tot<- (all_data$P04_alive + all_data$P06)
+
+raw_ces_mean<-mean(all_data$ces_tot)
+raw_ces_sd<-sd(all_data$ces_tot)
+
+#body condition uninfected
+dat_bc <- read.table("./output/dat_bc.csv",header=T, sep=",") #dataset with body condition classified with trials and treatment
+
+dat_bc_c <- dat_bc %>% filter(treatment == "C")
+raw_bc_c_mean<-mean(dat_bc_c$body_condition)
+raw_bc_c_sd<-sd(dat_bc_c$body_condition)
+
+#body condition infected
+dat_bc_e <- dat_bc %>% filter(treatment == "E")
+raw_bc_e_mean<-mean(dat_bc_e$body_condition)
+raw_bc_e_sd<-sd(dat_bc_e$body_condition)
+
+#table with raw mean and sd for the variables
+
+tab2 <- data.frame("Raw variables" = c("Boldness (sec)", "Exploration (%)","Activity (cm)","Body condition (mass/length^3)", "Parasite load (no)", "Blackspots (no)","Cestodes (no)"), 
+                  "Mean uninfected" = c(raw_boldc_mean,raw_expc_mean,raw_actc_mean,raw_bc_c_mean,NA,NA,NA), "Standard deviation uninfected" = c(raw_boldc_sd,raw_expc_sd,raw_actc_sd,raw_bc_c_sd,NA,NA,NA),
+                  "Mean infected" = c(raw_bolde_mean,raw_expe_mean,raw_acte_mean,raw_bc_e_mean,raw_pl_mean,raw_bs_mean,raw_ces_mean), "Standard deviation infected" = c(raw_bolde_sd,raw_expe_sd,raw_acte_sd,raw_bc_e_sd,raw_pl_sd,raw_bs_sd,raw_ces_sd),
+                  check.names = FALSE)
 
    gt(tab2)  %>% 
     tab_style(style = list(cell_text(weight = "bold")),
@@ -1653,4 +1714,7 @@ tab2 <- data.frame(Trait = c("Boldness", "Exploration","Activity"),
     tab_style(style = cell_borders(sides = c("top", "bottom")),
           locations = list(cells_column_labels()))  %>% 
     tab_style(style = cell_borders(sides = "bottom", weight = px(2)),
-         locations =  cells_body(rows = 3))
+         locations =  cells_body(rows = 7))
+
+```
+
