@@ -250,8 +250,10 @@ dat_trial4<-all_dat  %>%
                values_to='body_condition') %>% arrange(ID_fish)
 
 #rbind together to get dataset for the model
-dat_trials <- rbind(dat_trial1, dat_trial2, dat_trial3, dat_trial4) %>% arrange(ID_fish)
+dat_bc <- rbind(dat_trial1, dat_trial2, dat_trial3, dat_trial4) %>% arrange(ID_fish)
 
+write.table(dat_bc, file = "dat_bc.csv",
+            sep = ",", row.names = F)
 #Select for each group the data and scale 
 #Experimental group
 dat_6 <- dat_trials %>% filter(treatment == "E") %>%  mutate(z_bc = scale(body_condition),
