@@ -14,9 +14,9 @@
 
 ### Model 6:
 
-  boldness_6 <- bf(log_boldness ~ 1 + z_pl + z_bc + (1 | ID_fish) + (1 | cage)) + gaussian()
-  activity_6 <- bf(log_activity ~ 1 + z_pl + z_bc + (1 | ID_fish) + (1 | cage)) + gaussian()
-  explore_6 <- bf(exploration  ~ 1 + z_pl + z_bc + (1 | ID_fish) + (1 | cage)) + gaussian()
+  boldness_6 <- bf(log_boldness ~ 1 + z_dens + z_bc + (1 | ID_fish) + (1 | cage)) + gaussian()
+  activity_6 <- bf(log_activity ~ 1 + z_dens + z_bc + (1 | ID_fish) + (1 | cage)) + gaussian()
+  explore_6 <- bf(exploration  ~ 1 + z_dens + z_bc + (1 | ID_fish) + (1 | cage)) + gaussian()
 
   
   model_6 <- brms::brm(boldness_6 + activity_6 + explore_6 + set_rescor(TRUE), 
