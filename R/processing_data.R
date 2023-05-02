@@ -133,6 +133,15 @@ all_data$adj_mass3<-(all_data$mass_3-((0.003*all_data$P04_tot)+(0.0008*all_data$
 ###Adjusted mass before sacrifice
 all_data$adj_mass4<-(all_data$mass_4-((0.003*all_data$P04_tot)+(0.0008*all_data$P06)))
 
+###Add new column for parasite density in total
+all_data$dens_tot<-((all_data$BS_post_tot + (all_data$P04_alive + all_data$P06)/all_data$adj_mass4))
+
+###Add new column for BS density
+all_data$dens_bs<-(all_data$BS_post_tot/all_data$adj_mass4)
+
+###Add new column for cestode density
+all_data$dens_ces<-((all_data$P04_alive + all_data$P06)/all_data$adj_mass4)
+
 #############################BODY CONDITION
 #############################FULTON INDEX : adjusted mass/standard length3 in CM (*0.1 to change mm to cm)
 ###Body condition when first arrived at the lab (normal fish mass)
@@ -226,25 +235,25 @@ write.table(dat, file = "all_data_p.csv",
 all_dat <- read.table("./output/all_data_p.csv",header=T, sep=",")
 
 dat_trial1<-all_dat  %>% 
-  select(ID_fish, trial, cage, treatment, log_boldness, log_activity, exploration, fulton1, parasite_load) %>% 
+  select(ID_fish, trial, cage, treatment, log_boldness, log_activity, exploration, fulton1, dens_tot) %>% 
   filter(trial == 1) %>% 
   pivot_longer("fulton1",
                values_to='body_condition') %>% arrange(ID_fish)
 
 dat_trial2<-all_dat  %>% 
-  select(ID_fish, trial, cage, treatment, log_boldness, log_activity, exploration,fulton2, parasite_load) %>%
+  select(ID_fish, trial, cage, treatment, log_boldness, log_activity, exploration,fulton2, dens_tot) %>%
   filter(trial == 2) %>% 
   pivot_longer("fulton2",
                values_to='body_condition') %>% arrange(ID_fish)
 
 dat_trial3<-all_dat  %>% 
-  select(ID_fish, trial, cage, treatment, log_boldness, log_activity, exploration,fulton3, parasite_load) %>%
+  select(ID_fish, trial, cage, treatment, log_boldness, log_activity, exploration,fulton3, dens_tot) %>%
   filter(trial == 3) %>% 
   pivot_longer("fulton3",
                values_to='body_condition') %>% arrange(ID_fish)
 
 dat_trial4<-all_dat  %>% 
-  select(ID_fish, trial, cage, treatment, log_boldness, log_activity, exploration, fulton4, parasite_load) %>%
+  select(ID_fish, trial, cage, treatment, log_boldness, log_activity, exploration, fulton4, dens_tot) %>%
   filter(trial == 4) %>% 
   pivot_longer("fulton4",
                values_to='body_condition') %>% arrange(ID_fish)
@@ -257,7 +266,7 @@ write.table(dat_bc, file = "dat_bc.csv",
 #Select for each group the data and scale 
 #Experimental group
 dat_6 <- dat_trials %>% filter(treatment == "E") %>%  mutate(z_bc = scale(body_condition),
-                                                            z_pl = scale(parasite_load))
+                                                            z_dens = scale(dens_tot))
 #Control group
 dat_5 <- dat_trials %>% filter(treatment == "C") %>% mutate(z_bc = scale(body_condition))
 
@@ -273,25 +282,25 @@ all_dat <- read.table("./output/all_data_p.csv",header=T, sep=",")
 all_dat$ces_tot<- (all_dat$P04_alive + all_data$P06)
 
 dat_trial1<-all_dat  %>% 
-  select(ID_fish, trial, cage, treatment, log_boldness, log_activity, exploration, fulton1, parasite_load, BS_post_tot, ces_tot, BS_pre) %>% 
+  select(ID_fish, trial, cage, treatment, log_boldness, log_activity, exploration, fulton1, dens_tot, dens_bs, dens_ces, BS_pre, BS_post_tot) %>% 
   filter(trial == 1) %>% 
   pivot_longer("fulton1",
                values_to='body_condition') %>% arrange(ID_fish)
 
 dat_trial2<-all_dat  %>% 
-  select(ID_fish, trial, cage, treatment, log_boldness, log_activity, exploration,fulton2, parasite_load, BS_post_tot, ces_tot, BS_pre) %>%
+  select(ID_fish, trial, cage, treatment, log_boldness, log_activity, exploration,fulton2, dens_tot, dens_bs, dens_ces, BS_pre, BS_post_tot) %>%
   filter(trial == 2) %>% 
   pivot_longer("fulton2",
                values_to='body_condition') %>% arrange(ID_fish)
 
 dat_trial3<-all_dat  %>% 
-  select(ID_fish, trial, cage, treatment, log_boldness, log_activity, exploration,fulton3, parasite_load, BS_post_tot, ces_tot, BS_pre) %>%
+  select(ID_fish, trial, cage, treatment, log_boldness, log_activity, exploration,fulton3, dens_tot, dens_bs, dens_ces, BS_pre, BS_post_tot) %>%
   filter(trial == 3) %>% 
   pivot_longer("fulton3",
                values_to='body_condition') %>% arrange(ID_fish)
 
 dat_trial4<-all_dat  %>% 
-  select(ID_fish, trial, cage, treatment, log_boldness, log_activity, exploration, fulton4, parasite_load, BS_post_tot, ces_tot, BS_pre) %>%
+  select(ID_fish, trial, cage, treatment, log_boldness, log_activity, exploration, fulton4, dens_tot, dens_bs, dens_ces, BS_pre, BS_post_tot) %>%
   filter(trial == 4) %>% 
   pivot_longer("fulton4",
                values_to='body_condition') %>% arrange(ID_fish)
@@ -301,10 +310,11 @@ dat_trials <- rbind(dat_trial1, dat_trial2, dat_trial3, dat_trial4) %>% arrange(
 
 #Select for experimentally infected fish and scale parasite and body condition
 dat_par_type <- dat_trials %>% filter(treatment == "E") %>%  mutate(z_bc = scale(body_condition),
-                                                             z_pl = scale(parasite_load),
-                                                             z_bs = scale(BS_post_tot),
-                                                            z_ces = scale (ces_tot),
-                                                            z_bs_pre = scale(BS_pre))
+                                                             z_dens = scale(dens_tot),
+                                                             z_bs = scale(dens_bs),
+                                                            z_ces = scale (dens_ces),
+                                                            z_bs_pre = scale(BS_pre),
+                                                            z_bs_post = scale(BS_post_tot))
 #Save data
 write.table(dat_par_type, file = "dat_models_parasite.csv",
             sep = ",", row.names = F)
@@ -384,25 +394,25 @@ all_dat$change_bc<- (all_dat$fulton2- all_dat$fulton4)
 all_dat$change_bs<-(all_dat$BS_post_tot - all_dat$BS_pre)
 
 dat_trial1<-all_dat  %>% 
-  select(ID_fish, trial, cage, treatment, log_boldness, log_activity, exploration, fulton1, parasite_load, BS_post_tot, ces_tot, change_bc, change_bs) %>% 
+  select(ID_fish, trial, cage, treatment, log_boldness, log_activity, exploration, fulton1, dens_tot, BS_post_tot, ces_tot, change_bc, change_bs) %>% 
   filter(trial == 1) %>% 
   pivot_longer("fulton1",
                values_to='body_condition') %>% arrange(ID_fish)
 
 dat_trial2<-all_dat  %>% 
-  select(ID_fish, trial, cage, treatment, log_boldness, log_activity, exploration,fulton2, parasite_load, BS_post_tot, ces_tot, change_bc, change_bs) %>%
+  select(ID_fish, trial, cage, treatment, log_boldness, log_activity, exploration,fulton2, dens_tot, BS_post_tot, ces_tot, change_bc, change_bs) %>%
   filter(trial == 2) %>% 
   pivot_longer("fulton2",
                values_to='body_condition') %>% arrange(ID_fish)
 
 dat_trial3<-all_dat  %>% 
-  select(ID_fish, trial, cage, treatment, log_boldness, log_activity, exploration,fulton3, parasite_load, BS_post_tot, ces_tot, change_bc, change_bs) %>%
+  select(ID_fish, trial, cage, treatment, log_boldness, log_activity, exploration,fulton3, dens_tot, BS_post_tot, ces_tot, change_bc, change_bs) %>%
   filter(trial == 3) %>% 
   pivot_longer("fulton3",
                values_to='body_condition') %>% arrange(ID_fish)
 
 dat_trial4<-all_dat  %>% 
-  select(ID_fish, trial, cage, treatment, log_boldness, log_activity, exploration, fulton4, parasite_load, BS_post_tot, ces_tot, change_bc, change_bs) %>%
+  select(ID_fish, trial, cage, treatment, log_boldness, log_activity, exploration, fulton4, dens_tot, BS_post_tot, ces_tot, change_bc, change_bs) %>%
   filter(trial == 4) %>% 
   pivot_longer("fulton4",
                values_to='body_condition') %>% arrange(ID_fish)
@@ -412,9 +422,9 @@ dat_trials <- rbind(dat_trial1, dat_trial2, dat_trial3, dat_trial4) %>% arrange(
 
 #Select for experimentally infected fish and scale parasite and body condition
 dat_par_type <- dat_trials %>% filter(treatment == "E" & trial == 4) %>%  mutate(z_bc = scale(body_condition),
-                                                                                 z_pl = scale(parasite_load),
-                                                                                 z_bs = scale(BS_post_tot),
-                                                                                 z_ces = scale (ces_tot),
+                                                                                 z_dens = scale(dens_tot),
+                                                                                 z_bs = scale(dens_bs),
+                                                                                 z_ces = scale (dens_ces),
                                                                                  z_change_bc = scale(change_bc), z_change_bs = scale(change_bs))
 
 #Save data
