@@ -370,10 +370,11 @@ q_act_exp<-quantile(bsyn_act_exp, c(0.025, 0.975))
 
 ### Methods
 #### *Statistical analysis*
+(The statistical significance of estimates from the models were inferred from whether or not confidence intervals included zero)
 
-All statistical analyses were performed in R (vers. `r paste0(R.Version()$major, ".", R.Version()$minor)`). Adjusted fish mass was calculated as the fish mass minus parasite mass [@Lagrue_2015-wg]. Parasite mass was estimated with the mean mass of 20 parasites (Vic, in prep). For bass tapeworm, adult average mass was 0.003g and the larval form was 0.0008g. We decided to exclude nematodes since the mass varied greatly between individuals, and was rarely found in our fish. Blackspot mass was considered too small to be subtracted from total mass ($10^{-7}g$). Body condition was calculated with the Fulton index ($mass/length^3$) [@Jakob_1996-wg]. We had 4 measures of body condition, one for each trial. We used the adjusted fish mass for the 2 measures of body condition after the experimental infection (we assume there was no parasites before the experimental infection). We used standard length of the fish in centimeters. We calculated parasite load by adding the total number of blackspots post-infection with the total number of cestodes found alive (adult and larvae form). We could not determine if larvae form was alive or not visually, but we assumed it can have an effect if the larva is developing in the fish. 
+All statistical analyses were performed in R (vers. `r paste0(R.Version()$major, ".", R.Version()$minor)`). Adjusted fish mass was calculated as the fish mass minus parasite mass [@Lagrue_2015-wg]. Parasite mass was estimated with the mean mass of 20 parasites (Vic, in prep). For bass tapeworm, adult average mass was 0.003g and the larval form was 0.0008g. We decided to exclude nematodes since the mass varied greatly between individuals, and was rarely found in our fish sample. Black spot mass was considered too small to be subtracted from total mass ($10^{-7}g$). Body condition was calculated with the Fulton index ($mass/length^3$) [@Jakob_1996-wg]. We had 4 measures of body condition, one for each trial. We used the adjusted fish mass for the 2 measures of body condition after the experimental infection (we assume there is no parasites before the experimental infection). We used standard length of the fish in centimeters. We calculated parasite density by dividing the number total of parasite (number of black spots post-infection and number of adult cestodes alive and larvae form) with the adjusted fish mass before sacrifice. We could not determine if larvae form was alive or not visually, but we assumed it can have an effect if the larva is developing in the fish. 
 
-Exploration was normally distributed while activity and boldness were log-transformed to better approximate normality. All variable were z-scaled (i.e., $\left(x - \bar{x} \right) / \sigma$) before fitting the models to ease model interpretation and improve parameter estimation. We fitted our models within a Bayesian statistical framework using the *brms* [vers. `r utils::packageVersion("brms")` [@Burkner2017-wg] package and *rstan* [vers. `r utils::packageVersion("rstan")`] [@noauthor_2021-az].  We ran four MCMC chains each with 6000 iterations, sampling every iteration. We discarded the first 2000 iterations as a warm up. We visually inspected chains to ensure that they were mixing well and that chains had converged (i.e., Rhat < 1.02), and ensured that we have an effective sample size >1000 for all parameters. 
+Exploration was visually normally distributed while activity and shyness-boldness were log-transformed to better approximate normality. All variable were z-scaled (i.e., $\left(x - \bar{x} \right) / \sigma$) before fitting the models to ease model interpretation and improve parameter estimation. We fitted our models within a Bayesian statistical framework using the *brms* [vers. `r utils::packageVersion("brms")` [@Burkner2017-wg] package and *rstan* [vers. `r utils::packageVersion("rstan")`] [@noauthor_2021-az].  We ran four MCMC chains each with 6000 iterations, sampling every iteration. We discarded the first 2000 iterations as a warm up. We visually inspected chains to ensure that they were mixing well and that chains had converged (i.e., Rhat < 1.02), and ensured that we have an effective sample size >1000 for all parameters. 
 
 To test if traits were repeatable (i.e., we had personality) and if they formed behavioural syndromes, we built a multi-responses model (n = 264, observations) with each of the three traits as response variables. Treatment (uninfected vs infected) was included as a fixed effect for each trait because we were interested in whether infection changed fish behaviour. Fish ID and cage number were included as random effects. Model 1 had tank effect as a fixed factor compared to Model 2. We compared the models using the *loo* package [vers. `r utils::packageVersion("loo")`]. Model 2 was better fitted than model 1 and we decided not to include tank effect in our models.
 
@@ -383,26 +384,26 @@ $$
 R = \frac{\sigma^{2}_{ID}}{\sigma^{2}_{ID} + \sigma^{2}_{cage} +  exp(\sigma_{R})^{2}}
 $$ {#eq-eq1}
 
-from @eq-eq1, $\sigma^{2}$ is the standard deviation from the posterior distribution from the model, ID is fish ID, cage is the cage number and sigma is distributed for each group. We also calculated repeatability across groups by pooling the posterior distribution of sigma and ID. To estimate if repeatability was different from 0, we choose 0.05 as a threshold since the values can't be 0 in the distribution. Correlation between traits were extracted from the posterior distribution of the model to determine if there was a behavioural syndrome between traits. To measure the average correlation for each group, we pooled together the two MCMC chains for both group.
+from @eq-eq1, $\sigma^{2}$ is the standard deviation from the posterior distribution, ID is fish ID, cage is the cage number and sigma is distributed for each group. We also calculated repeatability across groups by pooling the posterior distribution of sigma and ID. To estimate if repeatability was different from 0, we choose 0.05 as a threshold since the values can't be 0 in the distribution. Correlation between traits were extracted from the posterior distribution of the model to determine if there was a behavioural syndrome between traits. To measure the average correlation for each group, we pooled together the two MCMC chains for the uninfected and infected group.
 
-To test if the experimental infection had an effect on personality, we sublet the data set according to the treatment (uninfected/pre-infection: n = 144; infected/post-infection: n = 120). We built Model 3 to see if parasite load have an effect on the traits. Parasite load was included as a fixed factor, fish ID and cage number as random factors. Model 3 assume than parasite load effect is linear, so we included $parasite load^2$ as a fixed factor in model 4. Our sample was too small to estimate model 4. 
+To test random slopes, we built model 3 exactly the same way as model 2, but we estimated the correlation of change between the slopes and traits. 
 
-To test if body condition as an effect on traits, we fitted model 5 with body condition as a fixed factor, ID and cage number as random effects for our uninfected group. Model 6 was fitted with parasite load and body condition for our infected group. Finally, to see if the parasite species have different effects on the traits, we built model 7 with numer of cestodes, numer of blackspots and body condition as fixed factors; ID and cage number as random factors. We suspected an interaction between body condition and parasite load and so we fitted a new model to test this. We also wanted to see if there was an interaction between the two species of parasites and we built a new model with that interaction. Both interactions were not significant and so we decided not to include them in our models. 
+To test if the experimental infection had an effect on personality, we sublet the data set according to the treatment (uninfected/pre-infection: n = 144; infected/post-infection: n = 120). We built Model 4 to see if parasite density have an effect on the traits. Parasite density was included as a fixed factor, fish ID and cage number as random factors. Model 4 assume than parasite density effect is linear, so we included parasite density squared as a fixed factor in model 4.1. Our sample was too small to estimate this model.
+
+To test if body condition as an effect on personality, we fitted model 5 with body condition as a fixed factor, ID and cage number as random effects for our uninfected group. Model 6 was fitted with parasite density and body condition for our infected group. Finally, to see if the parasite species have different effects on the traits, we built model 7 with cestodes density, black spots density and body condition as fixed factors; ID and cage number as random factors. We suspected an interaction between body condition and parasite density and so we fitted a new model to test this. We also wanted to see if there was an interaction between the two species of parasites and we built a new model with that interaction. Both interactions were not significant and so we decided not to include them in our models. 
 
 ### Results
 #### *Experimental infection*
 
-The caging experiment successfully infected our fish. Uninfected fish that stayed in the laboratory had no living parasites, which indicated that the praziquantel treatment was effective. The two most abundant species found in the experimentally infected fish were trematodes causing the blackspot disease (Trematoda: *Apophallus sp.* and *Uvulifer sp.*; min-max: `r BS_min`- `r BS_max`; median: `r BS_median`) and the bass tapeworm (Cestoda: *Proteocephalus ambloplites*; min-max: `r cestode_min` - `r cestode_max` ; median: `r cestode_median`). The most abundant species of trematode causing blackspots was *Apophallus sp*. (Binning, Lanthier, unpublished data), but *Uvulifer sp.* was found more frequently inside the muscles (MG, personal observations). Experimental fish gained, on average, `r gain_mean` blackspots, and were found on the fins, body, gills and inside the muscles. Bass tapeworm were mostly found in the liver, stomach and digestive tract, and occasionally around the spleen (parasite count: 9), and rarely on the gills (parasite count: 3) or the heart (parasite count: 2). Other unknown nematode species were found rarely in the body cavity (alive parasite count: 4).
+The caging experiment successfully infected our fish. Uninfected fish that stayed in the laboratory had no living parasites, which indicated that the praziquantel treatment was effective. The two most abundant species found in the experimentally infected fish were trematodes causing the black spot disease (Trematoda: *Apophallus sp.* and *Uvulifer sp.*; min-max: `r BS_min`- `r BS_max`; median: `r BS_median`) and the bass tapeworm (Cestoda: *Proteocephalus ambloplites*; min-max: `r cestode_min` - `r cestode_max` ; median: `r cestode_median`). The most abundant species of trematode causing black spots was *Apophallus sp*. (Binning, Lanthier, unpublished data), but *Uvulifer sp.* was found more frequently inside the muscles (MG, personal observations). Experimental fish gained, on average, `r gain_mean` black spots across the different cages, and were found on the fins, body, gills and inside the muscles. Bass tapeworm were mostly found in the liver, stomach and digestive tract, and occasionally around the spleen (parasite count: 9), and rarely on the gills (parasite count: 3) or the heart (parasite count: 2). Other unknown nematode species were found rarely in the body cavity (alive parasite count: 4).
 
 #### *Evidence of personality and behavioural syndromes*
 
-#regarder correlations dans papiers
-
-Exploration and activity were repeatable across trials (Exploration: R = `r R_exp_mean`, 95% CI = `r R_Blb_exp`, `r R_Bub_exp`, $pMCMC_{\alpha = 0.05}$ = `r p_value_exp_a`; Activity: R = `r R_act_mean`, 95% CI = `r R_Blb_act`, `r R_Bub_act`, $pMCMC_{\alpha = 0.05}$ = `r p_value_act_a`), but shyness was not significantly repeatable (Shyness: R = `r R_bold_mean`, 95% CI = `r R_Blb_bold`, `r R_Bub_bold`, $pMCMC_{\alpha = 0.05}$ = `r p_value_bold_a`). We did not observe among-individual variation to be higher in the uninfected vs experimentally infected group (@tbl-tab1). Repeatability did not differ between treatment for shyness ($pMCMC_{\alpha = 0.05}$ = `r p_value_bold`), exploration ($pMCMC_{\alpha = 0.05}$ = `r p_value_exp`) and activity ($pMCMC_{\alpha = 0.05}$ = `r p_value_act`).We found evidence of behavioural syndromes between shyness and activity (cor = `r mean(bsyn_b_act2)`, 95% CI = `r q_b_act`); shyness and exploration (cor = `r mean(bsyn_b_exp)`, 95% CI = `r q_b_exp`), and between activity and exploration (cor = `r mean(bsyn_act_exp)`, 95% CI = `r q_act_exp`) (@fig-fig1).  The correlation did not differ between the uninfected and experimentally infected group for these syndromes (Shyness-Activity: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_b_act`; Shyness-Exploration: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_b_exp`; Activity-Exploration: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_act_exp`).
+Exploration and activity were repeatable across trials (Exploration: R = `r R_exp_mean`, 95% CI = `r R_Blb_exp`, `r R_Bub_exp`, $pMCMC_{\alpha = 0.05}$ = `r p_value_exp_a`; Activity: R = `r R_act_mean`, 95% CI = `r R_Blb_act`, `r R_Bub_act`, $pMCMC_{\alpha = 0.05}$ = `r p_value_act_a`), but shyness was not significantly repeatable (Shyness: R = `r R_bold_mean`, 95% CI = `r R_Blb_bold`, `r R_Bub_bold`, $pMCMC_{\alpha = 0.05}$ = `r p_value_bold_a`). We did not observe among-individual variation to be higher in the uninfected vs experimentally infected group (@tbl-tab1). Repeatability did not differ between treatment for shyness ($pMCMC_{\alpha = 0.05}$ = `r p_value_bold`), exploration ($pMCMC_{\alpha = 0.05}$ = `r p_value_exp`) and activity ($pMCMC_{\alpha = 0.05}$ = `r p_value_act`). We found evidence of behavioural syndromes between shyness and activity (cor = `r mean(bsyn_b_act2)`, 95% CI = `r q_b_act`); shyness and exploration (cor = `r mean(bsyn_b_exp)`, 95% CI = `r q_b_exp`), and between activity and exploration (cor = `r mean(bsyn_act_exp)`, 95% CI = `r q_act_exp`) (@fig-fig1). The correlation did not differ between the uninfected and experimentally infected group for these syndromes (Shyness-Activity: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_b_act`; Shyness-Exploration: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_b_exp`; Activity-Exploration: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_act_exp`).
 
 ```{r}
 #| label: tbl-tab1
-#| tbl-cap: Repeatbility of shyness, exploration and activity between the uninfected and experimentally infected group
+#| tbl-cap: Repeatability (R) values with 95% confidence intervals (CI) of shyness, exploration and activity between the uninfected and experimentally infected group
 
 tab1 <- data.frame(Trait = c("Shyness (log)", "Exploration","Activity (log)"), 
                 "Uninfected" = c(mean(R_C_boldness[,1]), mean(R_C_exploration[,1]), mean(R_C_activity[,1])), 
@@ -618,7 +619,7 @@ bub_act_e <- round(quantile(int_act_e, c(0.025, 0.975))[2], 3)
 
 #### *Shyness and exploration responses differ between uninfected and infected group*
 
-Mean shyness and exploration responses in the population were significantly different between the uninfected and experimentally infected group, but not for activity (@fig-fig2). For shyness, we observe a significant decrease in the mean response in the population (Contrast = `r mean_con_b`, 95% CI = `r blb_b_con`, `r bub_b_con`, $pMCMC_{\alpha = 0.05}$ = `r pm_b`), meaning that fish tend to get bolder after the experimental infection. Fish are also significantly more exploratory in the infected group (Contrast = `r mean_con_exp`, 95% CI = `r blb_exp_con`, `r bub_exp_con`, $pMCMC_{\alpha = 0.05}$ = `r pm_exp`). Fish tend to decrease their activity in the infected group compared to the uninfected group (Contrast = `r mean_con_act`, 95% CI = `r blb_act_con`, `r bub_act_con`, $pMCMC_{\alpha = 0.05}$ = `r pm_act`)
+Mean shyness and exploration responses in the population were significantly different between the uninfected and experimentally infected group, but not for activity (@fig-fig2). For shyness, we observe a significant decrease in the mean response in the population (Contrast = `r mean_con_b`, 95% CI = `r blb_b_con`, `r bub_b_con`, $pMCMC_{\alpha = 0.05}$ = `r pm_b`), meaning that fish tend to get bolder after the experimental infection. Fish are also significantly more exploratory in the infected group (Contrast = `r mean_con_exp`, 95% CI = `r blb_exp_con`, `r bub_exp_con`, $pMCMC_{\alpha = 0.05}$ = `r pm_exp`). Fish tend to decrease their activity in the infected group compared to the uninfected group (Contrast = `r mean_con_act`, 95% CI = `r blb_act_con`, `r bub_act_con`, $pMCMC_{\alpha = 0.05}$ = `r pm_act`). ###Change in traits = maybe because of age/time spend in the lab
 
 
 ```{r}
@@ -1165,7 +1166,6 @@ newdat4 <- data.frame(intercept = 1,
   
   #create dataframe
 act_bc_dat <- cbind(newdat4, summ_act_bc, summ_actL95_bc, summ_actU95_bc)
-
   
 #plot
 x2<- ggplot(data=dat_parasite)+
@@ -1177,7 +1177,7 @@ x2<- ggplot(data=dat_parasite)+
   draw_image("./img/parasite.png", x= 0.8,y = 1.7, scale = 0.9)+
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX("Body condition"), y = TeX("$Activity_{log_{2}}$"), title = "")+
-  annotate("text", x = -1, y = 2.3, label = TeX(paste0("$beta_{bc}$ = "," 0.25 ", " 95%CI: 0.08, 0.41**")), size=3, color = "black")
+  annotate("text", x = -1, y = 2.3, label = TeX(paste0("$beta_{bc}$ = "," 0.25 ", " 95%CI: 0.09, 0.42**")), size=3, color = "black")
 
   
  x<- plot_grid(
@@ -1189,9 +1189,9 @@ x2<- ggplot(data=dat_parasite)+
   fig3
 ```
 
-#### *Activity decrease with parasite load following the experimental infection*
+#### *Activity decrease with parasite density following an experimental infection*
 
-When looking at the experimentally infected fish, parasite load had a significant negative effect on activity ($\beta$ = `r act_pl_mean`, 95% CI = `r act_pl_Blb`, `r act_pl_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_pl`, $R_{^2}$ = 0.068). We did not capture a significant effect of parasite load on exploration and shyness (Exploration: $\beta$ = `r exp_pl_mean`, 95% CI = `r exp_pl_Blb`, `r exp_pl_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_exp_pl`; Shyness: $\beta$ = `r bold_pl_mean`, 95% CI = `r bold_pl_Blb`, `r bold_pl_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_bold_pl`). When looking at both parasites separately,surprisingly we found a significant negative effect of the number of blackspots on activity ($\beta$ = `r act_bs_mean`, 95% CI = `r act_bs_Blb`, `r act_bs_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_bs`, $R_{m}^{2}$ = `r R2_act_7_m`, $R_{c}^{2}$ = `r R2_act_7_c`). We find worth mentioning that the parasite species seem to have an opposite effect on each trait: cestodes tend to decrease exploration ($\beta$ = `r exp_ces_mean`, 95% CI = `r exp_ces_Blb`, `r exp_ces_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_exp_ces`) and shyness ($\beta$ = `r bold_ces_mean`, 95% CI = `r bold_ces_Blb`, `r bold_ces_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_bold_ces`), while blackspots tend to increase exploration ($\beta$ = `r exp_bs_mean`, 95% CI = `r exp_bs_Blb`, `r exp_bs_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_exp_bs`) and shyness ($\beta$ = `r bold_bs_mean`, 95% CI = `r bold_bs_Blb`, `r bold_bs_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_bold_bs`) (@fig-fig4). Activity was not impacted at all by cestodes ($\beta$ = `r act_ces_mean`, 95% CI = `r act_ces_Blb`, `r act_ces_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_ces`). 
+When looking at the experimentally infected fish, parasite density had a significant negative effect on activity ($\beta$ = `r act_pl_mean`, 95% CI = `r act_pl_Blb`, `r act_pl_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_pl`, $R_{^2}$ = 0.068). We did not capture a significant effect of parasite density on exploration and shyness (Exploration: $\beta$ = `r exp_pl_mean`, 95% CI = `r exp_pl_Blb`, `r exp_pl_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_exp_pl`; Shyness: $\beta$ = `r bold_pl_mean`, 95% CI = `r bold_pl_Blb`, `r bold_pl_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_bold_pl`). When looking at both parasites separately,surprisingly we found a significant negative effect of black spot density on activity ($\beta$ = `r act_bs_mean`, 95% CI = `r act_bs_Blb`, `r act_bs_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_bs`, $R_{m}^{2}$ = `r R2_act_7_m`, $R_{c}^{2}$ = `r R2_act_7_c`). We find worth mentioning that the parasite species seem to have an opposite effect on each trait: cestode density tend to decrease exploration ($\beta$ = `r exp_ces_mean`, 95% CI = `r exp_ces_Blb`, `r exp_ces_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_exp_ces`) and shyness ($\beta$ = `r bold_ces_mean`, 95% CI = `r bold_ces_Blb`, `r bold_ces_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_bold_ces`), while black spot density tend to increase exploration ($\beta$ = `r exp_bs_mean`, 95% CI = `r exp_bs_Blb`, `r exp_bs_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_exp_bs`) and shyness ($\beta$ = `r bold_bs_mean`, 95% CI = `r bold_bs_Blb`, `r bold_bs_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_bold_bs`) (@fig-fig4). Activity was not impacted at all by cestode density ($\beta$ = `r act_ces_mean`, 95% CI = `r act_ces_Blb`, `r act_ces_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_ces`). 
 
 
 ```{r}
@@ -1258,21 +1258,20 @@ boldness_bs_dat <- cbind(newdat2, summ_bold_bs, summ_boldL95_bs, summ_boldU95_bs
 #for parasite load
  #Predictive values for parasite load
  # matrix.
-newdat5 <- data.frame(intercept = 1,
-                        z_bc = 0,
-                        z_dens = seq(min(dat_parasite$z_dens), max(dat_parasite$z_dens), length.out = 100))
+#newdat5 <- data.frame(intercept = 1,
+                       # z_bc = 0,
+                      #  z_bs = seq(min(dat_parasite$z_bs), max(dat_parasite$z_bs), length.out = 100))
 
-#for parasite load
-    pred_pl_brms <- posterior_epred(model6, re_formula = NA, newdata = newdat5)
-  bold_pl <- pred_pl_brms[,,"logboldness"]
-  summ_bold_pl <- apply(bold_pl, 2, function(x) mean(x))
-  summ_boldL95_pl <- apply(bold_pl, 2, function(x) quantile(x, 0.025))
-  summ_boldU95_pl <- apply(bold_pl, 2, function(x) quantile(x, 0.975))
+#for parasite density
+    #pred_pl_brms <- posterior_epred(model6, re_formula = NA, newdata = newdat5)
+  #bold_pl <- pred_pl_brms[,,"logboldness"]
+  #summ_bold_pl <- apply(bold_pl, 2, function(x) mean(x))
+  #summ_boldL95_pl <- apply(bold_pl, 2, function(x) quantile(x, 0.025))
+  #summ_boldU95_pl <- apply(bold_pl, 2, function(x) quantile(x, 0.975))
   
   #create dataframe
-bold_pl_dat <- cbind(newdat5, summ_bold_pl, summ_boldL95_pl, summ_boldU95_pl)
+#bold_pl_dat <- cbind(newdat5, summ_bold_pl, summ_boldL95_pl, summ_boldU95_pl)
   
-
   # Another way to do this, but you need to know that this is producting PREDICTION INTERVALS not confidence intervals....which is why these are INSANELY wide.
  # pred_ces <- predict(model7, re_formula = NA, newdata = newdat)
 
@@ -1301,8 +1300,7 @@ bold_pl_dat <- cbind(newdat5, summ_bold_pl, summ_boldL95_pl, summ_boldU95_pl)
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX(""), y = TeX("$Shyness_{log_{2}}$"), title = "") +
       annotate("text", x = 1.5, y = 3.2, label = TeX(paste0("$beta_{bs}$ = ", " -0.08 ", " 95%CI: -0.28, 0.12")), size =3, color = "#56c667") + 
-  annotate("text", x = 1.5, y = 3, label = TeX(paste0("$beta_{ces}$ = "," 0.11 ", " 95%CI: -0.10,0.31")), size=3, color = "#365c8d")+
-   annotate("text", x = 1.5, y = 2.8, label = TeX(paste0("$beta_{pl}$ = "," -0.00 ", " 95%CI: -0.21, 0.21")), size=3, color = "black")
+  annotate("text", x = 1.5, y = 3, label = TeX(paste0("$beta_{ces}$ = "," 0.10 ", " 95%CI: -0.11, 0.30")), size=3, color = "#365c8d")
   
 #################################
 # EXPLORATION PREDICTIONS
@@ -1328,14 +1326,14 @@ exp_ces_dat <- cbind(newdat, summ_exp_ces, summ_expL95_ces, summ_expU95_ces)
 exp_bs_dat <- cbind(newdat2, summ_exp_bs, summ_expL95_bs, summ_expU95_bs)
   
     #for parasite load
-    pred_pl_brms <- posterior_epred(model6, re_formula = NA, newdata = newdat5)
-  exp_pl <- pred_pl_brms[,,"exploration"]
-  summ_exp_pl <- apply(exp_pl, 2, function(x) mean(x))
-  summ_expL95_pl <- apply(exp_pl, 2, function(x) quantile(x, 0.025))
-  summ_expU95_pl <- apply(exp_pl, 2, function(x) quantile(x, 0.975))
+   # pred_pl_brms <- posterior_epred(model6, re_formula = NA, newdata = newdat5)
+  #exp_pl <- pred_pl_brms[,,"exploration"]
+  #summ_exp_pl <- apply(exp_pl, 2, function(x) mean(x))
+  #summ_expL95_pl <- apply(exp_pl, 2, function(x) quantile(x, 0.025))
+  #summ_expU95_pl <- apply(exp_pl, 2, function(x) quantile(x, 0.975))
   
   #create dataframe
-exp_pl_dat <- cbind(newdat5, summ_exp_pl, summ_expL95_pl, summ_expU95_pl)
+#exp_pl_dat <- cbind(newdat5, summ_exp_pl, summ_expL95_pl, summ_expU95_pl)
   
 #figure 2
 n2<-ggplot(data=dat_parasite)+
@@ -1356,9 +1354,8 @@ n2<-ggplot(data=dat_parasite)+
     draw_image("./img/cestodes.png", x = 2.8, y = -0.7, scale = 0.8) +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX("Parasite density"), y = TeX("Exploration"), title = "") +
-      annotate("text", x = 1.5, y = 3.2, label = TeX(paste0("$beta_{bs}$ = ", " 0.15 ", " 95%CI: -0.03, 0.32")), size =3, color = "#56c667") + 
-  annotate("text", x = 1.5, y = 3, label = TeX(paste0("$beta_{ces}$ = "," -0.10 ", " 95%CI: -0.27, 0.08")), size=3, color = "#365c8d")+
-   annotate("text", x = 1.5, y = 2.8, label = TeX(paste0("$beta_{pl}$ = "," 0.06 ", " 95%CI: -0.12, 0.25")), size=3, color = "black")
+      annotate("text", x = 1.5, y = 3.2, label = TeX(paste0("$beta_{bs}$ = ", " 0.14 ", " 95%CI: -0.03, 0.31")), size =3, color = "#56c667") + 
+  annotate("text", x = 1.5, y = 3, label = TeX(paste0("$beta_{ces}$ = "," -0.09 ", " 95%CI: -0.27, 0.10")), size=3, color = "#365c8d")
 
 #################################
 # ACTIVITY PREDICTIONS
@@ -1384,14 +1381,14 @@ act_ces_dat <- cbind(newdat, summ_act_ces, summ_actL95_ces, summ_actU95_ces)
 act_bs_dat <- cbind(newdat2, summ_act_bs, summ_actL95_bs, summ_actU95_bs)
   
 #for parasite load
-    pred_pl_brms <- posterior_epred(model6, re_formula = NA, newdata = newdat5)
-  act_pl <- pred_pl_brms[,,"logactivity"]
-  summ_act_pl <- apply(act_pl, 2, function(x) mean(x))
-  summ_actL95_pl <- apply(act_pl, 2, function(x) quantile(x, 0.025))
-  summ_actU95_pl <- apply(act_pl, 2, function(x) quantile(x, 0.975))
+    #pred_pl_brms <- posterior_epred(model6, re_formula = NA, newdata = newdat5)
+  #act_pl <- pred_pl_brms[,,"logactivity"]
+  #summ_act_pl <- apply(act_pl, 2, function(x) mean(x))
+  #summ_actL95_pl <- apply(act_pl, 2, function(x) quantile(x, 0.025))
+  #summ_actU95_pl <- apply(act_pl, 2, function(x) quantile(x, 0.975))
   
   #create dataframe
-act_pl_dat <- cbind(newdat5, summ_act_pl, summ_actL95_pl, summ_actU95_pl)
+#act_pl_dat <- cbind(newdat5, summ_act_pl, summ_actL95_pl, summ_actU95_pl)
 
   #figure 3
 n3<-ggplot(data=dat_parasite)+
@@ -1412,9 +1409,8 @@ geom_point(mapping = aes(x = z_ces, y = log_activity), shape = 21,color = "#365c
     draw_image("./img/cestodes.png", x = 2.8, y = -0.6, scale = 0.8) +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX(""), y = TeX("$Activity_{log_{2}}$"), title = "")+
-      annotate("text", x = 1, y = 3.2, label = TeX(paste0("$beta_{bs}$ = ", " -0.23 ", " 95%CI: -0.41, -0.06 **")), size =3, color = "#56c667") + 
-  annotate("text", x = 1, y = 3, label = TeX(paste0("$beta_{ces}$ = "," 0.00 ", " 95%CI: -0.18, 0.18")), size=3, color = "#365c8d")+
-   annotate("text", x = 1, y = 2.8, label = TeX(paste0("$beta_{pl}$ = "," -0.18 ", " 95%CI: -0.37, 0.01**")), size=3, color = "black")
+      annotate("text", x = 1, y = 3.2, label = TeX(paste0("$beta_{bs}$ = ", " -0.22 ", " 95%CI: -0.40, -0.04 **")), size =3, color = "#56c667") + 
+  annotate("text", x = 1, y = 3, label = TeX(paste0("$beta_{ces}$ = "," 0.01 ", " 95%CI: -0.18, 0.19")), size=3, color = "#365c8d")
     
 p<-plot_grid(
   n1, n2, n3,
@@ -1429,7 +1425,7 @@ fig4
 
 #### *Correlation of change between the traits*
 
-Individuals that increased the most in their exploratory behaviour tend to have the strongest negative change in shyness ($cor_{id}$ = `r cor_b_exp_mean`, 95% CI = `r Blb_cor_b_exp_E`, `r Bub_cor_b_exp_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_bold_exp_E`). Fish that tend to have strong negative change in their boldness behaviour tend to have a positive change in their activity behaviour ($cor_{id}$ = `r cor_b_act_mean`, 95% CI = `r Blb_cor_b_act_E`, `r Bub_cor_b_act_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_bold_act_E`). We found that when a fish have a strong positive change in exploration, they tend to have a positive change in their activity as well ($cor_{id}$ = `r cor_act_exp_E_mean`, 95% CI = `r Blb_cor_act_exp_E`, `r Bub_cor_act_exp_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_act_exp_E`). Fish that were more shy tend to decrease more their shyness behaviour (smaller score) compared to bolder fish ($cor_{id}$ = `r cor_bold_I_E_mean`, 95% CI = `r Blb_cor_bold_I_E`, `r Bub_cor_bold_I_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_bold_I_E`). Less exploratory fish had a larger increase in their exploratory behaviour after the experimental infection ($cor_{id}$ = `r cor_exp_I_E_mean`, 95% CI = `r Blb_cor_exp_I_E`, `r Bub_cor_exp_I_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_exp_I_E`). More active fish tend to have the strongest negative change, and the least active fish tend to have a bigger increase in activity after the experimental infection ($cor_{id}$ = `r cor_act_I_E_mean`, 95% CI = `r Blb_cor_act_I_E`, `r Bub_cor_act_I_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_act_I_E`). 
+Individuals that increased the most in their exploratory behaviour tend to have the strongest negative change in shyness ($cor_{id}$ = `r cor_b_exp_mean`, 95% CI = `r Blb_cor_b_exp_E`, `r Bub_cor_b_exp_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_bold_exp_E`). Fish that tend to have strong negative change in their shyness behaviour tend to have a positive change in their activity behaviour ($cor_{id}$ = `r cor_b_act_mean`, 95% CI = `r Blb_cor_b_act_E`, `r Bub_cor_b_act_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_bold_act_E`). We found that when a fish have a strong positive change in exploration, they tend to have a positive change in their activity as well ($cor_{id}$ = `r cor_act_exp_E_mean`, 95% CI = `r Blb_cor_act_exp_E`, `r Bub_cor_act_exp_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_act_exp_E`). Fish that were more shy tend to decrease more their shyness behaviour (smaller score) compared to bolder fish ($cor_{id}$ = `r cor_bold_I_E_mean`, 95% CI = `r Blb_cor_bold_I_E`, `r Bub_cor_bold_I_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_bold_I_E`). Less exploratory fish had a larger increase in their exploratory behaviour after the experimental infection ($cor_{id}$ = `r cor_exp_I_E_mean`, 95% CI = `r Blb_cor_exp_I_E`, `r Bub_cor_exp_I_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_exp_I_E`). More active fish tend to have the strongest negative change, and the least active fish tend to have a bigger increase in activity after the experimental infection ($cor_{id}$ = `r cor_act_I_E_mean`, 95% CI = `r Blb_cor_act_I_E`, `r Bub_cor_act_I_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_act_I_E`). 
 
 ```{r}
 #| label: some stuff
@@ -1451,7 +1447,6 @@ plot(all_data$dens_bs,all_data$dens_ces)
 
 
 ```
-
 
 ```{r}
 #| label: fig-fig5
@@ -1659,13 +1654,99 @@ ggplot(data= new_data)+
 
 ```
 
+### Discussion
+#### *Repeatability*
+
+Behaviour is generally repeatable across trials and a meta anlysis found that the average repeatability for a wide variety of behaviours and taxa is 0.37 [Bell_2009-wg].
+
+Exploration
+Exploratory behaviour repeatability ranged from 0.27-0.66 for great tits bird [@Dingemanse_2002-wg]. A repeatability of 0.40 was found in pumpkinseed sunfish for exploration (Vic, in prep).A study found a repeatability of 0.47 for distance moved in cm for zebrafish and 0.35 for exploration [@Thomson_2020-wg].
+
+Boldness 
+A study on reef fish showed moderate repeatability for boldness (R = 0.38) for a short period in the lab and highly repeatable in the field (R= 0.69) [@White_2015-wg]
+
+Activity
+
+```{r}
+
+### essayer de faire un modèle bayesien avec les poissons controles ? ou trouver un modèle pour comparer les moyennes
+
+data_control <- read.table("./data_raw/12_fish.csv",header=T, sep=";")
+
+#exploration
+qqnorm(data_control$exploration)
+qqline(data_control$exploration)
+
+shapiro.test(data_control$exploration)#not normal but visually normal
+
+#boldness
+qqnorm(log(data_control$boldness))
+qqline(log(data_control$boldness))
+
+shapiro.test(log(data_control$boldness))#normal
+
+#activity
+qqnorm(log(data_control$activity))
+qqline(log(data_control$activity))
+
+shapiro.test(log(data_control$activity))#normal
+
+#graph inspection
+plot(as.factor(data_control$trial), data_control$exploration)
+
+plot(as.factor(data_control$trial), data_control$boldness)
+
+plot(as.factor(data_control$trial), data_control$activity)
+
+#Repeatability test
+install.packages("rptR")
+library(rptR)
+
+bold_log<-log(data_control$boldness)
+trial_num<- as.numeric(data_control$trial)
+ID<-as.factor(data_control$ID_fish)
+data_control1<-as.data.frame(data_control)
+cage_num<-as.factor(data_control$cage)
+
+#Only on ID
+rpt(exploration ~ (1|ID_fish) + trial, grname = "ID_fish", data = data_control, datatype = "Gaussian",
+          nboot = 0, npermut = 0)
+
+#Full model for exploration
+rep1<-rpt(exploration ~ ( 1 | ID_fish) + trial + ( 1 | cage), grname = "ID_fish", data = data_control, datatype = "Gaussian", 
+    nboot = 1000, npermut = 0)
+summary(rep1)
+plot(rep1, cex.main = 1)
+
+#Only on ID
+rpt(log(activity) ~ (1|ID_fish) + trial, grname = "ID_fish", data = data_control, datatype = "Gaussian",
+          nboot = 0, npermut = 0)
+
+#full model for activity
+rep2<-rpt(log(activity) ~ ( 1 | ID_fish) + trial + ( 1 | cage), grname = "ID_fish", data = data_control, datatype = "Gaussian", 
+    nboot = 1000, npermut = 0)
+summary(rep2)
+plot(rep2, cex.main = 1)
+
+#Only on ID
+rpt(log(boldness) ~ (1|ID_fish) + trial, grname = "ID_fish", data = data_control, datatype = "Gaussian",
+          nboot = 0, npermut = 0)
+
+#full model for boldness
+rep3<-rpt(log(boldness) ~ ( 1 | ID_fish) + trial + ( 1 | cage), grname = "ID_fish", data = data_control, datatype = "Gaussian", 
+    nboot = 1000, npermut = 0)
+summary(rep3)
+plot(rep3, cex.main = 1)
+
+
+
+```
+
 
 ## Supplement
 ```{r}
 #| label: tbl-tab2
-#| tbl-cap: Raw data
-
-########CHANGER PARASITE LOAD CES ET BS EN DENSITÉ##############
+#| tbl-cap: Raw mean and standard deviation for all variables used in the models
 
 all_data <- read.table("./output/all_data_p.csv",header=T, sep=",")#exploration is z transform here
 all_data2 <- read.table("./data_raw/all_data.csv",header=T, sep=";")#using this dataset for exploration
@@ -1700,19 +1781,17 @@ dat_acte <- all_data %>% filter(treatment == "E")
 raw_acte_mean<-mean(dat_acte$activity)
 raw_acte_sd<-sd(dat_acte$activity)
 
-#parasite load
-raw_pl_mean<-mean(all_data$parasite_load)
-raw_pl_sd<-sd(all_data$parasite_load)
+#parasite density
+raw_pl_mean<-mean(all_data$dens_tot)
+raw_pl_sd<-sd(all_data$dens_tot)
 
-#BS post total
-raw_bs_mean<-mean(all_data$BS_post_tot)
-raw_bs_sd<-sd(all_data$BS_post_tot)
+#BS density post
+raw_bs_mean<-mean(all_data$dens_bs)
+raw_bs_sd<-sd(all_data$dens_bs)
 
-#cestode total
-all_data$ces_tot<- (all_data$P04_alive + all_data$P06)
-
-raw_ces_mean<-mean(all_data$ces_tot)
-raw_ces_sd<-sd(all_data$ces_tot)
+#cestode density
+raw_ces_mean<-mean(all_data$dens_ces)
+raw_ces_sd<-sd(all_data$dens_ces)
 
 #body condition uninfected
 dat_bc <- read.table("./output/dat_bc.csv",header=T, sep=",") #dataset with body condition classified with trials and treatment
@@ -1727,8 +1806,8 @@ raw_bc_e_mean<-mean(dat_bc_e$body_condition)
 raw_bc_e_sd<-sd(dat_bc_e$body_condition)
 
 #table with raw mean and sd for the variables
-
-tab2 <- data.frame("Raw variables" = c("Shyness (sec)", "Exploration (%)","Activity (cm)","Body condition (mass/length^3)", "Parasite density (no/g)", "Blackspots (no/g)","Cestodes (no/g)"), 
+ 
+tab2 <- data.frame("Raw variables" = c("Shyness (sec)", "Exploration (%)","Activity (cm)","Body condition (mass/length^3)", "Parasite density (no/g)", "Black spot density (no/g)","Cestode density (no/g)"), 
                   "Mean uninfected" = c(raw_boldc_mean,raw_expc_mean,raw_actc_mean,raw_bc_c_mean,NA,NA,NA), "Standard deviation uninfected" = c(raw_boldc_sd,raw_expc_sd,raw_actc_sd,raw_bc_c_sd,NA,NA,NA),
                   "Mean infected" = c(raw_bolde_mean,raw_expe_mean,raw_acte_mean,raw_bc_e_mean,raw_pl_mean,raw_bs_mean,raw_ces_mean), "Standard deviation infected" = c(raw_bolde_sd,raw_expe_sd,raw_acte_sd,raw_bc_e_sd,raw_pl_sd,raw_bs_sd,raw_ces_sd),
                   check.names = FALSE)
@@ -1740,7 +1819,11 @@ tab2 <- data.frame("Raw variables" = c("Shyness (sec)", "Exploration (%)","Activ
     tab_style(style = cell_borders(sides = c("top", "bottom")),
           locations = list(cells_column_labels()))  %>% 
     tab_style(style = cell_borders(sides = "bottom", weight = px(2)),
-         locations =  cells_body(rows = 7))
+         locations =  cells_body(rows = 7))  %>%
+  fmt_number(columns = 2, decimals = 3) %>%
+  fmt_number(columns = 3, decimals = 3) %>%  
+  fmt_number(columns = 4, decimals = 3) %>%
+  fmt_number(columns = 5, decimals = 3)
 
 ```
 
