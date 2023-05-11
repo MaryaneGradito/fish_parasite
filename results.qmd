@@ -26,7 +26,7 @@ editor_options:
 #| warning: false
 
     source("./R/func.R")
-    pacman::p_load(tidyverse, brms, glmmTMB, gt, latex2exp, posterior, gt, glue, dplyr,magrittr, ggplot2, cowplot, jpeg, magick)
+    pacman::p_load(tidyverse, brms, glmmTMB, gt, latex2exp, posterior, gt, glue, dplyr,magrittr, ggplot2, cowplot, jpeg, magick,rptR)
     options(digits = 3, scipen = 2)
     
 ```
@@ -211,7 +211,7 @@ editor_options:
   0.51^2 / (exp(-0.26)^2 + 0.51^2 + 0.11^2) 
   
   hist(R_E_activity[,1])
-  R_act_E<-mean(R_E_activity[,1])
+    R_act_E<-mean(R_E_activity[,1])
   R_Blb_act_E <- round(quantile(R_E_activity[,1], c(0.025, 0.975))[1], 3)
   R_Bub_act_E <- round(quantile(R_E_activity[,1], c(0.025, 0.975))[2], 3)
 
@@ -311,65 +311,72 @@ editor_options:
 # See if syndromes differ in C and E
   
   #Boldness and activity
+  #Control
   bsyn_b_act_C <- data.frame(cor_bold_treatC[,1])
   b_act_C_mean<-mean(bsyn_b_act_C[,1])
   low_b_act_C<-quantile(bsyn_b_act_C[,1], 0.025)
   high_b_act_C<-quantile(bsyn_b_act_C[,1], 0.975)
-                            
+  blb_bul_b_act_C<-quantile(bsyn_b_act_C[,1], c(0.025, 0.975))
+  
+  #Experimental                          
   bsyn_b_act_E <- data.frame(cor_bold_treatE[,1])
   b_act_E_mean<-mean(bsyn_b_act_E[,1])
   blb_bul_b_act_E<-quantile(bsyn_b_act_E[,1], c(0.025, 0.975))
-  
   low_b_act_E<-quantile(bsyn_b_act_E[,1], 0.025)
   high_b_act_E<-quantile(bsyn_b_act_E[,1], 0.975)
   
+  #is it significant
   pmcmc_b_act_E<-pmcmc(bsyn_b_act_E[,1], twotail = TRUE)
   pmcmc_b_act_C<-pmcmc(bsyn_b_act_C[,1], twotail = TRUE)#control significant
   
   #is the difference significant
-  pmcmc_b_act_C<-pmcmc(bsyn_b_act_C[,1] - bsyn_b_act_E[,1], twotail = TRUE)
-   pmcmc_b_act_C<-pmcmc(bsyn_b_act_C[,1], twotail = TRUE)
-   pmcmc_b_act_E<-pmcmc(bsyn_b_act_E[,1], twotail = TRUE)#no
+  pmcmc_b_act<-pmcmc(bsyn_b_act_C[,1] - bsyn_b_act_E[,1], twotail = TRUE)
   
   #Boldness and exploration
+  #Control
   bsyn_b_exp_C <- data.frame(cor_bold_treatC[,2])
   b_exp_C_mean<-mean(bsyn_b_exp_C[,1])
   blb_bul_b_exp_C<-quantile(bsyn_b_exp_C[,1], c(0.025, 0.975))
-  
   low_b_exp_C<-quantile(bsyn_b_exp_C[,1], 0.025)
   high_b_exp_C<-quantile(bsyn_b_exp_C[,1], 0.975)
   
+  #Experimental
   bsyn_b_exp_E <- data.frame(cor_bold_treatE[,2])
   b_exp_E_mean<-mean(bsyn_b_exp_E[,1])
   blb_bul_b_exp_E<-quantile(bsyn_b_exp_E[,1], c(0.025, 0.975))
-  
   low_b_exp_E<-quantile(bsyn_b_exp_E[,1], 0.025)
   high_b_exp_E<-quantile(bsyn_b_exp_E[,1], 0.975)
   
-  #is the difference significant
+  #is it significant
   pmcmc_b_exp_C<-pmcmc(bsyn_b_exp_C[,1], twotail = TRUE) #no
-   pmcmc_b_exp_E<-pmcmc(bsyn_b_exp_E[,1], twotail = TRUE)# no
+  pmcmc_b_exp_E<-pmcmc(bsyn_b_exp_E[,1], twotail = TRUE)# no
+  
+  #is the difference significant
+  pmcmc_b_exp<-pmcmc(bsyn_b_exp_C[,1] - bsyn_b_exp_E[,1], twotail = TRUE)
+  
   
   #Activity and exploration
+   #Control
   bsyn_act_exp_C <- data.frame(cor_bold_treatC[,3])
   act_exp_C_mean<-mean(bsyn_act_exp_C[,1])
   blb_bul_act_exp_C<-quantile(bsyn_act_exp_C[,1], c(0.025, 0.975))
-  
   low_act_exp_C<-quantile(bsyn_act_exp_C[,1], 0.025)
   high_act_exp_C<-quantile(bsyn_act_exp_C[,1], 0.975)
   
-  
-  pmcmc_act_exp_C<- pmcmc(bsyn_act_exp_C[,1], twotail = TRUE) #significant
-  
+  #Experimental
   bsyn_act_exp_E <- data.frame(cor_bold_treatE[,3])
   act_exp_E_mean<-mean(bsyn_act_exp_E[,1])
   blb_bul_act_exp_E<-quantile(bsyn_act_exp_E[,1], c(0.025, 0.975))  
-  
   low_act_exp_E<-quantile(bsyn_act_exp_E[,1], 0.025)
   high_act_exp_E<-quantile(bsyn_act_exp_E[,1], 0.975)
   
+  #is it significant
    pmcmc_act_exp_E<- pmcmc(bsyn_act_exp_E[,1], twotail = TRUE) #not significant
-
+   pmcmc_act_exp_C<- pmcmc(bsyn_act_exp_C[,1], twotail = TRUE) #significant
+  
+   #is the difference significant
+   pmcmc_act_exp<-pmcmc(bsyn_act_exp_E[,1] - bsyn_act_exp_C[,1], twotail = TRUE)
+   
 # Overall syndrome
   # Take average of the two treatments
     bsyn_b_act   <- cbind(bsyn_b_act_C[,1], bsyn_b_act_E[,1]); mean(rowMeans(bsyn_b_act)); quantile(rowMeans(bsyn_b_act), c(0.025, 0.975))
@@ -437,14 +444,14 @@ The caging experiment successfully infected our fish. Uninfected fish that staye
 
 #### *Evidence of personality and behavioural syndromes*
 
-With a threshold of 10%, only activity was repeatable across trials regardless of the infected status (R = `r R_act_mean`, 95% CI = `r R_Blb_act`, `r R_Bub_act`, $pMCMC_{\alpha = 0.10}$ = `r p_value_act_a`). Shyness was not significantly repeatable in both treatment (R = `r R_bold_mean`, 95% CI = `r R_Blb_bold`, `r R_Bub_bold`, $pMCMC_{\alpha = 0.10}$ = `r p_value_bold_a`). Exploration was repeatable in the uninfected group (R = `r R_exp_C_mean`, 95% CI = `r R_Blb_exp_C`, `r R_Bub_exp_C`, $pMCMC_{\alpha = 0.10}$ = `r p_value_exp_C`;), but not in the experimentally infected group ((R = `r R_exp_E_mean`, 95% CI = `r R_Blb_exp_E`, `r R_Bub_exp_E`, $pMCMC_{\alpha = 0.10}$ = `r p_value_exp_E`) (@fig-fig1).
+With a threshold of 10%, only activity was repeatable across trials regardless of the infected status (R = `r R_act_mean`, 95% CI = `r R_Blb_act`, `r R_Bub_act`, $pMCMC_{\alpha = 0.10}$ = `r p_value_act_a`). Shyness was not significantly repeatable in both treatment (R = `r R_bold_mean`, 95% CI = `r R_Blb_bold`, `r R_Bub_bold`, $pMCMC_{\alpha = 0.10}$ = `r p_value_bold_a`). Exploration was repeatable in the uninfected group (R = `r R_exp_C_mean`, 95% CI = `r R_Blb_exp_C`, `r R_Bub_exp_C`, $pMCMC_{\alpha = 0.10}$ = `r p_value_exp_C`;), but not in the experimentally infected group ((R = `r R_exp_E_mean`, 95% CI = `r R_Blb_exp_E`, `r R_Bub_exp_E`, $pMCMC_{\alpha = 0.10}$ = `r p_value_exp_E`). We did not observe among-individual variation to be higher in the uninfected vs experimentally infected group. Repeatability did not differ between treatment for shyness ($pMCMC_{\alpha = 0.05}$ = `r p_value_bold`), exploration ($pMCMC_{\alpha = 0.05}$ = `r p_value_exp`) and activity ($pMCMC_{\alpha = 0.05}$ = `r p_value_act`) (@fig-fig1).
 
 ```{r}
 #| label: fig-fig1
-#| fig-cap: Repeatability estimates and their 95% confidence intervals for the three behaviours (shyness,exploration and activity) of pumpkinseed sunfish (Lepomis gibbosus) measured overall and within each group (uninfected and experimentally infected). Overall and uninfected: N= 72; Infected: N = 60.
+#| fig-cap: Repeatability estimates and their 95% confidence intervals for the three behaviours (shyness,exploration and activity) of pumpkinseed sunfish (Lepomis gibbosus) measured overall and within each group (overall and uninfected, N=72; infected, N=60).
 #| out-width: 100%
-#| fig-width: 7
-#| fig-height: 8
+
+
 
 #Plot 
 #created dataset for all repeatability measures
@@ -472,25 +479,19 @@ ggplot(dat_rep)+
 geom_point(data=dat_rep, mapping=aes(x= Repeatability, y= R), size=3)+
 geom_errorbarh(aes(y = R, xmin= Lower_CI, xmax=Higher_CI), height = 0.2, linewidth =0.9, inherit.aes = FALSE)+scale_x_continuous()+facet_grid(Treatment ~ .)+geom_vline(xintercept=0.1, color = "red2", linetype = 2)+geom_hline(yintercept= "Shyness_Exploration", color = "red2", linetype = 2)+ xlab("Repeatability (R)") + ylab("")+ theme_classic()+ theme(strip.text.y = element_text(size=12, face="bold", angle = 360),strip.background = element_rect(colour="white", fill="white"))
 
+w1
+
 ```
 
-We found evidence of behavioural syndromes between some traits depending on the treatment group (@fig-fig2). Activity and shyness were negatively and significantly correlated in the uninfected group (cor = `r b_act_C_mean`,95% CI = `r blb_bul_b_act_C`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_b_act_C`), but not in the infected group (cor = `r b_act_E_mean`,95% CI = `r blb_bul_b_act_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_b_act_E`). Activity and exploration were positively and significantly correlated in the uninfected group as well (cor = `r act_exp_C_mean`,95% CI = `r blb_bul_act_exp_C`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_act_exp_C`), but not in the infected group (cor = `r act_exp_E_mean`,95% CI = `r blb_bul_act_exp_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_act_exp_E`). Shyness and exploration were not significantly correlated in both treatment (cor = `r mean(bsyn_b_exp)`,95% CI = `r q_b_exp`). 
 
+We found evidence of behavioural syndromes between some traits depending on the treatment group (@fig-fig2). Activity and shyness were negatively and significantly correlated in the uninfected group (cor = `r b_act_C_mean`,95% CI = `r blb_bul_b_act_C`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_b_act_C`), but not in the infected group (cor = `r b_act_E_mean`,95% CI = `r blb_bul_b_act_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_b_act_E`). Activity and exploration were positively and significantly correlated in the uninfected group as well (cor = `r act_exp_C_mean`,95% CI = `r blb_bul_act_exp_C`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_act_exp_C`), but not in the infected group (cor = `r act_exp_E_mean`,95% CI = `r blb_bul_act_exp_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_act_exp_E`). Shyness and exploration were not significantly correlated in both treatment (cor = `r mean(bsyn_b_exp)`,95% CI = `r q_b_exp`). The correlation did not differ between the uninfected and experimentally infected group for these syndromes (Shyness-Activity: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_b_act`; Shyness-Exploration: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_b_exp`; Activity-Exploration: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_act_exp`) (@fig-fig3).
 
-#### do we keep this? Do we need to look at if they are different if some are significant and other not?###
-We did not observe among-individual variation to be higher in the uninfected vs experimentally infected group (@tbl-tab1). Repeatability did not differ between treatment for shyness ($pMCMC_{\alpha = 0.05}$ = `r p_value_bold`), exploration ($pMCMC_{\alpha = 0.05}$ = `r p_value_exp`) and activity ($pMCMC_{\alpha = 0.05}$ = `r p_value_act`). 
-
-##Same thing here; do we keep this?##
-The correlation did not differ between the uninfected and experimentally infected group for these syndromes (Shyness-Activity: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_b_act`; Shyness-Exploration: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_b_exp`; Activity-Exploration: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_act_exp`).
 
 ```{r}
 #| label: fig-fig2
-#| fig-cap: Correlation coefficients and their 95% confidence intervals for the three behaviours (shyness,exploration and activity) of pumpkinseed sunfish (Lepomis gibbosus) measured overall and within each group (uninfected and experimentally infected). Overall and uninfected: N= 72; Infected: N = 60.
+#| fig-cap: Correlation coefficients and their 95% confidence intervals for the three behaviours (shyness,exploration and activity) of pumpkinseed sunfish (Lepomis gibbosus) measured overall and within each group (overall and uninfected, N=72; infected, N=60).
 #| out-width: 100%
-#| fig-width: 7
-#| fig-height: 8
 
-#Plot 
 #created dataset for all correlations
   #Create data frame
 dat_cor<-data.frame(
@@ -515,6 +516,7 @@ ggplot(dat_cor)+
 geom_point(data=dat_cor, mapping=aes(x= Correlation, y= BS), size=3)+
 geom_errorbarh(aes(y = BS, xmin= Lower_CI_o, xmax=Higher_CI_o), height = 0.2, linewidth =0.9, inherit.aes = FALSE)+scale_x_continuous()+facet_grid(Treatment ~ .)+geom_vline(xintercept=0, color = "red2", linetype = 2)+geom_hline(yintercept= "Shyness_Exploration", color = "red2", linetype = 2)+ xlab("Correlation") + ylab("")+ theme_classic()+ theme(strip.text.y = element_text(size=12, face="bold", angle = 360),strip.background = element_rect(colour="white", fill="white"))
 
+m1
 ```
 
 ```{r}
@@ -523,7 +525,6 @@ geom_errorbarh(aes(y = BS, xmin= Lower_CI_o, xmax=Higher_CI_o), height = 0.2, li
 #| out-width: 100%
 #| fig-width: 7
 #| fig-height: 8
-
 
 #Boldness and activity average between trials
 dat_E <- read.table("./output/dat_models_E.csv",header=T, sep=",")
@@ -613,6 +614,7 @@ pp<-plot_grid(
   labels = "AUTO", ncol = 1)
 pp
 ggsave("./output/figures/fig1.png", plot = pp, width = 28, height = 30, units = "cm")
+
 ```
 
 ```{r}
@@ -1202,10 +1204,13 @@ Body condition had a positive effect on activity in both the uninfected and expe
 
 ```{r}
 #| label: fig-fig5
-#| fig-cap: Effect of body condition on activity of pumpkinseed sunfish (Lepomis gibbosus) in the uninfected group (A) and experimentally infected group (B). Uninfected: N=72; Infected: N=60.
+#| fig-cap: body condition
 #| out-width: 100%
 #| fig-width: 8
 #| fig-height: 5
+
+#Effect of body condition on activity of pumpkinseed sunfish (Lepomis gibbosus) in the uninfected group (A) and experimentally infected group (B). Uninfected: N=72; Infected: N=60.
+
 
 #################################
 # Uninfected group
@@ -1283,9 +1288,10 @@ x2<- ggplot(data=dat_parasite)+
   fig3
 ```
 
+
 #### *Activity decrease with parasite density following an experimental infection*
 
-When looking at the experimentally infected fish, parasite density had a significant negative effect on activity ($\beta$ = `r act_pl_mean`, 95% CI = `r act_pl_Blb`, `r act_pl_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_pl`, $R_{^2}$ = 0.068). We did not capture a significant effect of parasite density on exploration and shyness (Exploration: $\beta$ = `r exp_pl_mean`, 95% CI = `r exp_pl_Blb`, `r exp_pl_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_exp_pl`; Shyness: $\beta$ = `r bold_pl_mean`, 95% CI = `r bold_pl_Blb`, `r bold_pl_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_bold_pl`). When looking at both parasites separately,surprisingly we found a significant negative effect of black spot density on activity ($\beta$ = `r act_bs_mean`, 95% CI = `r act_bs_Blb`, `r act_bs_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_bs`, $R_{m}^{2}$ = `r R2_act_7_m`, $R_{c}^{2}$ = `r R2_act_7_c`). We find worth mentioning that the parasite species seem to have an opposite effect on each trait: cestode density tend to decrease exploration ($\beta$ = `r exp_ces_mean`, 95% CI = `r exp_ces_Blb`, `r exp_ces_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_exp_ces`) and shyness ($\beta$ = `r bold_ces_mean`, 95% CI = `r bold_ces_Blb`, `r bold_ces_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_bold_ces`), while black spot density tend to increase exploration ($\beta$ = `r exp_bs_mean`, 95% CI = `r exp_bs_Blb`, `r exp_bs_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_exp_bs`) and shyness ($\beta$ = `r bold_bs_mean`, 95% CI = `r bold_bs_Blb`, `r bold_bs_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_bold_bs`) (@fig-fig6). Activity was not impacted at all by cestode density ($\beta$ = `r act_ces_mean`, 95% CI = `r act_ces_Blb`, `r act_ces_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_ces`). 
+When looking at the experimentally infected fish, parasite density had a significant negative effect on activity ($\beta$ = `r act_pl_mean`, 95% CI = `r act_pl_Blb`, `r act_pl_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_pl`, $R_{^2}$ = 0.068). We did not capture a significant effect of parasite density on exploration and shyness (Exploration: $\beta$ = `r exp_pl_mean`, 95% CI = `r exp_pl_Blb`, `r exp_pl_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_exp_pl`; Shyness: $\beta$ = `r bold_pl_mean`, 95% CI = `r bold_pl_Blb`, `r bold_pl_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_bold_pl`). When looking at both parasites separately,surprisingly we found a significant negative effect of black spot density on activity ($\beta$ = `r act_bs_mean`, 95% CI = `r act_bs_Blb`, `r act_bs_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_bs`, $R_{m}^{2}$ = `r R2_act_7_m`, $R_{c}^{2}$ = `r R2_act_7_c`). We find worth mentioning that the parasite species seem to have an opposite effect on each trait: cestode density tend to decrease exploration ($\beta$ = `r exp_ces_mean`, 95% CI = `r exp_ces_Blb`, `r exp_ces_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_exp_ces`) and shyness ($\beta$ = `r bold_ces_mean`, 95% CI = `r bold_ces_Blb`, `r bold_ces_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_bold_ces`), while black spot density tend to increase exploration ($\beta$ = `r exp_bs_mean`, 95% CI = `r exp_bs_Blb`, `r exp_bs_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_exp_bs`) and shyness ($\beta$ = `r bold_bs_mean`, 95% CI = `r bold_bs_Blb`, `r bold_bs_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_bold_bs`). Activity was not impacted at all by cestode density ($\beta$ = `r act_ces_mean`, 95% CI = `r act_ces_Blb`, `r act_ces_Bub`, $pMCMC_{\alpha = 0.05}$ = `r p_act_ces`) (@fig-fig6).
 
 
 ```{r}
@@ -1519,7 +1525,7 @@ fig4
 
 #### *Correlation of change between the traits*
 
-Individuals that increased the most in their exploratory behaviour tend to have the strongest negative change in shyness ($cor_{id}$ = `r cor_b_exp_mean`, 95% CI = `r Blb_cor_b_exp_E`, `r Bub_cor_b_exp_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_bold_exp_E`). Fish that tend to have strong negative change in their shyness behaviour tend to have a positive change in their activity behaviour ($cor_{id}$ = `r cor_b_act_mean`, 95% CI = `r Blb_cor_b_act_E`, `r Bub_cor_b_act_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_bold_act_E`). We found that when a fish have a strong positive change in exploration, they tend to have a positive change in their activity as well ($cor_{id}$ = `r cor_act_exp_E_mean`, 95% CI = `r Blb_cor_act_exp_E`, `r Bub_cor_act_exp_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_act_exp_E`). Fish that were more shy tend to decrease more their shyness behaviour (smaller score) compared to bolder fish ($cor_{id}$ = `r cor_bold_I_E_mean`, 95% CI = `r Blb_cor_bold_I_E`, `r Bub_cor_bold_I_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_bold_I_E`). Less exploratory fish had a larger increase in their exploratory behaviour after the experimental infection ($cor_{id}$ = `r cor_exp_I_E_mean`, 95% CI = `r Blb_cor_exp_I_E`, `r Bub_cor_exp_I_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_exp_I_E`). More active fish tend to have the strongest negative change, and the least active fish tend to have a bigger increase in activity after the experimental infection ($cor_{id}$ = `r cor_act_I_E_mean`, 95% CI = `r Blb_cor_act_I_E`, `r Bub_cor_act_I_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_act_I_E`). 
+Individuals that increased the most in their exploratory behaviour tend to have the strongest negative change in shyness ($cor_{id}$ = `r cor_b_exp_mean`, 95% CI = `r Blb_cor_b_exp_E`, `r Bub_cor_b_exp_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_bold_exp_E`). Fish that tend to have strong negative change in their shyness behaviour tend to have a positive change in their activity behaviour ($cor_{id}$ = `r cor_b_act_mean`, 95% CI = `r Blb_cor_b_act_E`, `r Bub_cor_b_act_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_bold_act_E`). We found that when a fish have a strong positive change in exploration, they tend to have a positive change in their activity as well ($cor_{id}$ = `r cor_act_exp_E_mean`, 95% CI = `r Blb_cor_act_exp_E`, `r Bub_cor_act_exp_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_act_exp_E`). Fish that were more shy tend to decrease more their shyness behaviour (smaller score) compared to bolder fish ($cor_{id}$ = `r cor_bold_I_E_mean`, 95% CI = `r Blb_cor_bold_I_E`, `r Bub_cor_bold_I_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_bold_I_E`). Less exploratory fish had a larger increase in their exploratory behaviour after the experimental infection ($cor_{id}$ = `r cor_exp_I_E_mean`, 95% CI = `r Blb_cor_exp_I_E`, `r Bub_cor_exp_I_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_exp_I_E`). More active fish tend to have the strongest negative change, and the least active fish tend to have a bigger increase in activity after the experimental infection ($cor_{id}$ = `r cor_act_I_E_mean`, 95% CI = `r Blb_cor_act_I_E`, `r Bub_cor_act_I_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_cor_act_I_E`) (@fig-fig7).
 
 ```{r}
 #| label: some stuff
@@ -1527,15 +1533,15 @@ Individuals that increased the most in their exploratory behaviour tend to have 
 #| warning: false
 
 #looking at the correlation between bs and cestodes
-cor(all_data$dens_bs,all_data$dens_ces)
-plot(all_data$dens_bs,all_data$dens_ces)
+cor1<-cor(all_data$dens_bs,all_data$dens_ces)
+plot1<-plot(all_data$dens_bs,all_data$dens_ces)
 
 #effect of cage in parasite density
- ggplot(data=all_data)+
+plot2<- ggplot(data=all_data)+
   geom_point(mapping = aes(x = cage, y = dens_bs, color = factor(ID_fish))) +
    theme_classic()
  
-  ggplot(data=all_data)+
+plot3<- ggplot(data=all_data)+
   geom_point(mapping = aes(x = cage, y = dens_ces, color = factor(ID_fish))) +
    theme_classic()
 
@@ -1727,7 +1733,7 @@ fig5
 
 ```{r}
 #| label: fig-fig8
-#| fig-cap: Change in black spots density and body condition for slope of change in activity
+#| fig-cap: Change in black spots density and body condition of pumpkinseed sunfish in relation with the slope of change in activity
 #| out-width: 100%
 #| fig-width: 7
 #| fig-height: 4
@@ -1744,39 +1750,67 @@ new_data <- read.table("./output/new_data1.csv",header=T, sep=",")
 #plotting the change in bs with the change of activity, group with body condition change
 ggplot(data= new_data)+
   geom_point(aes(x= z_change_bs,y=act_E, color = z_change_bc), size=3)+
-  scale_fill_gradient()
+  xlab("Change in black spots density") + ylab("Slope of change in activity") + theme_classic()+geom_vline(xintercept=0, color = "red2", linetype = 2)+
+  labs(color = "Change in \n body condition") + scale_colour_gradient(low = "#112D72",high = "#C7D1ED")
+
 
 ```
 
 ### Discussion
 #### *Repeatability*
 
-Behaviour is generally repeatable across trials and a meta anlysis found that the average repeatability for a wide variety of behaviours and taxa is 0.37 [Bell_2009-wg].
+Behaviours are generally repeatable across contexts and a meta analysis found that the average repeatability for a wide variety of behaviours and taxon is 0.37 [Bell_2009-wg]. Shyness-boldness was not repeatable in our case; exploration was repeatable only in the uninfected status and activity was repeatable in both group. 
 
-Exploration
-Exploratory behaviour repeatability ranged from 0.27-0.66 for great tits bird [@Dingemanse_2002-wg]. A repeatability of 0.40 was found in pumpkinseed sunfish for exploration (Vic, in prep).A study found a repeatability of 0.47 for distance moved in cm for zebrafish and 0.35 for exploration [@Thomson_2020-wg].
+Multiple studies have look at the repeatability of exploration across a range of species: with the pumpkinseed sunfish (R = 0.40; Vic in prep); with the great tits (R = 0.27-0.66, [@Dingemanse_2002-wg]); with zebra fish (R = 0.35, @Thomson_2020-wg). In our case, we can say that we find low to moderate repeatability for exploration with R = 0.29 in the uninfected group; but it decrease in the infected group with R = 0.21. For shyness-boldness, a study on reef fish showed moderate repeatability (R = 0.38) for a short period in the lab and highly repeatable in the field (R= 0.69) [@White_2015-wg]. With the convict cichlid, a study found an average boldness repeatability of 0.30 and 0.31 for exploration [Mazué_2015-wg]. We found low repeatability for boldness in our case, suggesting that the test was not appropriate for this species. For activity, we found moderate repeatability ranging from 35% to 30% in the uninfected and infected group respectively. 
 
-Boldness 
-A study on reef fish showed moderate repeatability for boldness (R = 0.38) for a short period in the lab and highly repeatable in the field (R= 0.69) [@White_2015-wg]
+Since parasites didn't affect significantly exploration and boldness in our models, but we saw a significant increase of exploration and boldness over time, we think that fish may have being habituated to the test. Indeed, on a long period of time (in our case 2 months), individuals can become use to the test. It is hard to measure exploration as the novel environment might not be as novel as we want it to be for the fish when they do the test multiple times. Another recent study tried to measure boldness in pumpkinseed sunfish with a different test, but the trait was not repeatable as well. We know that pumpkinseed sunfish are, in general, bold and curious fish (M.G., personal observations). If all the individuals tested are rather bold, repeatability could be smaller as the variance is smaller.
 
- boldness and exploration averaged (R) 0.300 and 0.313, respectively (https://academic.oup.com/beheco/article/26/3/900/235074?login=false#43508879)
- 
-Activity
+#### *Behavioural syndromes*
 
-Behavioural syndromes changed between the uninfected and infected group. 
-Parasites could change the slope of a behavioural reaction norm without necessarily changing the average value of a behavioural trait or the variance in its expression (https://journals.biologists.com/jeb/article/216/1/18/11357/Parasite-manipulation-of-host-personality-and). Could making the response of the host completely independent from the context in which it is expressed. Parasites may have specific effects on a particular behavioural trait without affecting others, therefore decoupling traits and/or changing the way in which they correlate with each other. the vast majority of past studies, even when focusing on multiple host traits, have tended to only compare average (or median) trait values between parasitised and non-parasitised individuals, and not the relationships between different traits (Poulin, 2010).
+We found some evidence that behavioural syndromes changed between the uninfected and infected group. We found significant correlations between shyness-activity and activity-exploration, but not for shyness-exploration. What is interesting is how these behavioural syndromes changes after the experimental infection; the strength of these correlations decrease. Variation in the correlation estimates varies grandly after the experimental infection. Some have suggested that parasites could change behavioural syndromes by affecting some traits without affecting others, which could change the way traits correlate with each other [@Poulin_2013-wg]. In our case, only activity seemed to be affected by the parasites, which could explain why behavioural syndromes differ before and after the experimental infection between shyness-activity and activity-exploration. Another study of @Poulin_2010-wg stated that most studies tend to compare the average value of a trait between uninfected and infected individuals; but looking into the relationship or behavioural syndromes between the traits should be investigated more.
 
-parasites may have specific effects on a particular behavioural trait without affecting others, therefore decoupling traits and/or changing the way in which they correlate with each other (https://journals.biologists.com/jeb/article/216/1/18/11357/Parasite-manipulation-of-host-personality-and) -> in our case, activity is the only trait affected by parasite in our models. Act-exp and act-boldness are the one that are significantly correlated before but not after the infection. For repeatablity, activity changed quite a lot before and after the experimental infection. Parasire might affect activity but not the other traits, meaning that the behavioural syndrome changed and repeatability as well. Activity is decreased with parasite, as well as the correlation between activity-exploration and activity-boldness. 
-Many trematodes are known to manipulate their host for their transmission, as they have a complex life cycle and pumpkinseed sunfish are intermediate host that need to be eaten to continue the parasite life cycle. If the fish are less active, they could be easily be more predated by piscivirous bird. 
-Mean activity was not changed, but correlation and repeatability was. Sometimes, parasites can alter a trait without changing the mean average. 
+#### *Parasites*
 
-Since parasites didn't seem to affect significantly exploration and boldness, we think that fish may have being habituated to the test. Indeed, on a long period of time, in our case 2 months, individuals can become use to the test. It is hard to measure exploration as the novel environmment might not be as novel as we want it to be for the fish when they do the test multiple times. Another recent study tried to measure boldness in pumpkinseed sunfish with a different test, but the trait was not repeatable as well. We know that pumpkinseed sunfish are, in general, bold and curious fish (Personal observations). If all the individuals tested are rather bold, repeatability could be smaller. Exploration and activitiy were repeatable in the uninfected state of the fish, but not boldness. It is possible that our test was not suited for this species. 
+Parasites found and their effects in our study;
+What is known on cestodes and BS;
+What is commun with our study;
+Competition between parasites;
+Parasite manipulation hypothesis or other hypothesis for decrease activity;
+Limits and ideas for next study;
+What we found in a nutshell
 
-In an amphipod used as an intermediate host by trematodes, infection strengthened correlations between behaviours but reduced the repeatability of behaviours in infected hosts (Coats et al., 2010). 
+We experimentally infected our fish in a semi-natural caging experiment and found two species of parasite that are commonly known to infect pumpkinseed sunfish. Bass tapeworm are known to have many behavioural and physiological effects on their host, like a decrease in activity and oxygen consumption in an amphipod intermediate host (Franceschi et al., 2007), a decrease in predator avoidance and an increase in surface swimming in threespine stickleback (Gasterosteus aculeatus) (LoBue and Bell, 1993); and a decrease in standard and peak metabolic rates as well as a decrease in anti-predator response with simulated aerial attack (Guitard et al., 2022). Black spots are also known to affect behaviours and physiology of their host. In northern pike (Esox lucius), fish infected with black spot disease are smaller than uninfected fish between the ages of one and four years, and this difference increases with age (Harrison and Hadley, 1982). In addition, it has been shown that bold pumpkinseed sunfish had twice as many black spots as shy individuals (Wilson et al., 1993) and that pumpkinseed sunfish with a high black spot density and low body condition are less exploratory (Thelamon, in prep).
+We found that, in our models, black spots were the ones significantly affecting activity of the fish. Bass tapeworms did not have any effects on the traits. We find important to state that both parasites seemed to have opposite effects on the behavioural traits. Some parasite species sharing a host at the same time can be in competition, and if they have opposite effects, it is possible that we don't see the magnitude of effects from each species of parasite. (études sur compétition des parasites). Bass tapeworms have a piscivirous fish as final host, while black spots need a piscivirous bird. If one parasite succeed in their transmission, the other one fails. A co-evolution between the two species is expected to avoid extinction (cours à l'armement).     
+
+Exploration and boldness tended to increase with black spot density and decrease with cestode density. On the contrary, activity was decreasing with black spot density but we did not see any effect from cestodes. The tendencies we see in our study is interesting, because it shows similar patterns to parasite manipulation mechanism: often, host become bolder (i.e. will take more risks), more exploratory. On the other hand, a decrease of activity could facilitate the predation on the host (i.e. less reactive to predators, easier to catch). An increase in boldness and/or a reduction in anti-predator reactions in infected individuals has been reported in stickleback (Gasterosteus aculeatus) infected with a cestode (Schistocephalus solidus) (Barber et al., 2004; Giles, 1983) , rats (Rattus norvegicus) infected with Toxoplasma gondii (Berboy et al., 2000; Webster et al., 1994), mice (Mus musculus) infected with a protozoan (Eimeria vermiformis) and a nematode (Heligmosomoides polygyrus) respectively ( Kavaliers and Colwell, 1995; Kavaliers et al., 1997).
+
+
+Many trematodes species are known to manipulate their host behaviour to complete their transmission (études sur la manipulation parasitaire des trématodes). Pumpkinseed sunfish with black spot disease could be good candidates for this phenomenon, since this species of trematode have a complex life cycle, and their intermediate host, the pumpkinseed sunfish, need to be eaten by a piscivirous bird to complete the parasite transmission. It would be advantageous for the parasites to manipulate the host behaviour to facilitate their transmission. We found that activity decrease with black spot density, althought we did not see a significant decrease of activity before and after the experimental infection. Like discussed earlier, parasites might affect the variance of a trait without changing their average value (Poulin, 2013). Any change in the capacity of escaping predators could help the parasite transmission rate. Therefore, less active fish could be easier to catch by piscivirous birds from the surface, thus completing the parasite life cycle.
+
+
+
+
+
+
+ In an amphipod used as an intermediate host by trematodes, infection strengthened correlations between behaviours but reduced the repeatability of behaviours in infected hosts (Coats et al., 2010).
+
+
+
+
+
+
+
+
+Acanthocephalans were more likely to alter host microhabitat choice, while other parasites were more likely to alter host activity. Parasites of vertebrates were more likely to decrease host reaction to predators, while parasites of invertebrates were more likely to increase host contact with predators. (https://journals.biologists.com/jeb/article/216/1/56/11367/Comparing-mechanisms-of-host-manipulation-across)
+
+Fish infected by larval tapeworms have higher oxygen demands, causing them to spend more time at the surface (Giles, 1987).
 
 
 
 ```{r}
+#| label: control fish
+#| output: false
+#| warning: false
 
 ### essayer de faire un modèle bayesien avec les poissons controles ? ou trouver un modèle pour comparer les moyennes
 
@@ -1808,9 +1842,6 @@ plot(as.factor(data_control$trial), data_control$boldness)
 plot(as.factor(data_control$trial), data_control$activity)
 
 #Repeatability test
-install.packages("rptR")
-library(rptR)
-
 bold_log<-log(data_control$boldness)
 trial_num<- as.numeric(data_control$trial)
 ID<-as.factor(data_control$ID_fish)
@@ -1851,7 +1882,6 @@ plot(rep3, cex.main = 1)
 
 ```
 
-
 ## Supplement
 ```{r}
 #| label: tbl-tab1
@@ -1874,6 +1904,7 @@ tab1 <- data.frame(Trait = c("Shyness (log)", "Exploration","Activity (log)"),
          locations =  cells_body(rows = 3))
 
 ```
+
 
 ```{r}
 #| label: tbl-tab2
@@ -1957,5 +1988,9 @@ tab2 <- data.frame("Raw variables" = c("Shyness (sec)", "Exploration (%)","Activ
   fmt_number(columns = 5, decimals = 3)
 
 ```
+
+
+
+
 
 ## References
