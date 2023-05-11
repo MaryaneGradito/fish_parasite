@@ -374,7 +374,7 @@ dat_slopes<-as.data.frame(data_slopes)
 dat_slopes$ID_fish <- rownames(dat_slopes)
 
 # assigning new names to the columns of the data frame
-colnames(dat_slopes) <- c('bold_E','se_b_E','exp_E','se_exp_E','act_E','se_act_E','bold_I','se_b_I','exp_I','se_exp_I','act_I','se_act_I')
+colnames(dat_slopes) <- c('bold_E','se_b_E','exp_E','se_exp_E','act_E','se_act_E','bold_I','se_b_I','exp_I','se_exp_I','act_I','se_act_I', 'ID_fish')
 
 write.table(dat_slopes, file = "dat_slopes.csv",
             sep = ",", row.names = F)
@@ -391,7 +391,8 @@ write.table(dat_slopes, file = "dat_slopes.csv",
 all_dat <- read.table("./output/all_data_p.csv",header=T, sep=",")
 all_dat$ces_tot<- (all_dat$P04_alive + all_data$P06)
 all_dat$change_bc<- (all_dat$fulton2- all_dat$fulton4)
-all_dat$change_bs<-(all_dat$BS_post_tot - all_dat$BS_pre)
+all_dat$dens_pre_bs<-(all_dat$BS_pre/all_dat$mass_1)
+all_dat$change_bs<-(all_dat$dens_bs - all_dat$dens_pre_bs)
 
 dat_trial1<-all_dat  %>% 
   select(ID_fish, trial, cage, treatment, log_boldness, log_activity, exploration, fulton1, dens_tot, BS_post_tot, ces_tot, change_bc, change_bs) %>% 
@@ -422,9 +423,6 @@ dat_trials <- rbind(dat_trial1, dat_trial2, dat_trial3, dat_trial4) %>% arrange(
 
 #Select for experimentally infected fish and scale parasite and body condition
 dat_par_type <- dat_trials %>% filter(treatment == "E" & trial == 4) %>%  mutate(z_bc = scale(body_condition),
-                                                                                 z_dens = scale(dens_tot),
-                                                                                 z_bs = scale(dens_bs),
-                                                                                 z_ces = scale (dens_ces),
                                                                                  z_change_bc = scale(change_bc), z_change_bs = scale(change_bs))
 
 #Save data
