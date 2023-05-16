@@ -18,7 +18,7 @@ library(ggplot2)
 
 # ----- Loading data ----- #
 
-CombinedData <- read.csv(paste0(to.output, "CombinedData.csv")) # ---- Étape 1) Load ton fichier de données avec tes coordonnées GPS
+CombinedData <- read.csv(paste0(to.output, "cromwell.csv")) # ---- Étape 1) Load ton fichier de données avec tes coordonnées GPS
 
 #### Intra lake prevalences bubble map #### 
 col.pal <- c("chocolate", "goldenrod", "olivedrab")
@@ -53,5 +53,11 @@ CROM.plot <- ggplot() +
   geom_point(data = CROM.att, aes(x = Longitude, y = Latitude, size = prev_LeGi, color = Sampling_method)) + #Points GPS de tes cages
   scale_color_manual(values = col.pal) + 
   geom_text(data = CROM.att, aes(x = Longitude, y = Latitude, label = Sampling_ID), size = 2) + #Si tu veux ajouter des étiquettes à tes points
-  theme_void() #Pour mettre sur fond blanc plutôt qu'un graphique
+  theme_void() + theme(legend.position = "none") #Pour mettre sur fond blanc plutôt qu'un graphique
 CROM.plot
+
+ggsave("./output/figures/map.png", plot = CROM.plot, width = 40, height = 15, units = "cm")
+
+MAP <- image_read("./output/figures/map.png")
+
+
