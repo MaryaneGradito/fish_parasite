@@ -442,6 +442,17 @@ To test if body condition as an effect on personality, we fitted model 5 with bo
 
 The caging experiment successfully infected our fish. Uninfected fish that stayed in the laboratory had no living parasites, which indicated that the praziquantel treatment was effective. The two most abundant species found in the experimentally infected fish were trematodes causing the black spot disease (Trematoda: *Apophallus sp.* and *Uvulifer sp.*; min-max: `r BS_min`- `r BS_max`; median: `r BS_median`) and the bass tapeworm (Cestoda: *Proteocephalus ambloplites*; min-max: `r cestode_min` - `r cestode_max` ; median: `r cestode_median`). The most abundant species of trematode causing black spots was *Apophallus sp*. (Binning, Lanthier, unpublished data), but *Uvulifer sp.* was found more frequently inside the muscles (MG, personal observations). Experimental fish gained, on average, `r gain_mean` black spots across the different cages, and were found on the fins, body, gills and inside the muscles. Bass tapeworm were mostly found in the liver, stomach and digestive tract, and occasionally around the spleen (parasite count: 9), and rarely on the gills (parasite count: 3) or the heart (parasite count: 2). Other unknown nematode species were found rarely in the body cavity (alive parasite count: 4).
 
+```{r}
+#| label: fig-fig0
+#| fig-cap: Map
+#| out-width: 100%
+#| fig-width: 8
+#| fig-height: 8
+map <- image_read("./output/figures/map.png")
+map
+```
+
+
 #### *Evidence of personality and behavioural syndromes*
 
 With a threshold of 10%, only activity was repeatable across trials regardless of the infected status (R = `r R_act_mean`, 95% CI = `r R_Blb_act`, `r R_Bub_act`, $pMCMC_{\alpha = 0.10}$ = `r p_value_act_a`). Shyness was not significantly repeatable in both treatment (R = `r R_bold_mean`, 95% CI = `r R_Blb_bold`, `r R_Bub_bold`, $pMCMC_{\alpha = 0.10}$ = `r p_value_bold_a`). Exploration was repeatable in the uninfected group (R = `r R_exp_C_mean`, 95% CI = `r R_Blb_exp_C`, `r R_Bub_exp_C`, $pMCMC_{\alpha = 0.10}$ = `r p_value_exp_C`;), but not in the experimentally infected group ((R = `r R_exp_E_mean`, 95% CI = `r R_Blb_exp_E`, `r R_Bub_exp_E`, $pMCMC_{\alpha = 0.10}$ = `r p_value_exp_E`). We did not observe among-individual variation to be higher in the uninfected vs experimentally infected group. Repeatability did not differ between treatment for shyness ($pMCMC_{\alpha = 0.05}$ = `r p_value_bold`), exploration ($pMCMC_{\alpha = 0.05}$ = `r p_value_exp`) and activity ($pMCMC_{\alpha = 0.05}$ = `r p_value_act`) (@fig-fig1).
@@ -833,7 +844,6 @@ trt <- as.factor(all_data$treatment)
 dat1<-dat_model %>% 
   filter(trait == "logboldness")
 
- 
 #boldness
 m1<-
 ggplot(all_data, aes(x = trt, y = log_boldness, group = trt, color = trt)) +
@@ -1265,13 +1275,16 @@ newdat4 <- data.frame(intercept = 1,
   
   #create dataframe
 act_bc_dat <- cbind(newdat4, summ_act_bc, summ_actL95_bc, summ_actU95_bc)
-  
+  library(harrypotter)
+pal <- hp(n = 120, house = "Slytherin")
+pal2 <- hp(n = 80, house = "Slytherin")
+pal3 <- hp(n = 1, house = "Slytherin")
 #plot
 x2<- ggplot(data=dat_parasite)+
-  geom_point(mapping = aes(x = z_bc, y = log_activity), shape = 21,color = "#1f978b")+
- geom_smooth(data = act_bc_dat, ggplot2::aes(x = z_bc, y = summ_act_bc), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#1f978b", size=1) +
-  geom_smooth(data = act_bc_dat, ggplot2::aes(x = z_bc, y = summ_actL95_bc), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#1f978b", size=0.8)+
-  geom_smooth(data = act_bc_dat, ggplot2::aes(x = z_bc, y = summ_actU95_bc), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#1f978b", size=0.8)+
+  geom_point(mapping = aes(x = z_bc, y = log_activity), shape = 16,color = pal)+
+ geom_smooth(data = act_bc_dat, ggplot2::aes(x = z_bc, y = summ_act_bc), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = pal2, size=1) +
+  geom_smooth(data = act_bc_dat, ggplot2::aes(x = z_bc, y = summ_actL95_bc), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = pal3, size=0.8)+
+  geom_smooth(data = act_bc_dat, ggplot2::aes(x = z_bc, y = summ_actU95_bc), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = pal3, size=0.8)+
    theme_classic() +
   draw_image("./img/parasite.png", x= 0.8,y = 1.7, scale = 0.9)+
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
@@ -1537,13 +1550,24 @@ cor1<-cor(all_data$dens_bs,all_data$dens_ces)
 plot1<-plot(all_data$dens_bs,all_data$dens_ces)
 
 #effect of cage in parasite density
+all_data$cage <- factor(all_data$cage, levels=c("1","2","3","4","5","6","7","8","9","10","C1","C2"))
+
 plot2<- ggplot(data=all_data)+
   geom_point(mapping = aes(x = cage, y = dens_bs, color = factor(ID_fish))) +
-   theme_classic()
+   theme_classic()+ theme(legend.position = "none") + xlab("Cage number") + ylab("Black spot density")
+
  
 plot3<- ggplot(data=all_data)+
   geom_point(mapping = aes(x = cage, y = dens_ces, color = factor(ID_fish))) +
-   theme_classic()
+   theme_classic() + theme(legend.position = "none") + xlab("Cage number") + ylab("Cestode density") 
+
+
+moy_dens_bs<-aggregate(dens_bs ~ cage, all_data, mean)
+moy_dens_ces<-aggregate(dens_ces ~ cage, all_data, mean)
+moy_dens_parasite<-aggregate(dens_tot ~ cage, all_data, mean)
+
+
+
 
 
 ```
@@ -1759,9 +1783,9 @@ ggplot(data= new_data)+
 ### Discussion
 #### *Repeatability*
 
-Behaviours are generally repeatable across contexts and a meta analysis found that the average repeatability for a wide variety of behaviours and taxon is 0.37 [Bell_2009-wg]. Shyness-boldness was not repeatable in our case; exploration was repeatable only in the uninfected status and activity was repeatable in both group. 
+ess-boldness was not repeatable in our case; exploration was repeatable only in the uninfected status and activity was repeatable in both group. 
 
-Multiple studies have look at the repeatability of exploration across a range of species: with the pumpkinseed sunfish (R = 0.40; Vic in prep); with the great tits (R = 0.27-0.66, [@Dingemanse_2002-wg]); with zebra fish (R = 0.35, @Thomson_2020-wg). In our case, we can say that we find low to moderate repeatability for exploration with R = 0.29 in the uninfected group; but it decrease in the infected group with R = 0.21. For shyness-boldness, a study on reef fish showed moderate repeatability (R = 0.38) for a short period in the lab and highly repeatable in the field (R= 0.69) [@White_2015-wg]. With the convict cichlid, a study found an average boldness repeatability of 0.30 and 0.31 for exploration [Mazué_2015-wg]. We found low repeatability for boldness in our case, suggesting that the test was not appropriate for this species. For activity, we found moderate repeatability ranging from 35% to 30% in the uninfected and infected group respectively. 
+Multiple studies have look at the repeatability of exploration across a range of species: with the pumpkinseed sunfish (R = 0.40; Vic in prep); with the great tits (R = 0.27-0.66, [@Dingemanse_2002-wg]); with zebra fish (R = 0.35, @Thomson_2020-wg). In our case, we can say that we find low to moderate repeatability for exploration with R = 0.29 in the uninfected group; but it decrease in the infected group with R = 0.21. For shyness-boldness, a study on reef fish showed moderate repeatability (R = 0.38) for a short period in the lab and highly repeatable in the field (R= 0.69) [@White_2015-wg]. With the convict cichlid, a study found an average boldness repeatability of 0.30 and 0.31 for exploration [Mazué_2015-wg]. We found low repeatability for boldness in our case, suggesting that the test was not appropriate for this spBehaviours are generally repeatable across contexts and a meta analysis found that the average repeatability for a wide variety of behaviours and taxon is 0.37 [Bell_2009-wg]. For activity, we found moderate repeatability ranging from 35% to 30% in the uninfected and infected group respectively. 
 
 Since parasites didn't affect significantly exploration and boldness in our models, but we saw a significant increase of exploration and boldness over time, we think that fish may have being habituated to the test. Indeed, on a long period of time (in our case 2 months), individuals can become use to the test. It is hard to measure exploration as the novel environment might not be as novel as we want it to be for the fish when they do the test multiple times. Another recent study tried to measure boldness in pumpkinseed sunfish with a different test, but the trait was not repeatable as well. We know that pumpkinseed sunfish are, in general, bold and curious fish (M.G., personal observations). If all the individuals tested are rather bold, repeatability could be smaller as the variance is smaller.
 
