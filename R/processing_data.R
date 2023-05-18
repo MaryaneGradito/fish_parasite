@@ -174,22 +174,22 @@ hist(as.numeric(all_data$boldness))
 ggplot(all_data, aes(x = exploration)) +
   geom_histogram(aes(color = treatment, fill = treatment), 
                  position = "identity", bins = 30, alpha = 0.4) +
-  scale_color_manual(values = c("#00AFBB", "#E7B800")) +
-  scale_fill_manual(values = c("#00AFBB", "#E7B800"))
+  scale_color_manual(values = c("#00AFBB", "#E7B800", "black")) +
+  scale_fill_manual(values = c("#00AFBB", "#E7B800", "black"))
 
 # Distribution of activity for group C and E
 ggplot(all_data, aes(x = activity)) +
   geom_histogram(aes(color = treatment, fill = treatment), 
                  position = "identity", bins = 30, alpha = 0.4) +
-  scale_color_manual(values = c("#00AFBB", "#E7B800")) +
-  scale_fill_manual(values = c("#00AFBB", "#E7B800"))
+  scale_color_manual(values = c("#00AFBB", "#E7B800", "black")) +
+  scale_fill_manual(values = c("#00AFBB", "#E7B800","black"))
 
 # Distribution of boldness for group C and E
 ggplot(all_data, aes(x = boldness)) +
   geom_histogram(aes(color = treatment, fill = treatment), 
                  position = "identity", bins = 30, alpha = 0.4) +
-  scale_color_manual(values = c("#00AFBB", "#E7B800")) +
-  scale_fill_manual(values = c("#00AFBB", "#E7B800"))
+  scale_color_manual(values = c("#00AFBB", "#E7B800", "black")) +
+  scale_fill_manual(values = c("#00AFBB", "#E7B800","black"))
 
 #NORMALITY AND TRANSFORMATION
 # Exploration
