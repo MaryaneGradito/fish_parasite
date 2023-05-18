@@ -46,6 +46,14 @@ cage_number<-as.factor(attributes$cage)
 # ---- Étape 5) Représentation visuelle
 # Specify the number of decimal places in the labels
 
+
+library(png)
+library(grid)
+
+image_path <- "./img/no_parasite.png"
+image <- png::readPNG(image_path)
+
+
 #map for black spot density
 CROM.plot <- ggplot() + 
   geom_sf(data = CROM, fill = "#DFEFFE", color = "black")+
@@ -59,11 +67,12 @@ scale_y_continuous(breaks=c(45.988,45.989, 45.990),labels = function(y) paste0(f
   xlab("") + ylab("")
 CROM.plot<-CROM.plot + theme(plot.title = element_text(size=14, face="bold")) + theme(panel.background = element_rect(fill = '#F7F7F7', color = 'black')) + scale_colour_gradient(low = "#FEFFD0",high = "#B80A0A")
 
-p1<-CROM.plot +annotation_scale(location = "bl", bar_cols = c("black","white")) +
+CROM.plot<-CROM.plot +annotation_scale(location = "bl", bar_cols = c("black","white")) +
   annotation_north_arrow(location = "tl", which_north = "true",
                          style = north_arrow_nautical(fill =c("black","white"),line_col = "black"))+ theme(legend.position = c(0.88, 0.40), legend.background = element_rect(fill = "#F7F7F7", color = "black"), legend.key.size = unit(0.8, 'cm'), legend.title = element_text(size=15,face = "bold"), legend.text = element_text(size=12),plot.margin=unit(c(1,1,-0.5,1), "cm")) +
-  labs(color = "Mean \n black spot \n density (no/g) \n per cage")
-  
+  labs(color = "Mean \n black spot \n density (no/g) \n per cage") + annotation_raster(raster_Grob(image, xmin = 0.5, xmax = 2, ymin = 1, ymax = 2))
+
+
 
 #map for cestode density
 CROM.plot <- ggplot() + 
