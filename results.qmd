@@ -448,8 +448,8 @@ The caging experiment successfully infected our fish. Uninfected fish that staye
 #| out-width: 100%
 #| fig-width: 8
 #| fig-height: 8
-map <- image_read("./output/figures/map.png")
-map
+fig1 <- image_read("./output/figures/map.png")
+fig1
 ```
 
 
@@ -461,9 +461,8 @@ When infected, the estimates of repeatability seem to vary more.
 
 ```{r}
 #| label: fig-fig2
-#| fig-cap: Repeatability estimates and their 95% confidence intervals for the three behaviours (shyness,exploration and activity) of pumpkinseed sunfish (Lepomis gibbosus) measured overall and within each group (overall and uninfected, N=72; infected, N=60).
+#| fig-cap: Repeatability estimates and their 95% confidence intervals for the three behaviours (shyness,exploration and activity) of pumpkinseed sunfish (Lepomis gibbosus) measured overall and within each group (overall and uninfected, N=72; infected, N=60). Uninfected is before the experimental infection (trial 1-2); infected is after the fish were experimentally infected (trial 3-4); overall looks at repeatability regardless of the treatment (trial 1-2-3-4).
 #| out-width: 100%
-
 
 
 #Plot 
@@ -492,7 +491,10 @@ ggplot(dat_rep)+
 geom_point(data=dat_rep, mapping=aes(x= Repeatability, y= R), size=3)+
 geom_errorbarh(aes(y = R, xmin= Lower_CI, xmax=Higher_CI), height = 0.2, linewidth =0.9, inherit.aes = FALSE)+scale_x_continuous()+facet_grid(Treatment ~ .)+geom_vline(xintercept=0.1, color = "red2", linetype = 2)+geom_hline(yintercept= "Shyness_Exploration", color = "red2", linetype = 2)+ xlab("Repeatability (R)") + ylab("")+ theme_classic()+ theme(strip.text.y = element_text(size=12, face="bold", angle = 360),strip.background = element_rect(colour="white", fill="white"))
 
-w1
+ggsave("./output/figures/fig2.png", plot = w1, width = 18, height = 16, units = "cm")
+
+fig2 <- image_read("./output/figures/fig2.png")  
+fig2
 
 ```
 
@@ -503,7 +505,7 @@ We found evidence of behavioural syndromes between some traits depending on the 
 Range of estimates is greater and not significantly different of 0 in the infected state for these correlations. 
 ```{r}
 #| label: fig-fig3
-#| fig-cap: Correlation coefficients and their 95% confidence intervals for the three behaviours (shyness,exploration and activity) of pumpkinseed sunfish (Lepomis gibbosus) measured overall and within each group (overall and uninfected, N=72; infected, N=60).
+#| fig-cap: Correlation coefficients and their 95% confidence intervals for the three behaviours (shyness,exploration and activity) of pumpkinseed sunfish (Lepomis gibbosus) measured overall and within each group (overall and uninfected, N=72; infected, N=60). Uninfected is before the experimental infection (trial 1-2); infected is after the fish were experimentally infected (trial 3-4); overall looks at repeatability regardless of the treatment (trial 1-2-3-4).
 #| out-width: 100%
 
 #created dataset for all correlations
@@ -531,6 +533,11 @@ geom_point(data=dat_cor, mapping=aes(x= Correlation, y= BS), size=3)+
 geom_errorbarh(aes(y = BS, xmin= Lower_CI_o, xmax=Higher_CI_o), height = 0.2, linewidth =0.9, inherit.aes = FALSE)+scale_x_continuous()+facet_grid(Treatment ~ .)+geom_vline(xintercept=0, color = "red2", linetype = 2)+geom_hline(yintercept= "Shyness_Exploration", color = "red2", linetype = 2)+ xlab("Correlation") + ylab("")+ theme_classic()+ theme(strip.text.y = element_text(size=12, face="bold", angle = 360),strip.background = element_rect(colour="white", fill="white"))
 
 m1
+ggsave("./output/figures/fig3.png", plot = m1, width = 18, height = 16, units = "cm")
+
+fig3 <- image_read("./output/figures/fig3.png")  
+fig3
+
 ```
 
 ```{r}
@@ -627,7 +634,7 @@ pp<-plot_grid(
   p_1, p_2, p_3,
   labels = "AUTO", ncol = 1)
 pp
-ggsave("./output/figures/fig1.png", plot = pp, width = 28, height = 30, units = "cm")
+ggsave("./output/figures/fig4.png", plot = pp, width = 28, height = 30, units = "cm")
 
 ```
 
@@ -911,10 +918,10 @@ annotate("text",  x = 1.5, y = 4, label = TeX(paste0("Contrast = -0.26, $pMCMC_{
   m1,m2,m3,
   labels = "AUTO", ncol = 3)
 
- ggsave("./output/figures/fig2.png", plot = m, width = 28, height = 13, units = "cm")
+ ggsave("./output/figures/fig5.png", plot = m, width = 28, height = 13, units = "cm")
 
-fig2 <- image_read("./output/figures/fig2.png") 
-fig2
+fig5 <- image_read("./output/figures/fig5.png") 
+fig5
 
 ```
 
@@ -1299,9 +1306,9 @@ x2<- ggplot(data=dat_parasite)+
   x1,x2,
   labels = "AUTO", ncol = 2)
 
-  ggsave("./output/figures/fig3.png", plot = x, width = 28, height = 16, units = "cm")
-  fig3 <- image_read("./output/figures/fig3.png")
-  fig3
+  ggsave("./output/figures/fig6.png", plot = x, width = 28, height = 16, units = "cm")
+  fig6 <- image_read("./output/figures/fig6.png")
+  fig6
 ```
 
 
@@ -1532,10 +1539,10 @@ p<-plot_grid(
   n1, n2, n3,
   labels = "AUTO", ncol = 3)
 
-ggsave("./output/figures/fig4.png", plot = p, width = 40, height = 15, units = "cm")
+ggsave("./output/figures/fig7.png", plot = p, width = 40, height = 15, units = "cm")
 
-fig4 <- image_read("./output/figures/fig4.png")
-fig4
+fig7 <- image_read("./output/figures/fig7.png")
+fig7
 ```
 
 
@@ -1750,10 +1757,10 @@ k6<-ggplot(data= dat_slopes)+
   kk,kkk,
   labels = "AUTO", ncol = 1)
  
-ggsave("./output/figures/fig5.png", plot = w, width = 30, height = 20, units = "cm")
+ggsave("./output/figures/fig8.png", plot = w, width = 30, height = 20, units = "cm")
 
-fig5 <- image_read("./output/figures/fig5.png")  
-fig5
+fig8 <- image_read("./output/figures/fig8.png")  
+fig8
 
 
 ```
@@ -1775,11 +1782,15 @@ new_data <- read.table("./output/new_data1.csv",header=T, sep=",")
 #k6<-plot(new_data$exp_E,new_data$z_change_bc)
 
 #plotting the change in bs with the change of activity, group with body condition change
-ggplot(data= new_data)+
+k1<-ggplot(data= new_data)+
   geom_point(aes(x= z_change_bs,y=act_E, color = z_change_bc), size=3)+
   xlab("Change in black spots density") + ylab("Slope of change in activity") + theme_classic()+geom_vline(xintercept=0, color = "red2", linetype = 2)+
   labs(color = "Change in \n body condition") + scale_colour_gradient(low = "#112D72",high = "#C7D1ED")
 
+ggsave("./output/figures/fig9.png", plot = k1, width = 30, height = 20, units = "cm")
+
+fig9 <- image_read("./output/figures/fig9.png")  
+fig9
 
 ```
 
@@ -1840,6 +1851,7 @@ Fish infected by larval tapeworms have higher oxygen demands, causing them to sp
 #| warning: false
 
 ### essayer de faire un modèle bayesien avec les poissons controles ? ou trouver un modèle pour comparer les moyennes
+#séparer trial 1-2 versus 3-4
 
 data_control <- read.table("./data_raw/12_fish.csv",header=T, sep=";")
 
@@ -1880,6 +1892,7 @@ rpt(exploration ~ (1|ID_fish) + trial, grname = "ID_fish", data = data_control, 
           nboot = 0, npermut = 0)
 
 #Full model for exploration
+#overall et avant/après 
 rep1<-rpt(exploration ~ ( 1 | ID_fish) + trial + ( 1 | cage), grname = "ID_fish", data = data_control, datatype = "Gaussian", 
     nboot = 1000, npermut = 0)
 summary(rep1)
@@ -1900,7 +1913,7 @@ rpt(log(boldness) ~ (1|ID_fish) + trial, grname = "ID_fish", data = data_control
           nboot = 0, npermut = 0)
 
 #full model for boldness
-rep3<-rpt(log(boldness) ~ ( 1 | ID_fish) + trial + ( 1 | cage), grname = "ID_fish", data = data_control, datatype = "Gaussian", 
+rep3<-rpt(log(boldness) ~ ( 1 | ID_fish) + ( 1 | cage), grname = "ID_fish", data = data_control, datatype = "Gaussian", 
     nboot = 1000, npermut = 0)
 summary(rep3)
 plot(rep3, cex.main = 1)
