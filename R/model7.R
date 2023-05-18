@@ -14,9 +14,9 @@ pacman::p_load(lme4, rstan, tidyverse, StanHeaders, jsonlite, rstantools, brms, 
 
 ### Model 7
 
-boldness_7 <- bf(log_boldness ~ 1 + z_ces + z_bs + z_bc + (1 | ID_fish) + (1 | cage)) + gaussian()
-activity_7 <- bf(log_activity ~ 1 + z_ces + z_bs + z_bc + (1 | ID_fish) + (1 | cage)) + gaussian()
-explore_7 <- bf(exploration  ~ 1 + z_ces + z_bs + z_bc + (1 | ID_fish) + (1 | cage)) + gaussian()
+boldness_7 <- bf(z_log_boldness ~ 1 + z_ces + z_bs + z_bc + (1 | ID_fish) + (1 | cage)) + gaussian()
+activity_7 <- bf(z_log_activity ~ 1 + z_ces + z_bs + z_bc + (1 | ID_fish) + (1 | cage)) + gaussian()
+explore_7 <- bf(z_exploration  ~ 1 + z_ces + z_bs + z_bc + (1 | ID_fish) + (1 | cage)) + gaussian()
 
 
 model_7 <- brms::brm(boldness_7 + activity_7 + explore_7 + set_rescor(TRUE), 
