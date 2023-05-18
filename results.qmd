@@ -444,7 +444,7 @@ The caging experiment successfully infected our fish. Uninfected fish that staye
 
 ```{r}
 #| label: fig-fig1
-#| fig-cap: Mean black spot and cestode density according per cage number (n=10) and geographic location on Lake Cromwell, Station de Biologie des Laurentides, Québec, Canada
+#| fig-cap: Mean black spot and cestode density per cage (n=10) according to geographic location of cage sites on Lake Cromwell, Station de Biologie des Laurentides, Québec, Canada. Map coordonates are expressed in decimal degrees. Black square is the water entry point.
 #| out-width: 100%
 #| fig-width: 8
 #| fig-height: 8
@@ -469,12 +469,12 @@ When infected, the estimates of repeatability seem to vary more.
 #created dataset for all repeatability measures
   #Create data frame
 dat_rep<-data.frame(
-  "R"=c("Shyness","Exploration","Activity","Shyness","Exploration","Activity","Shyness","Exploration","Activity"),
-  "Treatment" = c("Overall", "Overall","Overall","Uninfected","Uninfected","Uninfected","Infected","Infected","Infected"),
+  "R"=c("Shyness","Exploration","Activity","Shyness","Exploration","Activity","Shyness","Exploration","Activity","Shyness","Exploration","Activity"),
+  "Treatment" = c("Overall", "Overall","Overall","Uninfected","Uninfected","Uninfected","Infected","Infected","Infected","Control","Control","Control"),
   "Repeatability"=c(R_bold_mean,R_exp_mean,R_act_mean
-                    ,R_C_bold,R_exp_C_mean,R_act_C,R_E_bold,R_exp_E_mean,R_act_E), 
-  "Lower_CI" = c(R_Blb_bold,R_Blb_exp,R_Blb_act,R_Blb_bold_C,R_Blb_exp_C,R_Blb_act_C,R_Blb_bold_E,R_Blb_exp_E,R_Blb_act_E),
-  "Higher_CI" = c(R_Bub_bold,R_Bub_exp,R_Bub_act,R_Bub_bold_C,R_Bub_exp_C,R_Bub_act_C,R_Bub_bold_E,R_Bub_exp_E,R_Bub_act_E))
+                    ,R_C_bold,R_exp_C_mean,R_act_C,R_E_bold,R_exp_E_mean,R_act_E,0.0464,0.417,0.314), 
+  "Lower_CI" = c(R_Blb_bold,R_Blb_exp,R_Blb_act,R_Blb_bold_C,R_Blb_exp_C,R_Blb_act_C,R_Blb_bold_E,R_Blb_exp_E,R_Blb_act_E,0,0,0),
+  "Higher_CI" = c(R_Bub_bold,R_Bub_exp,R_Bub_act,R_Bub_bold_C,R_Bub_exp_C,R_Bub_act_C,R_Bub_bold_E,R_Bub_exp_E,R_Bub_act_E,0.555,0.782,0.752))
   
   
  # "Uninfected" = c(b_act_C_mean,b_exp_C_mean,act_exp_C_mean),
@@ -484,7 +484,7 @@ dat_rep<-data.frame(
   #"Lower_CI_i" = c(low_b_act_E,low_b_exp_E,low_act_exp_E),
   #"Higher_CI_i" = c(high_b_act_E,high_b_exp_E,high_act_exp_E))
 
-dat_rep$Treatment = factor(dat_rep$Treatment, levels=c('Overall','Uninfected','Infected'))
+dat_rep$Treatment = factor(dat_rep$Treatment, levels=c('Overall','Uninfected','Infected','Control'))
 
 w1<-
 ggplot(dat_rep)+ 
@@ -851,6 +851,7 @@ all_data[all_data == 'E'] <- 'Infected'
 all_data$treatment <- factor(all_data$treatment, levels=c("Uninfected", "Infected"))
 trt <- as.factor(all_data$treatment)
 
+
 dat1<-dat_model %>% 
   filter(trait == "logboldness")
 
@@ -887,12 +888,12 @@ geom_point(data=dat2, mapping=aes(x= treatment, y= estimate), size=2, shape=21, 
 labs(x = "Treatment", 
 y = "Exploration") +
 theme_classic() +
-  draw_image("./img/parasite.png", x= 1.5,y = 3, scale = 0.6)+
-  draw_image("./img/no_parasite.png", x= 0.5,y = 3, scale = 0.6)+
+  draw_image("./img/parasite.png", x= 1.5,y = 1, scale = 0.6)+
+  draw_image("./img/no_parasite.png", x= 0.5,y = 1, scale = 0.6)+
 theme(legend.position = "none",
  legend.title = element_blank()) +
-geom_segment(aes(x = 1, xend = 2, y = 3.85, yend = 3.85),color = "black") +
-annotate("text",  x = 1.5, y = 4, label = TeX(paste0("Contrast = 0.43, $pMCMC_{\\alpha = 0.05}$ = 0.0015**")), size =2.5)
+geom_segment(aes(x = 1, xend = 2, y = 1, yend = 1),color = "black") +
+annotate("text",  x = 1.5, y = 1, label = TeX(paste0("Contrast = 0.43, $pMCMC_{\\alpha = 0.05}$ = 0.0015**")), size =2.5)
 
 #activity
 dat3<-dat_model %>% 
@@ -1817,6 +1818,9 @@ Parasite manipulation hypothesis or other hypothesis for decrease activity;
 Limits and ideas for next study;
 What we found in a nutshell
 
+Expliquer comment se font les infections pour expliquer la map: escargots moins étendus, moins de dispersions, parasite qui initie le contact, infection plus passive vs copépodes plus infection active, se font manger par les poissons 
+
+
 We experimentally infected our fish in a semi-natural caging experiment and found two species of parasite that are commonly known to infect pumpkinseed sunfish. Bass tapeworm are known to have many behavioural and physiological effects on their host, like a decrease in activity and oxygen consumption in an amphipod intermediate host (Franceschi et al., 2007), a decrease in predator avoidance and an increase in surface swimming in threespine stickleback (Gasterosteus aculeatus) (LoBue and Bell, 1993); and a decrease in standard and peak metabolic rates as well as a decrease in anti-predator response with simulated aerial attack (Guitard et al., 2022). Black spots are also known to affect behaviours and physiology of their host. In northern pike (Esox lucius), fish infected with black spot disease are smaller than uninfected fish between the ages of one and four years, and this difference increases with age (Harrison and Hadley, 1982). In addition, it has been shown that bold pumpkinseed sunfish had twice as many black spots as shy individuals (Wilson et al., 1993) and that pumpkinseed sunfish with a high black spot density and low body condition are less exploratory (Thelamon, in prep).
 We found that, in our models, black spots were the ones significantly affecting activity of the fish. Bass tapeworms did not have any effects on the traits. We find important to state that both parasites seemed to have opposite effects on the behavioural traits. Some parasite species sharing a host at the same time can be in competition, and if they have opposite effects, it is possible that we don't see the magnitude of effects from each species of parasite. (études sur compétition des parasites). Bass tapeworms have a piscivirous fish as final host, while black spots need a piscivirous bird. If one parasite succeed in their transmission, the other one fails. A co-evolution between the two species is expected to avoid extinction (cours à l'armement).     
 
@@ -1853,7 +1857,11 @@ Fish infected by larval tapeworms have higher oxygen demands, causing them to sp
 ### essayer de faire un modèle bayesien avec les poissons controles ? ou trouver un modèle pour comparer les moyennes
 #séparer trial 1-2 versus 3-4
 
-data_control <- read.table("./data_raw/12_fish.csv",header=T, sep=";")
+data_control <- read.table("./data_raw/12_fish.csv",header=T, sep=";") # all fish
+data_before <- read.table("./data_raw/12_fish_before.csv",header=T, sep=";") #trial 1-2
+data_after <- read.table("./data_raw/12_fish_after.csv",header=T, sep=";") #trial 3-4
+data_infected <- read.table("./data_raw/data_infectedd.csv",header=T, sep=";") #trial 3-4
+data_uninfected <- read.table("./data_raw/data_uninfected.csv",header=T, sep=";") #trial 1-2
 
 #exploration
 qqnorm(data_control$exploration)
@@ -1887,37 +1895,119 @@ ID<-as.factor(data_control$ID_fish)
 data_control1<-as.data.frame(data_control)
 cage_num<-as.factor(data_control$cage)
 
+#VERIFICATION
+#looking to see if I get the same R as my bayesien model
+#between trial 3-4
+k1<-rpt(exploration ~ ( 1 | ID_fish) + trial + ( 1 | cage), grname = "ID_fish", data = data_infected, datatype = "Gaussian", 
+    nboot = 1000, npermut = 0) #0.36, a bit higher then my model
+
+rpt(log(activity) ~ ( 1 | ID_fish) + trial + ( 1 | cage), grname = "ID_fish", data = data_infected, datatype = "Gaussian", 
+    nboot = 1000, npermut = 0) #similar to bayesien model, 0.357
+
+rpt(log(boldness) ~ ( 1 | ID_fish) + trial + ( 1 | cage), grname = "ID_fish", data = data_infected, datatype = "Gaussian", 
+    nboot = 1000, npermut = 0) #similar to bayesien model, 0.12
+
+#between trial 1-2, all fish including control
+k<-rpt(exploration ~ ( 1 | ID_fish) + trial + ( 1 | cage), grname = "ID_fish", data = data_uninfected, datatype = "Gaussian", 
+    nboot = 1000, npermut = 0) #0.26, similar to my model
+
+kk<-rpt(log(activity) ~ ( 1 | ID_fish) + trial + ( 1 | cage), grname = "ID_fish", data = data_uninfected, datatype = "Gaussian", 
+    nboot = 1000, npermut = 0) #higher, 0.51
+
+rpt(log(boldness) ~ ( 1 | ID_fish) + trial + ( 1 | cage), grname = "ID_fish", data = data_uninfected, datatype = "Gaussian", 
+    nboot = 1000, npermut = 0) #similar to bayesien model, 0.16
+
+
 #Only on ID
 rpt(exploration ~ (1|ID_fish) + trial, grname = "ID_fish", data = data_control, datatype = "Gaussian",
           nboot = 0, npermut = 0)
 
+#before
+rpt(exploration ~ (1|ID_fish) + trial, grname = "ID_fish", data = data_before, datatype = "Gaussian",
+          nboot = 0, npermut = 0)
+
+#after
+rpt(exploration ~ (1|ID_fish) + trial, grname = "ID_fish", data = data_after, datatype = "Gaussian",
+          nboot = 0, npermut = 0)
+
 #Full model for exploration
-#overall et avant/après 
+#overall repeatability for exploration
 rep1<-rpt(exploration ~ ( 1 | ID_fish) + trial + ( 1 | cage), grname = "ID_fish", data = data_control, datatype = "Gaussian", 
     nboot = 1000, npermut = 0)
 summary(rep1)
 plot(rep1, cex.main = 1)
 
+#repeatability for trial 1-2
+rep1.1<-rpt(exploration ~ ( 1 | ID_fish) + trial + ( 1 | cage), grname = "ID_fish", data = data_before, datatype = "Gaussian", 
+    nboot = 1000, npermut = 0)
+summary(rep1.1)#0.264 
+plot(rep1.1, cex.main = 1)
+
+#repeatability for trial 3-4
+rep1.2<-rpt(exploration ~ ( 1 | ID_fish) + trial + ( 1 | cage), grname = "ID_fish", data = data_after, datatype = "Gaussian", 
+    nboot = 1000, npermut = 0)
+summary(rep1.2)#0.417
+plot(rep1.2, cex.main = 1)
+
 #Only on ID
 rpt(log(activity) ~ (1|ID_fish) + trial, grname = "ID_fish", data = data_control, datatype = "Gaussian",
           nboot = 0, npermut = 0)
 
+#before
+rpt(log(activity) ~ (1|ID_fish) + trial, grname = "ID_fish", data = data_before, datatype = "Gaussian",
+          nboot = 0, npermut = 0)
+
+#after
+rpt(log(activity) ~ (1|ID_fish) + trial, grname = "ID_fish", data = data_after, datatype = "Gaussian",
+          nboot = 0, npermut = 0)
+
 #full model for activity
+#overall repeatability for activity
 rep2<-rpt(log(activity) ~ ( 1 | ID_fish) + trial + ( 1 | cage), grname = "ID_fish", data = data_control, datatype = "Gaussian", 
     nboot = 1000, npermut = 0)
-summary(rep2)
+summary(rep2) # 0.16
 plot(rep2, cex.main = 1)
+
+#repeatability before
+rep2.1<-rpt(log(activity) ~ ( 1 | ID_fish) + trial + ( 1 | cage), grname = "ID_fish", data = data_before, datatype = "Gaussian", 
+    nboot = 1000, npermut = 0)
+summary(rep2.1) #0.528 
+plot(rep2.1, cex.main = 1)
+
+#repeatability after
+rep2.2<-rpt(log(activity) ~ ( 1 | ID_fish) + trial + ( 1 | cage), grname = "ID_fish", data = data_after, datatype = "Gaussian", 
+    nboot = 1000, npermut = 0)
+summary(rep2.2) #0.314
+plot(rep2.2, cex.main = 1)
 
 #Only on ID
 rpt(log(boldness) ~ (1|ID_fish) + trial, grname = "ID_fish", data = data_control, datatype = "Gaussian",
           nboot = 0, npermut = 0)
+#before
+rpt(log(boldness) ~ (1|ID_fish) + trial, grname = "ID_fish", data = data_before, datatype = "Gaussian",
+          nboot = 0, npermut = 0)
+#after
+rpt(log(boldness) ~ (1|ID_fish) + trial, grname = "ID_fish", data = data_after, datatype = "Gaussian",
+          nboot = 0, npermut = 0)
 
 #full model for boldness
+#overall repeatability for boldness
 rep3<-rpt(log(boldness) ~ ( 1 | ID_fish) + ( 1 | cage), grname = "ID_fish", data = data_control, datatype = "Gaussian", 
     nboot = 1000, npermut = 0)
 summary(rep3)
 plot(rep3, cex.main = 1)
 
+#repeatability before 
+rep3.1<-rpt(log(boldness) ~ ( 1 | ID_fish) + ( 1 | cage), grname = "ID_fish", data = data_before, datatype = "Gaussian", 
+    nboot = 1000, npermut = 0)
+summary(rep3.1) #0.123
+plot(rep3.1, cex.main = 1)
+
+#repeatability after
+rep3.2<-rpt(log(boldness) ~ ( 1 | ID_fish) + ( 1 | cage), grname = "ID_fish", data = data_after, datatype = "Gaussian", 
+    nboot = 1000, npermut = 0)
+summary(rep3.2) # 0.0464
+plot(rep3.2, cex.main = 1)
 
 
 ```
