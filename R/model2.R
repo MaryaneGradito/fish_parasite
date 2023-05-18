@@ -9,7 +9,7 @@
 #############################
 # Import processed data
 #############################
-  all_data <- read.table("./output/all_data_p.csv",header=T, sep=",")
+  all_data <- read.table("./output/all_data_p_T.csv",header=T, sep=",")
 
 #############################
 # Model 2: without tank effect
@@ -20,11 +20,11 @@
 
 ### Model 2: without tank effect
 
-  boldness_2 <- bf(log_boldness ~ 1 + treatment + (-1 + treatment |q| ID_fish) + (1 | cage),
+  boldness_2 <- bf(z_log_boldness ~ 1 + treatment + (-1 + treatment |q| ID_fish) + (1 | cage),
                   sigma ~ -1 + treatment) + gaussian()
-  activity_2 <- bf(log_activity ~ 1 + treatment + (-1 + treatment |q| ID_fish) + (1 | cage),
+  activity_2 <- bf(z_log_activity ~ 1 + treatment + (-1 + treatment |q| ID_fish) + (1 | cage),
                   sigma ~ -1 + treatment) + gaussian()
-  explore_2 <- bf(exploration ~ 1 + treatment + (-1 + treatment |q| ID_fish) + (1 | cage),
+  explore_2 <- bf(z_exploration ~ 1 + treatment + (-1 + treatment |q| ID_fish) + (1 | cage),
                   sigma ~ -1 + treatment) + gaussian()
 
   model2_T <- brms::brm(boldness_2 + activity_2 + explore_2 + set_rescor(TRUE), 
@@ -52,7 +52,6 @@ summary(model2)
 
 ###############
 #Model 2.2 - looking at the distribution of E and C
-#ajouter une autre catégorie contrôle
 
 #Split treatment into two columns so we can use both in the model
 dat<-  all_data  %>%  
