@@ -23,9 +23,9 @@ dat_C <- read.table("./output/dat_models_C.csv",header=T, sep=",")
 
 ### Model 5: control group 
 
-  boldness_5 <- bf(log_boldness ~ 1 + z_bc + (1 | ID_fish) + (1 | cage)) + gaussian()
-  activity_5 <- bf(log_activity ~ 1 + z_bc + (1 | ID_fish) + (1 | cage)) + gaussian()
-   explore_5 <- bf(exploration  ~ 1 + z_bc + (1 | ID_fish) + (1 | cage)) + gaussian()
+  boldness_5 <- bf(z_log_boldness ~ 1 + z_bc + (1 | ID_fish) + (1 | cage)) + gaussian()
+  activity_5 <- bf(z_log_activity ~ 1 + z_bc + (1 | ID_fish) + (1 | cage)) + gaussian()
+   explore_5 <- bf(z_exploration  ~ 1 + z_bc + (1 | ID_fish) + (1 | cage)) + gaussian()
 
   model_5 <- brms::brm(boldness_5 + activity_5 + explore_5 + set_rescor(TRUE), data = dat_C, iter = 6000, warmup = 2000, chains = 4, cores = 4, save_pars = save_pars(), file = "./output/models/model_5", file_refit = "on_change", control = list(adapt_delta = 0.98))
 
