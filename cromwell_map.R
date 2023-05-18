@@ -2,16 +2,8 @@
 #Script de Juliane Vigneault
 
 # ----- Loading packages ----- #
-library(sf)
-library(dplyr)
-library(measurements)
-library(ggplot2)
-library(stringr)
-library(tmap)    # for static and interactive maps
-library(leaflet) # for interactive maps
-library(ggplot2) # tidyverse data visualization package
-library(ggspatial)
-library(magick)
+pacman::p_load(sf,dplyr,measurements,ggplot2,stringr,tmap,leaflet,ggspatial,magick,cowplot, gridExtra)
+
 
 # ----- Loading data ----- #
 
@@ -36,6 +28,13 @@ attributes$long <- str_remove(attributes$long, "'")
 attributes$long <- conv_unit(attributes$long, from = "deg_dec_min", to = "dec_deg")
 attributes$long <- as.numeric(attributes$long)*(-1) #Add negative sign as coordinates are from western hemisphere
 
+#save new data
+write.table(attributes, file = "map_data.csv",
+            sep = ";", row.names = F)
+
+attributes <- read.csv("./output/map_data.csv",header=T, sep=";")
+quai <- read.csv("./output/quai.csv",header=T, sep=";")
+
 # Cromwell #
 # ---- Étape 4) Load la shape du lac. Pour que tu puisses importer le fichier, tu dois avoir dans ton directory les 4 fichiers que je t'ai envoyé
 CROM <- st_read("./map/Cromwell.shp")
@@ -46,14 +45,6 @@ cage_number<-as.factor(attributes$cage)
 # ---- Étape 5) Représentation visuelle
 # Specify the number of decimal places in the labels
 
-
-library(png)
-library(grid)
-
-image_path <- "./img/no_parasite.png"
-image <- png::readPNG(image_path)
-
-
 #map for black spot density
 CROM.plot <- ggplot() + 
   geom_sf(data = CROM, fill = "#DFEFFE", color = "black")+
@@ -61,16 +52,18 @@ scale_x_continuous(breaks=c(-74.002,-73.998, -73.994),labels = function(x) paste
 scale_y_continuous(breaks=c(45.988,45.989, 45.990),labels = function(y) paste0(format(y, digit = 5), "\u00B0","N")) +
   geom_point(data = attributes, aes(x = long, y = lat, color = dens_bs), size = 9)+ #Points GPS de tes cages
   geom_text(data = attributes, aes(x = long, y = lat, label = cage), size = 7) +
+  geom_point(data = quai, aes(x = long, y = lat),size=5, shape=22, fill = "black", inherit.aes = FALSE) + 
   theme_classic() +
   labs(title = "", 
        subtitle = "") +
   xlab("") + ylab("")
 CROM.plot<-CROM.plot + theme(plot.title = element_text(size=14, face="bold")) + theme(panel.background = element_rect(fill = '#F7F7F7', color = 'black')) + scale_colour_gradient(low = "#FEFFD0",high = "#B80A0A")
 
-CROM.plot<-CROM.plot +annotation_scale(location = "bl", bar_cols = c("black","white")) +
+p1<-CROM.plot +annotation_scale(location = "bl", bar_cols = c("black","white")) +
   annotation_north_arrow(location = "tl", which_north = "true",
                          style = north_arrow_nautical(fill =c("black","white"),line_col = "black"))+ theme(legend.position = c(0.88, 0.40), legend.background = element_rect(fill = "#F7F7F7", color = "black"), legend.key.size = unit(0.8, 'cm'), legend.title = element_text(size=15,face = "bold"), legend.text = element_text(size=12),plot.margin=unit(c(1,1,-0.5,1), "cm")) +
-  labs(color = "Mean \n black spot \n density (no/g) \n per cage") + annotation_raster(raster_Grob(image, xmin = 0.5, xmax = 2, ymin = 1, ymax = 2))
+  labs(color = "Mean \n black spot \n density (no/g) \n per cage")
+
 
 
 
@@ -81,6 +74,7 @@ CROM.plot <- ggplot() +
   scale_y_continuous(breaks=c(45.988,45.989, 45.990),labels = function(y) paste0(format(y, digit = 5), "\u00B0","N")) +
   geom_point(data = attributes, aes(x = long, y = lat, color = dens_ces), size = 9)+ #Points GPS de tes cages
   geom_text(data = attributes, aes(x = long, y = lat, label = cage), size = 7) +
+  geom_point(data = quai, aes(x = long, y = lat),size=5, shape=22, fill = "black", inherit.aes = FALSE) +
   theme_classic() +
   labs(title = "", 
        subtitle = "") +
