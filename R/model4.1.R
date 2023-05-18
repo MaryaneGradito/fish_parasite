@@ -20,9 +20,9 @@ dat_E <- read.table("./output/dat_models_E.csv",header=T, sep=",")
 
 ### Model 4: experimental group
 
-  boldness_4 <- bf(log_boldness ~ 1 + z_pl + I(z_pl)^2 + (1 | ID_fish) + (1 | cage)) + gaussian()
-  activity_4 <- bf(log_activity ~ 1 + z_pl + I(z_pl)^2 + (1 | ID_fish) + (1 | cage)) + gaussian()
-   explore_4 <- bf(exploration  ~ 1 + z_pl + I(z_pl)^2 + (1 | ID_fish) + (1 | cage)) + gaussian()
+  boldness_4 <- bf(z_log_boldness ~ 1 + z_pl + I(z_pl)^2 + (1 | ID_fish) + (1 | cage)) + gaussian()
+  activity_4 <- bf(z_log_activity ~ 1 + z_pl + I(z_pl)^2 + (1 | ID_fish) + (1 | cage)) + gaussian()
+   explore_4 <- bf(z_exploration  ~ 1 + z_pl + I(z_pl)^2 + (1 | ID_fish) + (1 | cage)) + gaussian()
 
   model_4 <- brms::brm(boldness_4 + activity_4 + explore_4 + set_rescor(TRUE), data = dat_E, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
                       save_pars = save_pars(), file = "./output/models/model_4", file_refit = "on_change",
