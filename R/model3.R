@@ -14,11 +14,11 @@ pacman::p_load(lme4, rstan, StanHeaders, jsonlite, rstantools, brms, Rcpp, dplyr
 
 ### Model 3:
 
-boldness_3 <- bf(log_boldness ~ 1 + treatment + (treatment |q| ID_fish) + (1 | cage),
+boldness_3 <- bf(z_log_boldness ~ 1 + treatment + (treatment |q| ID_fish) + (1 | cage),
                  sigma ~ -1 + treatment) + gaussian()
-activity_3 <- bf(log_activity ~ 1 + treatment + (treatment |q| ID_fish) + (1 | cage),
+activity_3 <- bf(z_log_activity ~ 1 + treatment + (treatment |q| ID_fish) + (1 | cage),
                  sigma ~ -1 + treatment) + gaussian()
-explore_3 <- bf(exploration ~ 1 + treatment + (treatment |q| ID_fish) + (1 | cage),
+explore_3 <- bf(z_exploration ~ 1 + treatment + (treatment |q| ID_fish) + (1 | cage),
                 sigma ~ -1 + treatment) + gaussian()
 
 model3 <- brms::brm(boldness_3 + activity_3 + explore_3 + set_rescor(TRUE), 
