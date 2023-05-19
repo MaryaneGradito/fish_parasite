@@ -27,6 +27,7 @@
   explore_2 <- bf(z_exploration ~ 1 + treatment + (-1 + treatment |q| ID_fish) + (1 | cage),
                   sigma ~ -1 + treatment) + gaussian()
 
+## Model that tests whether ALL control animals behave the same as C and infected?
   model2_T <- brms::brm(boldness_2 + activity_2 + explore_2 + set_rescor(TRUE), 
                       data = all_data, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
                       save_pars = save_pars(), file = "./output/models/model2_T", file_refit = "on_change",
