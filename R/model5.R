@@ -11,17 +11,17 @@
 dat_C <- read.table("./output/dat_models_C.csv",header=T, sep=",")
 
 #############################
-# Model 5: body condition as a response variable
+# Model 5: body condition with uninfected group
 #############################
 
 # Load.packages
   pacman::p_load(lme4, rstan, tidyverse, StanHeaders, jsonlite, rstantools, brms, Rcpp, dplyr, here, flextable, pander)
 
 #############################
-# Model 5: control group
+# Model 5: uninfected group
 #############################
 
-### Model 5: control group 
+### Model 5: uninfected group 
 
   boldness_5 <- bf(z_log_boldness ~ 1 + z_bc + (1 | ID_fish) + (1 | cage)) + gaussian()
   activity_5 <- bf(z_log_activity ~ 1 + z_bc + (1 | ID_fish) + (1 | cage)) + gaussian()
