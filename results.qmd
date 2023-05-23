@@ -122,9 +122,9 @@ editor_options:
 ############################
 
 #Boldness for control group
-  fish_c_b <- post_sd_C_2[,grep("logboldness", colnames(post_sd_C_2))]^2
-  cage_c_b <- post_sd_cage_2[ ,grep("logboldness", colnames(post_sd_cage_2))]^2
-   res_c_b <- post_sd_sig_C_2[,grep("b_sigma_logboldness_treatmentC", colnames(post_sd_sig_C_2))]^2
+  fish_c_b <- post_sd_C_2[,grep("zlogboldness", colnames(post_sd_C_2))]^2
+  cage_c_b <- post_sd_cage_2[ ,grep("zlogboldness", colnames(post_sd_cage_2))]^2
+   res_c_b <- post_sd_sig_C_2[,grep("b_sigma_zlogboldness_treatmentC", colnames(post_sd_sig_C_2))]^2
 
   R_C_boldness <-   fish_c_b / (fish_c_b + cage_c_b + res_c_b)
 
@@ -137,9 +137,9 @@ editor_options:
   R_Bub_bold_C <- round(quantile(R_C_boldness[,1], c(0.025, 0.975))[2], 3)
 
 #exploration for control group
-  fish_c_ex <- post_sd_C_2[,grep("exploration", colnames(post_sd_C_2))]^2
-  cage_c_ex <- post_sd_cage_2[ ,grep("exploration", colnames(post_sd_cage_2))]^2
-   res_c_ex <- post_sd_sig_C_2[,grep("b_sigma_exploration_treatmentC", colnames(post_sd_sig_C_2))]^2
+  fish_c_ex <- post_sd_C_2[,grep("zexploration", colnames(post_sd_C_2))]^2
+  cage_c_ex <- post_sd_cage_2[ ,grep("zexploration", colnames(post_sd_cage_2))]^2
+   res_c_ex <- post_sd_sig_C_2[,grep("b_sigma_zexploration_treatmentC", colnames(post_sd_sig_C_2))]^2
 
   R_C_exploration <-   fish_c_ex / (fish_c_ex + cage_c_ex + res_c_ex)
   
@@ -152,9 +152,9 @@ editor_options:
   R_Bub_exp_C <- round(quantile(R_C_exploration[,1], c(0.025, 0.975))[2], 3)
 
 #activity for control group
-  fish_c_ac <- post_sd_C_2[,grep("logactivity", colnames(post_sd_C_2))]^2
-  cage_c_ac <- post_sd_cage_2[ ,grep("logactivity", colnames(post_sd_cage_2))]^2
-  res_c_ac <- post_sd_sig_C_2[,grep("b_sigma_logactivity_treatmentC", colnames(post_sd_sig_C_2))]^2
+  fish_c_ac <- post_sd_C_2[,grep("zlogactivity", colnames(post_sd_C_2))]^2
+  cage_c_ac <- post_sd_cage_2[ ,grep("zlogactivity", colnames(post_sd_cage_2))]^2
+  res_c_ac <- post_sd_sig_C_2[,grep("b_sigma_zlogactivity_treatmentC", colnames(post_sd_sig_C_2))]^2
 
   R_C_activity <-   fish_c_ac / (fish_c_ac + cage_c_ac + res_c_ac)
   
@@ -171,9 +171,9 @@ editor_options:
 ############################
 
 #Boldness for experimental group
-  fish_e_b <- post_sd_E_2[,grep("logboldness", colnames(post_sd_E_2))]^2
-  cage_e_b <- post_sd_cage_2[ ,grep("logboldness", colnames(post_sd_cage_2))]^2
-  res_e_b <- post_sd_sig_E_2[,grep("b_sigma_logboldness_treatmentE", colnames(post_sd_sig_E_2))]^2
+  fish_e_b <- post_sd_E_2[,grep("zlogboldness", colnames(post_sd_E_2))]^2
+  cage_e_b <- post_sd_cage_2[ ,grep("zlogboldness", colnames(post_sd_cage_2))]^2
+  res_e_b <- post_sd_sig_E_2[,grep("b_sigma_zlogboldness_treatmentE", colnames(post_sd_sig_E_2))]^2
 
   R_E_boldness <-   fish_e_b / (fish_e_b + cage_e_b + res_e_b)
   
@@ -186,9 +186,9 @@ editor_options:
   R_Bub_bold_E <- round(quantile(R_E_boldness[,1], c(0.025, 0.975))[2], 3)
 
 #exploration for experimental group
-   fish_e_ex <- post_sd_E_2[,grep("exploration", colnames(post_sd_E_2))]^2
-  cage_e_ex <- post_sd_cage_2[ ,grep("exploration", colnames(post_sd_cage_2))]^2
-  res_e_ex <- post_sd_sig_E_2[,grep("b_sigma_exploration_treatmentE", colnames(post_sd_sig_E_2))]^2
+   fish_e_ex <- post_sd_E_2[,grep("zexploration", colnames(post_sd_E_2))]^2
+  cage_e_ex <- post_sd_cage_2[ ,grep("zexploration", colnames(post_sd_cage_2))]^2
+  res_e_ex <- post_sd_sig_E_2[,grep("b_sigma_zexploration_treatmentE", colnames(post_sd_sig_E_2))]^2
 
   R_E_exploration <-   fish_e_ex / (fish_e_ex + cage_e_ex + res_e_ex)
   
@@ -201,9 +201,9 @@ editor_options:
   R_Bub_exp_E <- round(quantile(R_E_exploration[,1], c(0.025, 0.975))[2], 3)
 
 #activity for experimental group
-  fish_e_ac <- post_sd_E_2[,grep("logactivity", colnames(post_sd_E_2))]^2
-  cage_e_ac <- post_sd_cage_2[ ,grep("logactivity", colnames(post_sd_cage_2))]^2
-  res_e_ac <- post_sd_sig_E_2[,grep("b_sigma_logactivity_treatmentE", colnames(post_sd_sig_E_2))]^2
+  fish_e_ac <- post_sd_E_2[,grep("zlogactivity", colnames(post_sd_E_2))]^2
+  cage_e_ac <- post_sd_cage_2[ ,grep("zlogactivity", colnames(post_sd_cage_2))]^2
+  res_e_ac <- post_sd_sig_E_2[,grep("b_sigma_zlogactivity_treatmentE", colnames(post_sd_sig_E_2))]^2
 
   R_E_activity <-   fish_e_ac / (fish_e_ac + cage_e_ac + res_e_ac)
 
@@ -220,21 +220,21 @@ editor_options:
 #############################
 
   # Boldness
-   R_bold  <-  overall_repeatability(post_sd_C_2, post_sd_E_2, post_sd_cage_2, post_sd_sig_C_2, post_sd_sig_E_2, trait = "logboldness")
+   R_bold  <-  overall_repeatability(post_sd_C_2, post_sd_E_2, post_sd_cage_2, post_sd_sig_C_2, post_sd_sig_E_2, trait = "zlogboldness")
   
         R_bold_mean <- mean(R_bold)
         R_Blb_bold <- round(quantile(R_bold, c(0.025, 0.975))[1], 2)
         R_Bub_bold <- round(quantile(R_bold, c(0.025, 0.975))[2], 2)
         
   #Exploration
-  R_exp  <-  overall_repeatability(post_sd_C_2, post_sd_E_2, post_sd_cage_2, post_sd_sig_C_2, post_sd_sig_E_2, trait = "exploration")
+  R_exp  <-  overall_repeatability(post_sd_C_2, post_sd_E_2, post_sd_cage_2, post_sd_sig_C_2, post_sd_sig_E_2, trait = "zexploration")
   
       R_exp_mean<-mean(R_exp)
        R_Blb_exp <- round(quantile(R_exp, c(0.025, 0.975))[1], 2)
        R_Bub_exp <- round(quantile(R_exp, c(0.025, 0.975))[2], 2)
        
   #Activity
-  R_act  <-  overall_repeatability(post_sd_C_2, post_sd_E_2, post_sd_cage_2, post_sd_sig_C_2, post_sd_sig_E_2, trait = "logactivity")
+  R_act  <-  overall_repeatability(post_sd_C_2, post_sd_E_2, post_sd_cage_2, post_sd_sig_C_2, post_sd_sig_E_2, trait = "zlogactivity")
   
   R_act_mean<-mean(R_act)
        R_Blb_act <- round(quantile(R_act, c(0.025, 0.975))[1], 2)
@@ -268,14 +268,14 @@ editor_options:
   hist(R_C_activity[,1])
   
   
-#Is the repeatability different from 5? #trouver papier avec seuil de valeur
+#Is the repeatability different from 10? #trouver papier avec seuil de valeur
 
 #Boldness control
   p_value_bold_C<-pmcmc(R_C_boldness[,1]*100, null = 10, twotail = FALSE)#not significative
 #Boldness experimental
   p_value_bold_E<-pmcmc(R_E_boldness[,1]*100, null = 10, twotail = FALSE)#not significative
 #Average boldness
-  p_value_bold_a<-pmcmc(R_bold*100, null = 10, twotail = FALSE)#not significative but really close
+  p_value_bold_a<-pmcmc(R_bold*100, null = 10, twotail = FALSE)#not significative
   
 #Exploration control
   p_value_exp_C<-pmcmc(R_C_exploration[,1]*100, null = 10, twotail = FALSE)#significative
@@ -375,7 +375,7 @@ editor_options:
    pmcmc_act_exp_C<- pmcmc(bsyn_act_exp_C[,1], twotail = TRUE) #significant
   
    #is the difference significant
-   pmcmc_act_exp<-pmcmc(bsyn_act_exp_E[,1] - bsyn_act_exp_C[,1], twotail = TRUE)
+   pmcmc_act_exp<-pmcmc(bsyn_act_exp_E[,1] - bsyn_act_exp_C[,1], twotail = TRUE)#yes
    
 # Overall syndrome
   # Take average of the two treatments
@@ -554,8 +554,8 @@ dat_C <- read.table("./output/dat_models_C.csv",header=T, sep=",")
 #Boldness activity 
 p1<-
    ggplot(data=dat_C)+
-  geom_point(mapping = aes(x = log_boldness, y = log_activity, color = factor(ID_fish)))+ scale_color_viridis_d(option = "viridis") +
-  geom_line(mapping = aes(x = log_boldness, y = log_activity, color = factor(ID_fish))) +
+  geom_point(mapping = aes(x = z_log_boldness, y = z_log_activity, color = factor(ID_fish)))+ scale_color_viridis_d(option = "viridis") +
+  geom_line(mapping = aes(x = z_log_boldness, y = z_log_activity, color = factor(ID_fish))) +
    theme_classic() +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX("$Shyness_{log_{2}}$"), y = TeX("$Activity_{log_{2}}$"), title = "Uninfected") +
@@ -564,8 +564,8 @@ p1<-
 
 p2<-
   ggplot(data=dat_E)+
-  geom_point(mapping = aes(x = log_boldness, y = log_activity, color = factor(ID_fish)))+ scale_color_viridis_d(option = "viridis") +
-  geom_line(mapping = aes(x = log_boldness, y = log_activity, color = factor(ID_fish))) + 
+  geom_point(mapping = aes(x = z_log_boldness, y = z_log_activity, color = factor(ID_fish)))+ scale_color_viridis_d(option = "viridis") +
+  geom_line(mapping = aes(x = z_log_boldness, y = z_log_activity, color = factor(ID_fish))) + 
    theme_classic() +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX("$Shyness_{log_{2}}$"), y = TeX("$Activity_{log_{2}}$"), title = "Infected") +
@@ -579,8 +579,8 @@ p2<-
             
   p3<-
  ggplot(data=dat_C)+
-  geom_point(mapping = aes(x = log_boldness, y = exploration, color = factor(ID_fish)))+ scale_color_viridis_d(option = "viridis") +
-  geom_line(mapping = aes(x = log_boldness, y = exploration, color = factor(ID_fish))) + 
+  geom_point(mapping = aes(x = z_log_boldness, y = z_exploration, color = factor(ID_fish)))+ scale_color_viridis_d(option = "viridis") +
+  geom_line(mapping = aes(x = z_log_boldness, y = z_exploration, color = factor(ID_fish))) + 
    theme_classic() +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX("$Shyness_{log_{2}}$"), y = TeX("Exploration"), title = "Uninfected") +
@@ -590,8 +590,8 @@ p2<-
 
   p4<-
     ggplot(data=dat_E)+
-  geom_point(mapping = aes(x = log_boldness, y = exploration, color = factor(ID_fish)))+ scale_color_viridis_d(option = "viridis") +
-  geom_line(mapping = aes(x = log_boldness, y = exploration, color = factor(ID_fish))) + 
+  geom_point(mapping = aes(x = z_log_boldness, y = z_exploration, color = factor(ID_fish)))+ scale_color_viridis_d(option = "viridis") +
+  geom_line(mapping = aes(x = z_log_boldness, y = z_exploration, color = factor(ID_fish))) + 
    theme_classic() +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX("$Shyness_{log_{2}}$"), y = TeX("Exploration"), title = "Infected") +
@@ -607,8 +607,8 @@ p2<-
 
     p5<-
  ggplot(data=dat_C)+
-  geom_point(mapping = aes(x = log_activity, y = exploration, color = factor(ID_fish))) +
-  geom_line(mapping = aes(x = log_activity, y = exploration, color = factor(ID_fish))) + 
+  geom_point(mapping = aes(x = z_log_activity, y = z_exploration, color = factor(ID_fish))) +
+  geom_line(mapping = aes(x = z_log_activity, y = z_exploration, color = factor(ID_fish))) + 
   scale_color_viridis_d(option = "viridis")+
    theme_classic() +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
@@ -618,8 +618,8 @@ p2<-
   
   p6<-
     ggplot(data=dat_E)+
-  geom_point(mapping = aes(x = log_activity, y = exploration, color = factor(ID_fish)))+ scale_color_viridis_d(option = "viridis") +
-  geom_line(mapping = aes(x = log_activity, y = exploration, color = factor(ID_fish))) + 
+  geom_point(mapping = aes(x = z_log_activity, y = z_exploration, color = factor(ID_fish)))+ scale_color_viridis_d(option = "viridis") +
+  geom_line(mapping = aes(x = z_log_activity, y = z_exploration, color = factor(ID_fish))) + 
    theme_classic() +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX("$Activity_{log_{2}}$"), y = TeX(""), title = "Infected") +
@@ -649,9 +649,9 @@ ggsave("./output/figures/fig4.png", plot = pp, width = 28, height = 30, units = 
 int_b <- as_draws_df(model2, variable = "^b", regex = TRUE)
 
 #intercept for control
-int_b_c<-int_b[,grep("logboldness_Intercept", colnames(int_b))]
-int_exp_c<-int_b[,grep("exploration_Intercept", colnames(int_b))]
-int_act_c<-int_b[,grep("logactivity_Intercept", colnames(int_b))]
+int_b_c<-int_b[,grep("zlogboldness_Intercept", colnames(int_b))]
+int_exp_c<-int_b[,grep("zexploration_Intercept", colnames(int_b))]
+int_act_c<-int_b[,grep("zlogactivity_Intercept", colnames(int_b))]
 
 #mean estimates for control
 int_b_c_num<- as.numeric(unlist(int_b_c))
@@ -664,9 +664,9 @@ int_act_c_num<- as.numeric(unlist(int_act_c))
 mean_int_act_c<-mean(int_act_c_num)
 
 #contrast between intercept C and E
-int_b_con<-int_b[,grep("b_logboldness_treatmentE", colnames(int_b))]
-int_exp_con<-int_b[,grep("b_exploration_treatmentE", colnames(int_b))]
-int_act_con<-int_b[,grep("b_logactivity_treatmentE", colnames(int_b))]
+int_b_con<-int_b[,grep("b_zlogboldness_treatmentE", colnames(int_b))]
+int_exp_con<-int_b[,grep("b_zexploration_treatmentE", colnames(int_b))]
+int_act_con<-int_b[,grep("b_zlogactivity_treatmentE", colnames(int_b))]
 
 #mean estimates for contrast
 int_b_con_num<- as.numeric(unlist(int_b_con))
@@ -752,9 +752,9 @@ Mean shyness and exploration responses in the population were significantly diff
 int_b <- as_draws_df(model2, variable = "^b", regex = TRUE)
 
 #intercept for control
-int_b_c<-int_b[,grep("logboldness_Intercept", colnames(int_b))]
-int_exp_c<-int_b[,grep("exploration_Intercept", colnames(int_b))]
-int_act_c<-int_b[,grep("logactivity_Intercept", colnames(int_b))]
+int_b_c<-int_b[,grep("zlogboldness_Intercept", colnames(int_b))]
+int_exp_c<-int_b[,grep("zexploration_Intercept", colnames(int_b))]
+int_act_c<-int_b[,grep("zlogactivity_Intercept", colnames(int_b))]
 
 #mean estimates for control
 int_b_c_num<- as.numeric(unlist(int_b_c))
@@ -767,9 +767,9 @@ int_act_c_num<- as.numeric(unlist(int_act_c))
 mean_int_act_c<-mean(int_act_c_num)
 
 #contrast between intercept C and E
-int_b_con<-int_b[,grep("b_logboldness_treatmentE", colnames(int_b))]
-int_exp_con<-int_b[,grep("b_exploration_treatmentE", colnames(int_b))]
-int_act_con<-int_b[,grep("b_logactivity_treatmentE", colnames(int_b))]
+int_b_con<-int_b[,grep("b_zlogboldness_treatmentE", colnames(int_b))]
+int_exp_con<-int_b[,grep("b_zexploration_treatmentE", colnames(int_b))]
+int_act_con<-int_b[,grep("b_zlogactivity_treatmentE", colnames(int_b))]
 
 #mean estimates for contrast
 int_b_con_num<- as.numeric(unlist(int_b_con))
@@ -941,7 +941,7 @@ fig5
 # Extract correlations
   
   #Bold and act treatment E
-  cor_bold_act_E <-   post_cor_3[,grep("cor_ID_fish__logboldness_treatmentE__logactivity_treatmentE", colnames(post_cor_3))]
+  cor_bold_act_E <-   post_cor_3[,grep("cor_ID_fish__zlogboldness_treatmentE__zlogactivity_treatmentE", colnames(post_cor_3))]
   
    cor_bold_act_E<- as.numeric(unlist(cor_bold_act_E))
    cor_b_act_mean<-mean(cor_bold_act_E)
@@ -950,7 +950,7 @@ fig5
   pmcmc_cor_bold_act_E<- pmcmc(cor_bold_act_E, twotail = TRUE) #not significant
   
   #Bold and exploration treatment E
-  cor_bold_exp_E <-   post_cor_3[,grep("cor_ID_fish__logboldness_treatmentE__exploration_treatmentE", colnames(post_cor_3))]
+  cor_bold_exp_E <-   post_cor_3[,grep("cor_ID_fish__zlogboldness_treatmentE__zexploration_treatmentE", colnames(post_cor_3))]
   pmcmc_cor_bold_exp_E<- pmcmc(cor_bold_exp_E[,1], twotail = TRUE)
   
    cor_bold_exp_E<- as.numeric(unlist(cor_bold_exp_E))
@@ -960,7 +960,7 @@ fig5
   pmcmc_cor_bold_exp_E<- pmcmc(cor_bold_exp_E, twotail = TRUE) #not significant
   
   #Activity and exploration E
-  cor_act_exp_E <-   post_cor_3[,grep("cor_ID_fish__logactivity_treatmentE__exploration_treatmentE", colnames(post_cor_3))]
+  cor_act_exp_E <-   post_cor_3[,grep("cor_ID_fish__zlogactivity_treatmentE__zexploration_treatmentE", colnames(post_cor_3))]
   
    cor_act_exp_E<- as.numeric(unlist(cor_act_exp_E))
    cor_act_exp_E_mean<-mean(cor_act_exp_E)
@@ -970,7 +970,7 @@ fig5
   
   
 #  Bold Intercept vs Bold E
-  cor_bold_I_E <-   post_cor_3[,grep("cor_ID_fish__logboldness_Intercept__logboldness_treatmentE", colnames(post_cor_3))]
+  cor_bold_I_E <-   post_cor_3[,grep("cor_ID_fish__zlogboldness_Intercept__zlogboldness_treatmentE", colnames(post_cor_3))]
   
   cor_bold_I_E<- as.numeric(unlist(cor_bold_I_E))
    cor_bold_I_E_mean<-mean(cor_bold_I_E)
@@ -979,7 +979,7 @@ fig5
   pmcmc_cor_bold_I_E<- pmcmc(cor_bold_I_E, twotail = TRUE) #not significant
   
   #Exploration I and Exp E
-  cor_exp_I_E <-   post_cor_3[,grep("cor_ID_fish__exploration_Intercept__exploration_treatment", colnames(post_cor_3))]
+  cor_exp_I_E <-   post_cor_3[,grep("cor_ID_fish__zexploration_Intercept__zexploration_treatment", colnames(post_cor_3))]
   
   cor_exp_I_E <- as.numeric(unlist(cor_exp_I_E))
    cor_exp_I_E_mean<-mean(cor_exp_I_E)
@@ -988,7 +988,7 @@ fig5
   pmcmc_cor_exp_I_E<- pmcmc(cor_exp_I_E, twotail = TRUE) #not significant
   
 #Act Intercept and act E
-  cor_act_I_E <-   post_cor_3[,grep("cor_ID_fish__logactivity_Intercept__logactivity_treatmentE", colnames(post_cor_3))]
+  cor_act_I_E <-   post_cor_3[,grep("cor_ID_fish__zlogactivity_Intercept__zlogactivity_treatmentE", colnames(post_cor_3))]
   
    cor_act_I_E <- as.numeric(unlist(cor_act_I_E))
    cor_act_I_E_mean<-mean(cor_act_I_E)
@@ -1005,9 +1005,9 @@ fig5
 post_sd_pl <- as_draws_df(model4, variable = "^b", regex = TRUE)
 
 #extrait effect of parasite load on each traits
-bold_pl<-post_sd_pl[,grep("b_logboldness_z_dens", colnames(post_sd_pl))]
-exp_pl<-post_sd_pl[,grep("b_exploration_z_dens", colnames(post_sd_pl))]
-act_pl<-post_sd_pl[,grep("b_logactivity_z_dens", colnames(post_sd_pl))]
+bold_pl<-post_sd_pl[,grep("b_zlogboldness_z_dens", colnames(post_sd_pl))]
+exp_pl<-post_sd_pl[,grep("b_zexploration_z_dens", colnames(post_sd_pl))]
+act_pl<-post_sd_pl[,grep("b_zlogactivity_z_dens", colnames(post_sd_pl))]
 
   #mean and quantile for activity
   act_pl_num<- as.numeric(unlist(act_pl))
@@ -1051,9 +1051,9 @@ act_pl<-post_sd_pl[,grep("b_logactivity_z_dens", colnames(post_sd_pl))]
 post_sd_bc <- as_draws_df(model5, variable = "^b", regex = TRUE)
 
 #extrait effect of parasite load on each traits
-bold_bc<-post_sd_bc[,grep("b_logboldness_z_bc", colnames(post_sd_bc))]
-exp_bc<-post_sd_bc[,grep("b_exploration_z_bc", colnames(post_sd_bc))]
-act_bc<-post_sd_bc[,grep("b_logactivity_z_bc", colnames(post_sd_bc))]
+bold_bc<-post_sd_bc[,grep("b_zlogboldness_z_bc", colnames(post_sd_bc))]
+exp_bc<-post_sd_bc[,grep("b_zexploration_z_bc", colnames(post_sd_bc))]
+act_bc<-post_sd_bc[,grep("b_zlogactivity_z_bc", colnames(post_sd_bc))]
 
   #mean and quantile for activity 
   act_bc_num<- as.numeric(unlist(act_bc))
@@ -1098,9 +1098,9 @@ act_bc<-post_sd_bc[,grep("b_logactivity_z_bc", colnames(post_sd_bc))]
 post_sd_pl_bc<- as_draws_df(model6, variable = "^b", regex = TRUE)
 
 #extrait effect of body condition and parasite load on each traits
-bold_bc_6<-post_sd_pl_bc[,grep("b_logboldness_z_bc", colnames(post_sd_pl_bc))]
-exp_bc_6<-post_sd_pl_bc[,grep("b_exploration_z_bc", colnames(post_sd_pl_bc))]
-act_bc_6<-post_sd_pl_bc[,grep("b_logactivity_z_bc", colnames(post_sd_pl_bc))]
+bold_bc_6<-post_sd_pl_bc[,grep("b_zlogboldness_z_bc", colnames(post_sd_pl_bc))]
+exp_bc_6<-post_sd_pl_bc[,grep("b_zexploration_z_bc", colnames(post_sd_pl_bc))]
+act_bc_6<-post_sd_pl_bc[,grep("b_zlogactivity_z_bc", colnames(post_sd_pl_bc))]
 
   #mean and quantile for activity 
   act_bc_num_6<- as.numeric(unlist(act_bc_6))
@@ -1145,13 +1145,13 @@ act_bc_6<-post_sd_pl_bc[,grep("b_logactivity_z_bc", colnames(post_sd_pl_bc))]
 post_sd_2_p <- as_draws_df(model7, variable = "^b", regex = TRUE)
 
 #extrait effect of parasite load on each traits
-bold_bs<-post_sd_2_p[,grep("b_logboldness_z_bs", colnames(post_sd_2_p))]
-exp_bs<-post_sd_2_p[,grep("b_exploration_z_bs", colnames(post_sd_2_p))]
-act_bs<-post_sd_2_p[,grep("b_logactivity_z_bs", colnames(post_sd_2_p))]
+bold_bs<-post_sd_2_p[,grep("b_zlogboldness_z_bs", colnames(post_sd_2_p))]
+exp_bs<-post_sd_2_p[,grep("b_zexploration_z_bs", colnames(post_sd_2_p))]
+act_bs<-post_sd_2_p[,grep("b_zlogactivity_z_bs", colnames(post_sd_2_p))]
 
-bold_ces<-post_sd_2_p[,grep("b_logboldness_z_ces", colnames(post_sd_2_p))]
-exp_ces<-post_sd_2_p[,grep("b_exploration_z_ces", colnames(post_sd_2_p))]
-act_ces<-post_sd_2_p[,grep("b_logactivity_z_ces", colnames(post_sd_2_p))]
+bold_ces<-post_sd_2_p[,grep("b_zlogboldness_z_ces", colnames(post_sd_2_p))]
+exp_ces<-post_sd_2_p[,grep("b_zexploration_z_ces", colnames(post_sd_2_p))]
+act_ces<-post_sd_2_p[,grep("b_zlogactivity_z_ces", colnames(post_sd_2_p))]
 
   #blackspots
   #mean and quantile for activity
@@ -1225,7 +1225,7 @@ Body condition had a positive effect on activity in both the uninfected and expe
 
 ```{r}
 #| label: fig-fig6
-#| fig-cap: body condition
+#| fig-cap: Effect of body condition on activity of pumpkinseed sunfish (Lepomis gibbosus) in the uninfected group (A) and experimentally infected group (B). Uninfected: N=72; Infected: N=60
 #| out-width: 100%
 #| fig-width: 8
 #| fig-height: 5
@@ -1244,7 +1244,7 @@ newdat4 <- data.frame(intercept = 1,
 
   #activity for parasite load
     pred_bc_c_brms <- posterior_epred(model5, re_formula = NA, newdata = newdat4)
-  act_bc_c <- pred_bc_c_brms[,,"logactivity"]
+  act_bc_c <- pred_bc_c_brms[,,"zlogactivity"]
   summ_act_bc_c <- apply(act_bc_c, 2, function(x) mean(x))
   summ_actL95_bc_c <- apply(act_bc_c, 2, function(x) quantile(x, 0.025))
   summ_actU95_bc_c <- apply(act_bc_c, 2, function(x) quantile(x, 0.975))
@@ -1254,7 +1254,7 @@ act_bc_c_dat <- cbind(newdat4, summ_act_bc_c, summ_actL95_bc_c, summ_actU95_bc_c
 
 #plot
    x1<- ggplot(data=dat_C)+
-  geom_point(mapping = aes(x = z_bc, y = log_activity), shape = 21,color = "#472a7a")+
+  geom_point(mapping = aes(x = z_bc, y = z_log_activity), shape = 21,color = "#472a7a")+
  geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = z_bc, y = summ_act_bc_c), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#472a7a", size=1) +
   geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = z_bc, y = summ_actL95_bc_c), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#472a7a", size=0.8)+
   geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = z_bc, y = summ_actU95_bc_c), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#472a7a", size=0.8)+
@@ -1279,7 +1279,7 @@ newdat4 <- data.frame(intercept = 1,
 
   #activity for body condition
     pred_bc_brms <- posterior_epred(model6, re_formula = NA, newdata = newdat4)
-  act_bc <- pred_bc_brms[,,"logactivity"]
+  act_bc <- pred_bc_brms[,,"zlogactivity"]
   summ_act_bc <- apply(act_bc, 2, function(x) mean(x))
   summ_actL95_bc <- apply(act_bc, 2, function(x) quantile(x, 0.025))
   summ_actU95_bc <- apply(act_bc, 2, function(x) quantile(x, 0.975))
@@ -1292,7 +1292,7 @@ pal2 <- hp(n = 80, house = "Slytherin")
 pal3 <- hp(n = 1, house = "Slytherin")
 #plot
 x2<- ggplot(data=dat_parasite)+
-  geom_point(mapping = aes(x = z_bc, y = log_activity), shape = 16,color = pal)+
+  geom_point(mapping = aes(x = z_bc, y = z_log_activity), shape = 16,color = pal)+
  geom_smooth(data = act_bc_dat, ggplot2::aes(x = z_bc, y = summ_act_bc), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = pal2, size=1) +
   geom_smooth(data = act_bc_dat, ggplot2::aes(x = z_bc, y = summ_actL95_bc), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = pal3, size=0.8)+
   geom_smooth(data = act_bc_dat, ggplot2::aes(x = z_bc, y = summ_actU95_bc), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = pal3, size=0.8)+
@@ -1355,7 +1355,7 @@ dat_parasite <- read.table("./output/dat_models_parasite.csv",header=T, sep=",")
   #FOR CESTODES
 
   pred_ces_brms <- posterior_epred(model7, re_formula = NA, newdata = newdat)
-  bold_ces <- pred_ces_brms[,,"logboldness"]
+  bold_ces <- pred_ces_brms[,,"zlogboldness"]
   summ_bold_ces <- apply(bold_ces, 2, function(x) mean(x))
   summ_boldL95_ces <- apply(bold_ces, 2, function(x) quantile(x, 0.025))
   summ_boldU95_ces <- apply(bold_ces, 2, function(x) quantile(x, 0.975))
@@ -1372,7 +1372,7 @@ boldness_ces_dat <- cbind(newdat, summ_bold_ces, summ_boldL95_ces, summ_boldU95_
                         z_bc = 0)
 
 pred_bs_brms <- posterior_epred(model7, re_formula = NA, newdata = newdat2)
-  boldness_bs <- pred_bs_brms[,,"logboldness"]
+  boldness_bs <- pred_bs_brms[,,"zlogboldness"]
   summ_bold_bs <- apply(boldness_bs, 2, function(x) mean(x))
   summ_boldL95_bs <- apply(boldness_bs, 2, function(x) quantile(x, 0.025))
   summ_boldU95_bs <- apply(boldness_bs, 2, function(x) quantile(x, 0.975))
@@ -1406,11 +1406,11 @@ boldness_bs_dat <- cbind(newdat2, summ_bold_bs, summ_boldL95_bs, summ_boldU95_bs
 
   #figure 1
   n1<- ggplot(data=dat_parasite)+
-  geom_point(mapping = aes(x = z_ces, y = log_boldness),shape = 21, color = "#365c8d")+
+  geom_point(mapping = aes(x = z_ces, y = z_log_boldness),shape = 21, color = "#365c8d")+
   geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = z_ces, y = summ_bold_ces), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#365c8d", size=1) +
   geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = z_ces, y = summ_boldL95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#365c8d", size=0.8)+
   geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = z_ces, y = summ_boldU95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#365c8d", size=0.8) + 
-    geom_point(mapping = aes(x = z_bs, y = log_boldness), shape = 21, color = "#56c667")+
+    geom_point(mapping = aes(x = z_bs, y = z_log_boldness), shape = 21, color = "#56c667")+
   geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = z_bs, y = summ_bold_bs), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#56c667", size=1) +
   geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = z_bs, y = summ_boldL95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#56c667", size=0.8)+
   geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = z_bs, y = summ_boldU95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#56c667", size=0.8)+
@@ -1431,7 +1431,7 @@ boldness_bs_dat <- cbind(newdat2, summ_bold_bs, summ_boldL95_bs, summ_boldU95_bs
 #################################
   #for cestode
     pred_ces_brms <- posterior_epred(model7, re_formula = NA, newdata = newdat)
-  exp_ces <- pred_ces_brms[,,"exploration"]
+  exp_ces <- pred_ces_brms[,,"zexploration"]
   summ_exp_ces <- apply(exp_ces, 2, function(x) mean(x))
   summ_expL95_ces <- apply(exp_ces, 2, function(x) quantile(x, 0.025))
   summ_expU95_ces <- apply(exp_ces, 2, function(x) quantile(x, 0.975))
@@ -1441,7 +1441,7 @@ exp_ces_dat <- cbind(newdat, summ_exp_ces, summ_expL95_ces, summ_expU95_ces)
   
   #for bs
    pred_bs_brms <- posterior_epred(model7, re_formula = NA, newdata = newdat2)
-  exp_bs <- pred_bs_brms[,,"exploration"]
+  exp_bs <- pred_bs_brms[,,"zexploration"]
   summ_exp_bs <- apply(exp_bs, 2, function(x) mean(x))
   summ_expL95_bs <- apply(exp_bs, 2, function(x) quantile(x, 0.025))
   summ_expU95_bs <- apply(exp_bs, 2, function(x) quantile(x, 0.975))
@@ -1461,11 +1461,11 @@ exp_bs_dat <- cbind(newdat2, summ_exp_bs, summ_expL95_bs, summ_expU95_bs)
   
 #figure 2
 n2<-ggplot(data=dat_parasite)+
-  geom_point(mapping = aes(x = z_ces, y = exploration), shape = 21, color = "#365c8d")+
+  geom_point(mapping = aes(x = z_ces, y = z_exploration), shape = 21, color = "#365c8d")+
  geom_smooth(data = exp_ces_dat, ggplot2::aes(x = z_ces, y = summ_exp_ces), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#365c8d", size=1) +
   geom_smooth(data = exp_ces_dat, ggplot2::aes(x = z_ces, y = summ_expL95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#365c8d", size=0.8)+
   geom_smooth(data = exp_ces_dat, ggplot2::aes(x = z_ces, y = summ_expU95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#365c8d", size=0.8)+
-  geom_point(mapping = aes(x = z_bs, y = exploration), shape = 21, color = "#56c667") +
+  geom_point(mapping = aes(x = z_bs, y = z_exploration), shape = 21, color = "#56c667") +
    geom_smooth(data = exp_bs_dat, ggplot2::aes(x = z_bs, y = summ_exp_bs), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#56c667", size=1) +
   geom_smooth(data = exp_bs_dat, ggplot2::aes(x = z_bs, y = summ_expL95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#56c667", size=0.8)+
   geom_smooth(data = exp_bs_dat, ggplot2::aes(x = z_bs, y = summ_expU95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#56c667", size=0.8)+
@@ -1486,7 +1486,7 @@ n2<-ggplot(data=dat_parasite)+
 #################################
   #for cestode
     pred_ces_brms <- posterior_epred(model7, re_formula = NA, newdata = newdat)
-  act_ces <- pred_ces_brms[,,"logactivity"]
+  act_ces <- pred_ces_brms[,,"zlogactivity"]
   summ_act_ces <- apply(act_ces, 2, function(x) mean(x))
   summ_actL95_ces <- apply(act_ces, 2, function(x) quantile(x, 0.025))
   summ_actU95_ces <- apply(act_ces, 2, function(x) quantile(x, 0.975))
@@ -1496,7 +1496,7 @@ act_ces_dat <- cbind(newdat, summ_act_ces, summ_actL95_ces, summ_actU95_ces)
 
   #for bs
    pred_bs_brms <- posterior_epred(model7, re_formula = NA, newdata = newdat2)
-  act_bs <- pred_bs_brms[,,"logactivity"]
+  act_bs <- pred_bs_brms[,,"zlogactivity"]
   summ_act_bs <- apply(act_bs, 2, function(x) mean(x))
   summ_actL95_bs <- apply(act_bs, 2, function(x) quantile(x, 0.025))
   summ_actU95_bs <- apply(act_bs, 2, function(x) quantile(x, 0.975))
@@ -1516,11 +1516,11 @@ act_bs_dat <- cbind(newdat2, summ_act_bs, summ_actL95_bs, summ_actU95_bs)
 
   #figure 3
 n3<-ggplot(data=dat_parasite)+
-geom_point(mapping = aes(x = z_ces, y = log_activity), shape = 21,color = "#365c8d")+
+geom_point(mapping = aes(x = z_ces, y = z_log_activity), shape = 21,color = "#365c8d")+
  geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_ces, y = summ_act_ces), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#365c8d", size=1) +
   geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_ces, y = summ_actL95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#365c8d", size=0.8)+
   geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_ces, y = summ_actU95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#365c8d", size=0.8)+
-  geom_point(mapping = aes(x = z_bs, y = log_activity),shape = 21, color = "#56c667") +
+  geom_point(mapping = aes(x = z_bs, y = z_log_activity),shape = 21, color = "#56c667") +
    geom_smooth(data = act_bs_dat, ggplot2::aes(x = z_bs, y = summ_act_bs), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#56c667", size=1) +
   geom_smooth(data = act_bs_dat, ggplot2::aes(x = z_bs, y = summ_actL95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#56c667", size=0.8)+
   geom_smooth(data = act_bs_dat, ggplot2::aes(x = z_bs, y = summ_actU95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#56c667", size=0.8)+
