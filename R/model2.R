@@ -9,7 +9,7 @@
 #############################
 # Import processed data
 #############################
-  all_data <- read.table("./output/all_data_p_T.csv",header=T, sep=",")
+  all_data <- read.table("./output/all_data_p.csv",header=T, sep=",")
 
 #############################
 # Model 2: without tank effect
@@ -27,32 +27,59 @@
   explore_2 <- bf(z_exploration ~ 1 + treatment + (-1 + treatment |q| ID_fish) + (1 | cage),
                   sigma ~ -1 + treatment) + gaussian()
 
-## Model that tests whether ALL control animals behave the same as C and infected?
-  model2_T <- brms::brm(boldness_2 + activity_2 + explore_2 + set_rescor(TRUE), 
+
+  model2 <- brms::brm(boldness_2 + activity_2 + explore_2 + set_rescor(TRUE), 
                       data = all_data, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
-                      save_pars = save_pars(), file = "./output/models/model2_T", file_refit = "on_change",
+                      save_pars = save_pars(), file = "./output/models/model2", file_refit = "on_change",
                       control = list(adapt_delta = 0.98))
   
-# Compare models  
+  # Compare models  
   model2 <- add_criterion(model2 , c("loo", "waic"), moment_match = TRUE)
-
+  
   saveRDS(model2, file = "./output/models/model2.rds")
-
-# Compare model 1 and 2: should we keep tank effect ? 
-
+  
+  # Compare model 1 and 2: should we keep tank effect ? 
+  
   model1 <- readRDS(file = "./output/models/model1.rds")
   model2 <- readRDS(file = "./output/models/model2.rds")
-
+  
   loo(model1, model2)
-
-# Look at the MCMC chains.
+  
+  # Look at the MCMC chains.
   plot(model2)
+  
+  # Look at the model
+  summary(model2)
+  
+  #############################
+  # Import processed data for model2_T
+  #############################
+  all_data_T <- read.table("./output/all_data_p._Tcsv",header=T, sep=",")
+  
+  #look at control fish
+  boxplot(all_data$exploration ~ as.factor(all_data$treatment))
+  boxplot(all_data$log_boldness ~ as.factor(all_data$treatment))
+  boxplot(all_data$log_activity ~ as.factor(all_data$treatment))
+  
+  ### Model 2_T : to test control fish
+  
+  boldness_2 <- bf(z_log_boldness ~ 1 + treatment + (-1 + treatment |q| ID_fish) + (1 | cage),
+                   sigma ~ -1 + treatment) + gaussian()
+  activity_2 <- bf(z_log_activity ~ 1 + treatment + (-1 + treatment |q| ID_fish) + (1 | cage),
+                   sigma ~ -1 + treatment) + gaussian()
+  explore_2 <- bf(z_exploration ~ 1 + treatment + (-1 + treatment |q| ID_fish) + (1 | cage),
+                  sigma ~ -1 + treatment) + gaussian()
+  
+  ## Model that tests whether ALL control animals behave the same as C and infected?
+  model2_T <- brms::brm(boldness_2 + activity_2 + explore_2 + set_rescor(TRUE), 
+                        data = all_data_T, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
+                        save_pars = save_pars(), file = "./output/models/model2_T", file_refit = "on_change",
+                        control = list(adapt_delta = 0.98))
 
-# Look at the model
-summary(model2)
 
-###############
+#############################
 #Model 2.2 - looking at the distribution of E and C
+#############################
 
 #Split treatment into two columns so we can use both in the model
 dat<-  all_data  %>%  
