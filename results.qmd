@@ -56,6 +56,7 @@ editor_options:
   model7 <- readRDS(file = "./output/models/model_7.rds")
   model8<-readRDS(file = "./output/models/model_8.rds")
   model9<-readRDS(file = "./output/models/model_9.rds")
+  model_T<-readRDS(file = "./output/models/model2_T.rds")
 
 ```
 
@@ -746,8 +747,47 @@ Mean shyness and exploration responses in the population were significantly diff
 #| fig-width: 8
 #| fig-height: 5
 
-#Create dataframe with estimates and CI
+######################
+#test for T treatment
+######################
+all_data_T <- read.table("./output/all_data_p_T.csv",header=T, sep=",")
+int_w <- as_draws_df(model_T, variable = "^b", regex = TRUE)
 
+bold_int<-int_w[,grep("zlogboldness_Intercept", colnames(int_w))]
+exp_int<-int_w[,grep("zexploration_Intercept", colnames(int_w))]
+act_int<-int_w[,grep("zlogactivity_Intercept", colnames(int_w))]
+
+bold_T<-int_w[,grep("b_zlogboldness_treatmentT", colnames(int_w))]
+exp_T<-int_w[,grep("b_zexploration_treatmentT", colnames(int_w))]
+act_T<-int_w[,grep("b_zlogactivity_treatmentT", colnames(int_w))]
+
+#EXPLORATION FOR UNINFECTED (INTERCEPT)
+int_exp_c_num<- as.numeric(unlist(exp_int))
+mean_int_exp_c<-mean(int_exp_c_num)
+sd_int_exp_c<-sd(int_exp_c_num)
+
+#EXPLORATION FOR CONTRAST (TREATMENT E)
+int_exp_con_num<- as.numeric(unlist(exp_T))
+mean_con_exp<-mean(int_exp_con_num)
+sd_con_exp<-sd(int_exp_con_num)
+
+#EXPLORATION FOR INFECTED
+int_exp_e<-(int_exp_con_num + int_exp_c_num)
+int_exp_e_num<- as.numeric(unlist(int_exp_e))
+mean_int_exp_e<-mean(int_exp_e_num)
+sd_int_exp_e<-sd(int_exp_e_num)
+
+#Exploration confidence intervals
+  #Control
+blb_exp_int <- round(quantile(int_exp_c_num, c(0.025, 0.975))[1], 3)
+bub_exp_int <- round(quantile(int_exp_c_num, c(0.025, 0.975))[2], 3)
+  #Experimental
+blb_exp_T <- round(quantile(int_exp_e, c(0.025, 0.975))[1], 3)
+bub_exp_T <- round(quantile(int_exp_e, c(0.025, 0.975))[2], 3)
+
+###################
+#EXPLORATION
+###################
 #Extract post sd from model 2 for each traits and treatment
 int_b <- as_draws_df(model2, variable = "^b", regex = TRUE)
 
@@ -756,90 +796,147 @@ int_b_c<-int_b[,grep("zlogboldness_Intercept", colnames(int_b))]
 int_exp_c<-int_b[,grep("zexploration_Intercept", colnames(int_b))]
 int_act_c<-int_b[,grep("zlogactivity_Intercept", colnames(int_b))]
 
-#mean estimates for control
-int_b_c_num<- as.numeric(unlist(int_b_c))
-mean_int_b_c<-mean(int_b_c_num)
-
-int_exp_c_num<- as.numeric(unlist(int_exp_c))
-mean_int_exp_c<-mean(int_exp_c_num)
-
-int_act_c_num<- as.numeric(unlist(int_act_c))
-mean_int_act_c<-mean(int_act_c_num)
-
 #contrast between intercept C and E
 int_b_con<-int_b[,grep("b_zlogboldness_treatmentE", colnames(int_b))]
 int_exp_con<-int_b[,grep("b_zexploration_treatmentE", colnames(int_b))]
 int_act_con<-int_b[,grep("b_zlogactivity_treatmentE", colnames(int_b))]
 
-#mean estimates for contrast
-int_b_con_num<- as.numeric(unlist(int_b_con))
-mean_con_b<-mean(int_b_con_num)
+#EXPLORATION FOR UNINFECTED (INTERCEPT C)
+int_exp_c_num<- as.numeric(unlist(int_exp_c))
+mean_int_exp_c<-mean(int_exp_c_num)
+sd_int_exp_c<-sd(int_exp_c_num)
 
-blb_b_con <- round(quantile(int_b_con_num, c(0.025, 0.975))[1], 3)
-bub_b_con <- round(quantile(int_b_con_num, c(0.025, 0.975))[2], 3)
+#raw units
+raw_int_exp_c<-(int_exp_c_num*sd_int_exp_c)+mean_int_exp_c
+raw_exp_c_mean<-mean(raw_int)
 
+#EXPLORATION FOR CONTRAST (TREATMENT E)
 int_exp_con_num<- as.numeric(unlist(int_exp_con))
 mean_con_exp<-mean(int_exp_con_num)
+sd_con_exp<-sd(int_exp_con_num)
 
-blb_exp_con <- round(quantile(mean_con_exp, c(0.025, 0.975))[1], 3)
-bub_exp_con <- round(quantile(mean_con_exp, c(0.025, 0.975))[2], 3)
+#raw units
+#raw_contrast<-(int_exp_con_num*sd_con_exp)+mean_con_exp
+#raw_con_mean<-mean(raw_contrast)
 
-int_act_con_num<- as.numeric(unlist(int_act_con))
-mean_con_act<-mean(int_act_con_num)
-
-blb_act_con <- round(quantile(mean_con_act, c(0.025, 0.975))[1], 3)
-bub_act_con <- round(quantile(mean_con_act, c(0.025, 0.975))[2], 3)
-
-#subtract intercept for C - contrast to get intercept for E
-int_b_e<-(int_b_c_num + int_b_con_num)
-int_b_e_num<- as.numeric(unlist(int_b_e))
-mean_int_b_e<-mean(int_b_e_num)
-
+#EXPLORATION FOR INFECTED
 int_exp_e<-(int_exp_con_num + int_exp_c_num)
 int_exp_e_num<- as.numeric(unlist(int_exp_e))
 mean_int_exp_e<-mean(int_exp_e_num)
+sd_int_exp_e<-sd(int_exp_e_num)
 
-int_act_e<-(int_act_con_num + int_act_c_num)
-int_act_e_num<- as.numeric(unlist(int_act_e))
-mean_int_act_e<-mean(int_act_e_num)
+#raw units
+raw_e<-(int_exp_e*sd_int_exp_e)+mean_int_exp_e
+raw_exp_e_mean<-mean(raw_e)
 
- 
-#is E and C significantly different for each trait?
-pm_b<-pmcmc(int_b_c_num - int_b_e_num, twotail = TRUE) #significantly different
-pm_exp<-pmcmc(int_exp_c_num - int_exp_e_num, twotail = TRUE) #significantly different
-pm_act<-pmcmc(int_act_c_num - int_act_e_num, twotail = TRUE) #not significant
+#Exploration confidence intervals
+  #Uninfected
+#blb_exp_c <- round(quantile(int_exp_c_num, c(0.025, 0.975))[1], 3)
+#bub_exp_c <- round(quantile(int_exp_c_num, c(0.025, 0.975))[2], 3)
+  #Experimental
+#blb_exp_e <- round(quantile(int_exp_e, c(0.025, 0.975))[1], 3)
+#bub_exp_e <- round(quantile(int_exp_e, c(0.025, 0.975))[2], 3)
 
+#Exploration confidence intervals
+  #Uninfected
+blb_exp_c <- round(quantile(raw_int_exp_c, c(0.025, 0.975))[1], 3)
+bub_exp_c <- round(quantile(raw_int_exp_c, c(0.025, 0.975))[2], 3)
+  #Experimental
+blb_exp_e <- round(quantile(raw_e, c(0.025, 0.975))[1], 3)
+bub_exp_e <- round(quantile(raw_e, c(0.025, 0.975))[2], 3)
+
+###################
+#BOLDNESS
+###################
+#BOLDNESS FOR UNINFECTED (INTERCEPT C)
+int_b_c_num<- as.numeric(unlist(int_b_c))
+mean_int_b_c<-mean(int_b_c_num)
+sd_int_b_c<-sd(int_b_c_num)
+
+#back to raw unit
+#raw_b_c<-((int_b_c_num*sd_int_b_c)+mean_int_b_c)
+#mean(exp(raw_b_c))
+
+#BOLDNESS FOR CONTRAST (TREATMENT_E)
+int_b_con_num<- as.numeric(unlist(int_b_con))
+mean_con_b<-mean(int_b_con_num)
+sd_con_b<-sd(int_b_con_num)
+
+#back to raw unit
+#raw_con_b<-((int_b_con_num*sd_con_b)+mean_con_b)
+#mean(raw_con_b)
+
+#BOLDNESS FOR INFECTED
+int_b_e<-(int_b_c_num + int_b_con_num)
+int_b_e_num<- as.numeric(unlist(int_b_e))
+mean_int_b_e<-mean(int_b_e_num)
+sd_int_b_e<-sd(int_b_e_num)
 
 #95% IC
 #Boldness
-  #Control
+  #Uninfected
 blb_b_c <- round(quantile(int_b_c_num, c(0.025, 0.975))[1], 3)
 bub_b_c <- round(quantile(int_b_c_num, c(0.025, 0.975))[2], 3)
   #Experimental
 blb_b_e<- round(quantile(int_b_e, c(0.025, 0.975))[1], 3)
 bub_b_e<- round(quantile(int_b_e, c(0.025, 0.975))[2], 3)
 
-#Exploration
-  #Control
-blb_exp_c <- round(quantile(int_exp_c_num, c(0.025, 0.975))[1], 3)
-bub_exp_c <- round(quantile(int_exp_c_num, c(0.025, 0.975))[2], 3)
-  #Experimental
-blb_exp_e <- round(quantile(int_exp_e, c(0.025, 0.975))[1], 3)
-bub_exp_e <- round(quantile(int_exp_e, c(0.025, 0.975))[2], 3)
+###################
+#ACTIVITY
+###################
+#ACTIVITY FOR UNINFECTED (INTERCEPT C)
+int_act_c_num<- as.numeric(unlist(int_act_c))
+mean_int_act_c<-mean(int_act_c_num)
+sd_int_act_c<-sd(int_act_c_num)
+
+#back to raw unit
+#raw_act_c<-((int_act_c_num*sd_int_act_c)+mean_int_act_c)
+#mean(exp(raw_act_c))
+
+#ACTIVITY FOR CONTRAST (TREATMENT_E)
+int_act_con_num<- as.numeric(unlist(int_act_con))
+mean_con_act<-mean(int_act_con_num)
+sd_con_act<-sd(int_act_con_num)
+
+#bacl to raw unit
+#raw_con_act<-((int_act_con_num*sd_con_act)+mean_con_act)
+
+#ACTIVITY FOR INFECTED
+#subtract intercept for C - contrast to get intercept for E
+int_act_e<-(int_act_con_num + int_act_c_num)
+int_act_e_num<- as.numeric(unlist(int_act_e))
+mean_int_act_e<-mean(int_act_e_num)
 
 #Activity
-  #Control
+  #Uninfected
 blb_act_c <- round(quantile(int_act_c_num, c(0.025, 0.975))[1], 3)
 bub_act_c <- round(quantile(int_act_c_num, c(0.025, 0.975))[2], 3)
   #Experimental
 blb_act_e <- round(quantile(int_act_e, c(0.025, 0.975))[1], 3)
 bub_act_e <- round(quantile(int_act_e, c(0.025, 0.975))[2], 3)
 
+#is E and C significantly different for each trait?
+pm_b<-pmcmc(int_b_c_num - int_b_e_num, twotail = TRUE) #significantly different
+pm_exp<-pmcmc(int_exp_c_num - int_exp_e_num, twotail = TRUE) #significantly different
+pm_act<-pmcmc(int_act_c_num - int_act_e_num, twotail = TRUE) #not significant
+
+###################
 #Create data frame
+###################
+#dat_model<-data.frame(
+  #trait=c("logboldness","logboldness","exploration","exploration","logactivity","logactivity"),
+  #treatment=c("Uninfected","Infected","Uninfected","Infected","Uninfected","Infected"), 
+  #estimate = c(mean_int_b_c,mean_int_b_e,mean_int_exp_c,mean_int_exp_e, mean_int_act_c, mean_int_act_e), 
+  #Lower_CI = c(blb_b_c, blb_b_e, blb_exp_c, blb_exp_e, blb_act_c, blb_act_e),
+ # Higher_CI = c(bub_b_c,bub_b_e,bub_exp_c,bub_exp_e,bub_act_c,bub_act_e))
+
+#all_data[all_data == 'C'] <- 'Uninfected'
+#all_data[all_data == 'E'] <- 'Infected'
+
 dat_model<-data.frame(
   trait=c("logboldness","logboldness","exploration","exploration","logactivity","logactivity"),
   treatment=c("Uninfected","Infected","Uninfected","Infected","Uninfected","Infected"), 
-  estimate = c(mean_int_b_c,mean_int_b_e,mean_int_exp_c,mean_int_exp_e, mean_int_act_c, mean_int_act_e), 
+  estimate = c(mean_int_b_c,mean_int_b_e,raw_exp_c_mean,raw_exp_e_mean, mean_int_act_c, mean_int_act_e), 
   Lower_CI = c(blb_b_c, blb_b_e, blb_exp_c, blb_exp_e, blb_act_c, blb_act_e),
   Higher_CI = c(bub_b_c,bub_b_e,bub_exp_c,bub_exp_e,bub_act_c,bub_act_e))
 
@@ -847,17 +944,19 @@ dat_model<-data.frame(
 all_data[all_data == 'C'] <- 'Uninfected'
 all_data[all_data == 'E'] <- 'Infected'
 
+###################
+#PLOTS
+###################
 #plot model2      
 all_data$treatment <- factor(all_data$treatment, levels=c("Uninfected", "Infected"))
 trt <- as.factor(all_data$treatment)
-
 
 dat1<-dat_model %>% 
   filter(trait == "logboldness")
 
 #boldness
 m1<-
-ggplot(all_data, aes(x = trt, y = log_boldness, group = trt, color = trt)) +
+ggplot(all_data, aes(x = trt, y = z_log_boldness, group = trt, color = trt)) +
 geom_violin(aes(), trim = FALSE) +
 geom_jitter(aes(colour = trt),shape=16, position=position_jitter(0.1))+
 scale_color_manual(labels = c("Uninfected", "Infected"), values = c("#472a7a", "#1f978b"))+
@@ -899,7 +998,7 @@ annotate("text",  x = 1.5, y = 1, label = TeX(paste0("Contrast = 0.43, $pMCMC_{\
 dat3<-dat_model %>% 
   filter(trait == "logactivity")
 
-m3<-ggplot(all_data, aes(x = trt, y = log_activity, group = trt, col = trt)) +
+m3<-ggplot(all_data, aes(x = trt, y = z_log_activity, group = trt, col = trt)) +
 geom_violin(aes(), trim = FALSE) +
 geom_jitter(aes(colour = trt), shape=16, position=position_jitter(0.1)) +
 scale_color_manual(labels = c("Uninfected", "Infected"), values = c("#472a7a", "#1f978b"))+
