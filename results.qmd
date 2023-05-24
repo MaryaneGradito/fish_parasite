@@ -748,7 +748,7 @@ Mean shyness and exploration responses in the population were significantly diff
 #| fig-height: 5
 
 ######################
-#test for T treatment
+#test for T treatment (NOT IMPORTANT FOR NOW, NEED TO WORK ON IT)
 ######################
 all_data_T <- read.table("./output/all_data_p_T.csv",header=T, sep=",")
 int_w <- as_draws_df(model_T, variable = "^b", regex = TRUE)
