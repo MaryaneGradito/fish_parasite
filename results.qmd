@@ -1903,13 +1903,13 @@ new_data <- read.table("./output/new_data1.csv",header=T, sep=",")
 #plotting the change in bs with the change of activity, group with body condition change
 k1<-ggplot(data= new_data)+
   geom_point(aes(x= z_change_bs,y=act_E, color = z_change_bc), size=3)+
-  xlab("Change in black spots density") + ylab("Slope of change in activity") + theme_classic()+geom_vline(xintercept=0, color = "red2", linetype = 2)+
+  xlab("Change in black spot density") + ylab("Slope of change in activity") + theme_classic()+geom_vline(xintercept=0, color = "red2", linetype = 2)+
   labs(color = "Change in \n body condition") + scale_colour_gradient(low = "#112D72",high = "#C7D1ED")
 
-ggsave("./output/figures/fig9.png", plot = k1, width = 30, height = 20, units = "cm")
+ggsave("./output/figures/fig10.png", plot = k1, width = 15, height = 10, units = "cm")
 
-fig9 <- image_read("./output/figures/fig9.png")  
-fig9
+fig10 <- image_read("./output/figures/fig10.png")  
+fig10
 
 ```
 
