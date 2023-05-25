@@ -831,11 +831,11 @@ raw_exp_e_mean<-mean(raw_e)
 
 #Exploration confidence intervals
   #Uninfected
-#blb_exp_c <- round(quantile(int_exp_c_num, c(0.025, 0.975))[1], 3)
-#bub_exp_c <- round(quantile(int_exp_c_num, c(0.025, 0.975))[2], 3)
+blb_exp_c <- round(quantile(int_exp_c_num, c(0.025, 0.975))[1], 3)
+bub_exp_c <- round(quantile(int_exp_c_num, c(0.025, 0.975))[2], 3)
   #Experimental
-#blb_exp_e <- round(quantile(int_exp_e, c(0.025, 0.975))[1], 3)
-#bub_exp_e <- round(quantile(int_exp_e, c(0.025, 0.975))[2], 3)
+blb_exp_e <- round(quantile(int_exp_e, c(0.025, 0.975))[1], 3)
+bub_exp_e <- round(quantile(int_exp_e, c(0.025, 0.975))[2], 3)
 
 #Exploration confidence intervals
   #Uninfected
@@ -923,15 +923,15 @@ pm_act<-pmcmc(int_act_c_num - int_act_e_num, twotail = TRUE) #not significant
 ###################
 #Create data frame
 ###################
-#dat_model<-data.frame(
-  #trait=c("logboldness","logboldness","exploration","exploration","logactivity","logactivity"),
-  #treatment=c("Uninfected","Infected","Uninfected","Infected","Uninfected","Infected"), 
-  #estimate = c(mean_int_b_c,mean_int_b_e,mean_int_exp_c,mean_int_exp_e, mean_int_act_c, mean_int_act_e), 
-  #Lower_CI = c(blb_b_c, blb_b_e, blb_exp_c, blb_exp_e, blb_act_c, blb_act_e),
- # Higher_CI = c(bub_b_c,bub_b_e,bub_exp_c,bub_exp_e,bub_act_c,bub_act_e))
+dat_model<-data.frame(
+  trait=c("logboldness","logboldness","exploration","exploration","logactivity","logactivity"),
+  treatment=c("Uninfected","Infected","Uninfected","Infected","Uninfected","Infected"), 
+  estimate = c(mean_int_b_c,mean_int_b_e,mean_int_exp_c,mean_int_exp_e, mean_int_act_c, mean_int_act_e), 
+  Lower_CI = c(blb_b_c, blb_b_e, blb_exp_c, blb_exp_e, blb_act_c, blb_act_e),
+ Higher_CI = c(bub_b_c,bub_b_e,bub_exp_c,bub_exp_e,bub_act_c,bub_act_e))
 
-#all_data[all_data == 'C'] <- 'Uninfected'
-#all_data[all_data == 'E'] <- 'Infected'
+all_data[all_data == 'C'] <- 'Uninfected'
+all_data[all_data == 'E'] <- 'Infected'
 
 dat_model<-data.frame(
   trait=c("logboldness","logboldness","exploration","exploration","logactivity","logactivity"),
@@ -1018,6 +1018,9 @@ annotate("text",  x = 1.5, y = 4, label = TeX(paste0("Contrast = -0.26, $pMCMC_{
   m1,m2,m3,
   labels = "AUTO", ncol = 3)
 
+ ggsave("./output/figures/sandra.png", plot = m3, width = 10, height = 13, units = "cm")
+ act_sandra <- image_read("./output/figures/sandra.png") 
+ 
  ggsave("./output/figures/fig5.png", plot = m, width = 28, height = 13, units = "cm")
 
 fig5 <- image_read("./output/figures/fig5.png") 
@@ -1615,25 +1618,29 @@ act_bs_dat <- cbind(newdat2, summ_act_bs, summ_actL95_bs, summ_actU95_bs)
 
   #figure 3
 n3<-ggplot(data=dat_parasite)+
-geom_point(mapping = aes(x = z_ces, y = z_log_activity), shape = 21,color = "#365c8d")+
- geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_ces, y = summ_act_ces), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#365c8d", size=1) +
-  geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_ces, y = summ_actL95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#365c8d", size=0.8)+
-  geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_ces, y = summ_actU95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#365c8d", size=0.8)+
-  geom_point(mapping = aes(x = z_bs, y = z_log_activity),shape = 21, color = "#56c667") +
-   geom_smooth(data = act_bs_dat, ggplot2::aes(x = z_bs, y = summ_act_bs), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#56c667", size=1) +
-  geom_smooth(data = act_bs_dat, ggplot2::aes(x = z_bs, y = summ_actL95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#56c667", size=0.8)+
-  geom_smooth(data = act_bs_dat, ggplot2::aes(x = z_bs, y = summ_actU95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#56c667", size=0.8)+
+#geom_point(mapping = aes(x = z_ces, y = z_log_activity), shape = 21,color = "#365c8d")+
+# geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_ces, y = summ_act_ces), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#365c8d", size=1) +
+  #geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_ces, y = summ_actL95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#365c8d", size=0.8)+
+  #geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_ces, y = summ_actU95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#365c8d", size=0.8)+
+  geom_point(mapping = aes(x = z_bs, y = z_log_activity), color = "#1f978b") +
+   geom_smooth(data = act_bs_dat, ggplot2::aes(x = z_bs, y = summ_act_bs), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#1f978b", size=1) +
+  geom_smooth(data = act_bs_dat, ggplot2::aes(x = z_bs, y = summ_actL95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#1f978b", size=0.8)+
+  geom_smooth(data = act_bs_dat, ggplot2::aes(x = z_bs, y = summ_actU95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#1f978b", size=0.8)+
    theme_classic() +
    #geom_point(mapping = aes(x = z_pl, y = log_activity),shape = 21, color = "#A2A2A2") +
    #geom_smooth(data = act_pl_dat, ggplot2::aes(x = z_pl, y = summ_act_pl), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#A2A2A2", size=1) +
   #geom_smooth(data = act_pl_dat, ggplot2::aes(x = z_pl, y = summ_actL95_pl), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#A2A2A2", size=0.8)+
   #geom_smooth(data = act_pl_dat, ggplot2::aes(x = z_pl, y = summ_actU95_pl), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#A2A2A2", size=0.8)+
-  draw_image("./img/blackspots.png", x = 2.8, y = -1.4, scale = 0.8)+
-    draw_image("./img/cestodes.png", x = 2.8, y = -0.6, scale = 0.8) +
+  draw_image("./img/blackspots.png", x = 2.8, y = 0.8, scale = 2)+
+    #draw_image("./img/cestodes.png", x = 2.8, y = -0.6, scale = 0.8) +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
-    theme(legend.position="none") + labs(x = TeX(""), y = TeX("$Activity_{log_{2}}$"), title = "")+
-      annotate("text", x = 1, y = 3.2, label = TeX(paste0("$beta_{bs}$ = ", " -0.22 ", " 95%CI: -0.40, -0.04 **")), size =3, color = "#56c667") + 
-  annotate("text", x = 1, y = 3, label = TeX(paste0("$beta_{ces}$ = "," 0.01 ", " 95%CI: -0.18, 0.19")), size=3, color = "#365c8d")
+    theme(legend.position="none") + labs(x = TeX("Black spot density (no/g)"), y = TeX("$Activity_{log_{2}}$"), title = "")+
+      annotate("text", x = 1.5, y = 2, label = TeX(paste0("$beta_{bs}$ = ", " -0.22 ", " 95%CI: -0.40, -0.04 **")), size =3, color = "black") 
+  #annotate("text", x = 1, y = 3, label = TeX(paste0("$beta_{ces}$ = "," 0.01 ", " 95%CI: -0.18, 0.19")), size=3, color = "#365c8d")
+
+ggsave("./output/figures/sandra2.png", plot = n3, width = 15, height = 15, units = "cm")
+
+sandra2 <- image_read("./output/figures/sandra2.png")
     
 p<-plot_grid(
   n1, n2, n3,
