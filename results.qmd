@@ -831,11 +831,11 @@ raw_exp_e_mean<-mean(raw_e)
 
 #Exploration confidence intervals
   #Uninfected
-blb_exp_c <- round(quantile(int_exp_c_num, c(0.025, 0.975))[1], 3)
-bub_exp_c <- round(quantile(int_exp_c_num, c(0.025, 0.975))[2], 3)
+#blb_exp_c <- round(quantile(int_exp_c_num, c(0.025, 0.975))[1], 3)
+#bub_exp_c <- round(quantile(int_exp_c_num, c(0.025, 0.975))[2], 3)
   #Experimental
-blb_exp_e <- round(quantile(int_exp_e, c(0.025, 0.975))[1], 3)
-bub_exp_e <- round(quantile(int_exp_e, c(0.025, 0.975))[2], 3)
+#blb_exp_e <- round(quantile(int_exp_e, c(0.025, 0.975))[1], 3)
+#bub_exp_e <- round(quantile(int_exp_e, c(0.025, 0.975))[2], 3)
 
 #Exploration confidence intervals
   #Uninfected
@@ -923,15 +923,15 @@ pm_act<-pmcmc(int_act_c_num - int_act_e_num, twotail = TRUE) #not significant
 ###################
 #Create data frame
 ###################
-dat_model<-data.frame(
-  trait=c("logboldness","logboldness","exploration","exploration","logactivity","logactivity"),
-  treatment=c("Uninfected","Infected","Uninfected","Infected","Uninfected","Infected"), 
-  estimate = c(mean_int_b_c,mean_int_b_e,mean_int_exp_c,mean_int_exp_e, mean_int_act_c, mean_int_act_e), 
-  Lower_CI = c(blb_b_c, blb_b_e, blb_exp_c, blb_exp_e, blb_act_c, blb_act_e),
- Higher_CI = c(bub_b_c,bub_b_e,bub_exp_c,bub_exp_e,bub_act_c,bub_act_e))
+#dat_model<-data.frame(
+  #trait=c("logboldness","logboldness","exploration","exploration","logactivity","logactivity"),
+  #treatment=c("Uninfected","Infected","Uninfected","Infected","Uninfected","Infected"), 
+ # estimate = c(mean_int_b_c,mean_int_b_e,mean_int_exp_c,mean_int_exp_e, mean_int_act_c, mean_int_act_e), 
+  #Lower_CI = c(blb_b_c, blb_b_e, blb_exp_c, blb_exp_e, blb_act_c, blb_act_e),
+# Higher_CI = c(bub_b_c,bub_b_e,bub_exp_c,bub_exp_e,bub_act_c,bub_act_e))
 
-all_data[all_data == 'C'] <- 'Uninfected'
-all_data[all_data == 'E'] <- 'Infected'
+#all_data[all_data == 'C'] <- 'Uninfected'
+#all_data[all_data == 'E'] <- 'Infected'
 
 dat_model<-data.frame(
   trait=c("logboldness","logboldness","exploration","exploration","logactivity","logactivity"),
