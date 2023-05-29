@@ -110,19 +110,31 @@ editor_options:
 # Repeatability C vs E
 ############################
 #Extract posterior distribution for model 2, looking at repeatability
-         post_sd_2 <- as_draws_df(model2, variable = "^sd", regex = TRUE)
-       post_sd_C_2 <- post_sd_2[,grepl("C", colnames(post_sd_2))] #ID control
-       post_sd_E_2 <- post_sd_2[,grepl("E", colnames(post_sd_2))] #ID experimental
-    post_sd_cage_2 <- post_sd_2[,grepl("cage", colnames(post_sd_2))]
-     post_sd_sig_2 <- as_draws_df(model2, variable = "^b_sigma", regex = TRUE)
-     post_sd_sig_C_2 <- exp(post_sd_sig_2[,grepl("C", colnames(post_sd_sig_2))]) #ID control
-       post_sd_sig_E_2 <- exp(post_sd_sig_2[,grepl("E", colnames(post_sd_sig_2))]) #ID experimental
+         #post_sd_2 <- as_draws_df(model2, variable = "^sd", regex = TRUE)
+       #post_sd_C_2 <- post_sd_2[,grepl("C", colnames(post_sd_2))] #ID control
+       #post_sd_E_2 <- post_sd_2[,grepl("E", colnames(post_sd_2))] #ID experimental
+    #post_sd_cage_2 <- post_sd_2[,grepl("cage", colnames(post_sd_2))]
+    # post_sd_sig_2 <- as_draws_df(model2, variable = "^b_sigma", regex = TRUE)
+     #post_sd_sig_C_2 <- exp(post_sd_sig_2[,grepl("C", colnames(post_sd_sig_2))]) #ID control
+      # post_sd_sig_E_2 <- exp(post_sd_sig_2[,grepl("E", colnames(post_sd_sig_2))]) #ID experimental
 
+       #Extract posterior distribution for model 2, looking at repeatability
+         post_sd_2 <- as_draws_df(model_T, variable = "^sd", regex = TRUE)
+       post_sd_C_2 <- post_sd_2[,grepl("C", colnames(post_sd_2))] #ID uninfected
+       post_sd_E_2 <- post_sd_2[,grepl("E", colnames(post_sd_2))] #ID experimentally infected
+       post_sd_T_2 <- post_sd_2[,grepl("T", colnames(post_sd_2))] #ID control
+    post_sd_cage_2 <- post_sd_2[,grepl("cage", colnames(post_sd_2))]
+     post_sd_sig_2 <- as_draws_df(model_T, variable = "^b_sigma", regex = TRUE)
+     post_sd_sig_C_2 <- exp(post_sd_sig_2[,grepl("C", colnames(post_sd_sig_2))]) #ID uninfected
+       post_sd_sig_E_2 <- exp(post_sd_sig_2[,grepl("E", colnames(post_sd_sig_2))]) #ID experimentally infected
+       post_sd_sig_T_2 <- exp(post_sd_sig_2[,grepl("T", colnames(post_sd_sig_2))]) #ID control
+       
+#repeatability doesn't change when using model_T (include control fish n = 12)
 ############################
 ##     CONTROL GROUP
 ############################
 
-#Boldness for control group
+#Boldness for uninfected group
   fish_c_b <- post_sd_C_2[,grep("zlogboldness", colnames(post_sd_C_2))]^2
   cage_c_b <- post_sd_cage_2[ ,grep("zlogboldness", colnames(post_sd_cage_2))]^2
    res_c_b <- post_sd_sig_C_2[,grep("b_sigma_zlogboldness_treatmentC", colnames(post_sd_sig_C_2))]^2
@@ -136,8 +148,25 @@ editor_options:
     R_C_bold <- mean(R_C_boldness[,1])
   R_Blb_bold_C <- round(quantile(R_C_boldness[,1], c(0.025, 0.975))[1], 3)
   R_Bub_bold_C <- round(quantile(R_C_boldness[,1], c(0.025, 0.975))[2], 3)
+  
+  #Boldness for control group
+  fish_t_b <- post_sd_T_2[,grep("zlogboldness", colnames(post_sd_T_2))]^2
+  cage_t_b <- post_sd_cage_2[ ,grep("zlogboldness", colnames(post_sd_cage_2))]^2
+   res_t_b <- post_sd_sig_T_2[,grep("b_sigma_zlogboldness_treatmentT", colnames(post_sd_sig_T_2))]^2
 
-#exploration for control group
+  R_T_boldness <-   fish_t_b / (fish_t_b + cage_t_b + res_t_b)
+  
+  
+    0.43^2 / (0.14^2 + 0.43^2 + exp(0.06)^2)
+  
+    hist(R_T_boldness[,1])
+    R_T_bold <- mean(R_T_boldness[,1])
+  R_Blb_bold_T <- round(quantile(R_T_boldness[,1], c(0.025, 0.975))[1], 3)
+  R_Bub_bold_T <- round(quantile(R_T_boldness[,1], c(0.025, 0.975))[2], 3)
+  
+   p_value_bold_T<-pmcmc(R_T_boldness[,1]*100, null = 10, twotail = FALSE)#significant
+
+#exploration for uninfected group
   fish_c_ex <- post_sd_C_2[,grep("zexploration", colnames(post_sd_C_2))]^2
   cage_c_ex <- post_sd_cage_2[ ,grep("zexploration", colnames(post_sd_cage_2))]^2
    res_c_ex <- post_sd_sig_C_2[,grep("b_sigma_zexploration_treatmentC", colnames(post_sd_sig_C_2))]^2
@@ -151,8 +180,26 @@ editor_options:
   R_exp_C_mean<-mean(R_C_exploration[,1])
   R_Blb_exp_C <- round(quantile(R_C_exploration[,1], c(0.025, 0.975))[1], 3)
   R_Bub_exp_C <- round(quantile(R_C_exploration[,1], c(0.025, 0.975))[2], 3)
+  
+   #Exploration for control group
+  fish_t_ex <- post_sd_T_2[,grep("zexploration", colnames(post_sd_T_2))]^2
+  cage_t_ex <- post_sd_cage_2[ ,grep("zexploration", colnames(post_sd_cage_2))]^2
+   res_t_ex <- post_sd_sig_T_2[,grep("b_sigma_zexploration_treatmentT", colnames(post_sd_sig_T_2))]^2
 
-#activity for control group
+  R_T_exploration <-   fish_t_ex / (fish_t_ex + cage_t_ex + res_t_ex)
+  
+  
+    0.27^2 / (0.15 ^2 + 0.27^2 + exp(-0.21)^2)
+  
+    hist(R_T_exploration[,1])
+    R_T_exp <- mean(R_T_exploration[,1])
+  R_Blb_exp_T <- round(quantile(R_T_exploration[,1], c(0.025, 0.975))[1], 3)
+  R_Bub_exp_T <- round(quantile(R_T_exploration[,1], c(0.025, 0.975))[2], 3)
+  
+   p_value_exp_T<-pmcmc(R_T_exploration[,1]*100, null = 10, twotail = FALSE)#not significant
+
+
+#activity for uninfected group
   fish_c_ac <- post_sd_C_2[,grep("zlogactivity", colnames(post_sd_C_2))]^2
   cage_c_ac <- post_sd_cage_2[ ,grep("zlogactivity", colnames(post_sd_cage_2))]^2
   res_c_ac <- post_sd_sig_C_2[,grep("b_sigma_zlogactivity_treatmentC", colnames(post_sd_sig_C_2))]^2
@@ -166,6 +213,24 @@ editor_options:
  R_act_C<- mean(R_C_activity[,1])
   R_Blb_act_C <- round(quantile(R_C_activity[,1], c(0.025, 0.975))[1], 3)
   R_Bub_act_C <- round(quantile(R_C_activity[,1], c(0.025, 0.975))[2], 3)
+  
+     #Activity for control group
+  fish_t_act <- post_sd_T_2[,grep("zlogactivity", colnames(post_sd_T_2))]^2
+  cage_t_act <- post_sd_cage_2[ ,grep("zlogactivity", colnames(post_sd_cage_2))]^2
+   res_t_act <- post_sd_sig_T_2[,grep("b_sigma_zlogactivity_treatmentT", colnames(post_sd_sig_T_2))]^2
+
+  R_T_activity <-   fish_t_act / (fish_t_act + cage_t_act + res_t_act)
+  
+  
+     0.43^2 / ( 0.11^2 +  0.43^2 + exp(-0.40)^2)
+  
+    hist(R_T_activity[,1])
+    R_T_act <- mean(R_T_activity[,1])
+  R_Blb_act_T <- round(quantile(R_T_activity[,1], c(0.025, 0.975))[1], 3)
+  R_Bub_act_T <- round(quantile(R_T_activity[,1], c(0.025, 0.975))[2], 3)
+  
+   p_value_act_T<-pmcmc(R_T_activity[,1]*100, null = 10, twotail = FALSE) #not significant
+
 
 ############################
 # EXPERIMENTAL GROUP
@@ -463,7 +528,6 @@ With a threshold of 10%, only activity was repeatable across trials regardless o
 #| fig-cap: Repeatability estimates and their 95% confidence intervals for the three behaviours (shyness,exploration and activity) of pumpkinseed sunfish (Lepomis gibbosus) measured overall and within each group (overall and uninfected, N=72; infected, N=60). Uninfected is before the experimental infection (trial 1-2); infected is after the fish were experimentally infected (trial 3-4); overall looks at repeatability regardless of the treatment (trial 1-2-3-4).
 #| out-width: 100%
 
-
 #Plot 
 #created dataset for all repeatability measures
   #Create data frame
@@ -471,9 +535,9 @@ dat_rep<-data.frame(
   "R"=c("Shyness","Exploration","Activity","Shyness","Exploration","Activity","Shyness","Exploration","Activity","Shyness","Exploration","Activity"),
   "Treatment" = c("Overall", "Overall","Overall","Uninfected","Uninfected","Uninfected","Infected","Infected","Infected","Control","Control","Control"),
   "Repeatability"=c(R_bold_mean,R_exp_mean,R_act_mean
-                    ,R_C_bold,R_exp_C_mean,R_act_C,R_E_bold,R_exp_E_mean,R_act_E,0.0464,0.417,0.314), 
-  "Lower_CI" = c(R_Blb_bold,R_Blb_exp,R_Blb_act,R_Blb_bold_C,R_Blb_exp_C,R_Blb_act_C,R_Blb_bold_E,R_Blb_exp_E,R_Blb_act_E,0,0,0),
-  "Higher_CI" = c(R_Bub_bold,R_Bub_exp,R_Bub_act,R_Bub_bold_C,R_Bub_exp_C,R_Bub_act_C,R_Bub_bold_E,R_Bub_exp_E,R_Bub_act_E,0.555,0.782,0.752))
+                    ,R_C_bold,R_exp_C_mean,R_act_C,R_E_bold,R_exp_E_mean,R_act_E,R_T_bold,R_T_exp,R_T_act), 
+  "Lower_CI" = c(R_Blb_bold,R_Blb_exp,R_Blb_act,R_Blb_bold_C,R_Blb_exp_C,R_Blb_act_C,R_Blb_bold_E,R_Blb_exp_E,R_Blb_act_E,R_Blb_bold_T,R_Blb_exp_T,R_Blb_act_T),
+  "Higher_CI" = c(R_Bub_bold,R_Bub_exp,R_Bub_act,R_Bub_bold_C,R_Bub_exp_C,R_Bub_act_C,R_Bub_bold_E,R_Bub_exp_E,R_Bub_act_E,R_Bub_bold_T,R_Bub_exp_T,R_Bub_act_T))
   
   
  # "Uninfected" = c(b_act_C_mean,b_exp_C_mean,act_exp_C_mean),
@@ -740,7 +804,7 @@ Mean shyness and exploration responses in the population were significantly diff
 
 ```{r}
 #| label: fig-fig5
-#| fig-cap: Contrast in the mean responses and the 95% confidence intervals of shyness (A), exploration (B) and activity (C) of pumpkinseed sunfish (Lepomis gibbosus) between the uninfected (N=72) and experimentally infected group (N=60)
+#| fig-cap: Contrast in the mean responses and the 95% confidence intervals of shyness (A), exploration (B) and activity (C) of pumpkinseed sunfish (Lepomis gibbosus) between the uninfected (all fish, trial 1-2, N=72), experimentally infected group (trial 3-4,caging experiment N=60) and control fish (trial 3-4, stayed in the lab, N=12)
 #| out-width: 100%
 #| fig-width: 8
 #| fig-height: 5
@@ -759,34 +823,123 @@ bold_T<-int_w[,grep("b_zlogboldness_treatmentT", colnames(int_w))]
 exp_T<-int_w[,grep("b_zexploration_treatmentT", colnames(int_w))]
 act_T<-int_w[,grep("b_zlogactivity_treatmentT", colnames(int_w))]
 
+bold_E<-int_w[,grep("b_zlogboldness_treatmentE", colnames(int_w))]
+exp_E<-int_w[,grep("b_zexploration_treatmentE", colnames(int_w))]
+act_E<-int_w[,grep("b_zlogactivity_treatmentE", colnames(int_w))]
+
 #EXPLORATION FOR UNINFECTED (INTERCEPT)
 int_exp_c_num<- as.numeric(unlist(exp_int))
 mean_int_exp_c<-mean(int_exp_c_num)
 sd_int_exp_c<-sd(int_exp_c_num)
 
-#EXPLORATION FOR CONTRAST (TREATMENT E)
+#raw units
+raw_int_exp_c<-((int_exp_c_num*sd_int_exp_c))+mean_int_exp_c
+raw_exp_c_mean<-mean(raw_int_exp_c)
+
+#EXPLORATION FOR CONTRAST (TREATMENT T)
 int_exp_con_num<- as.numeric(unlist(exp_T))
 mean_con_exp<-mean(int_exp_con_num)
 sd_con_exp<-sd(int_exp_con_num)
 
-#EXPLORATION FOR INFECTED
-int_exp_e<-(int_exp_con_num + int_exp_c_num)
-int_exp_e_num<- as.numeric(unlist(int_exp_e))
-mean_int_exp_e<-mean(int_exp_e_num)
-sd_int_exp_e<-sd(int_exp_e_num)
+#EXPLORATION FOR CONTRAST (TREATMENT E)
+int_exp_con_E_num<- as.numeric(unlist(exp_E))
+mean_con_exp_E<-mean(int_exp_con_E_num)
+sd_con_exp_E<-sd(int_exp_con_E_num)
+
+#EXPLORATION FOR E
+int_exp_E<-(int_exp_con_E_num + int_exp_c_num)
+int_exp_E_num<- as.numeric(unlist(int_exp_E))
+mean_int_exp_E<-mean(int_exp_E_num)
+sd_int_exp_E<-sd(int_exp_E_num)
+
+#raw units
+raw_int_exp_E<-(int_exp_E_num*sd_int_exp_E)+mean_int_exp_E
+raw_exp_E_mean<-mean(raw_int_exp_E)
+
+#EXPLORATION FOR T
+int_exp_T<-(int_exp_con_num + int_exp_c_num)
+int_exp_T_num<- as.numeric(unlist(int_exp_T))
+mean_int_exp_T<-mean(int_exp_T_num)
+sd_int_exp_T<-sd(int_exp_T_num)
+
+#raw units
+raw_int_exp_T<-(int_exp_T_num*sd_int_exp_T)+mean_int_exp_T
+raw_exp_T_mean<-mean(raw_int_exp_T)
+
+#pmcmc test
+pm_exp_T<-pmcmc(int_exp_c_num - int_exp_T_num,twotail = TRUE) #significantly different
 
 #Exploration confidence intervals
   #Control
-blb_exp_int <- round(quantile(int_exp_c_num, c(0.025, 0.975))[1], 3)
-bub_exp_int <- round(quantile(int_exp_c_num, c(0.025, 0.975))[2], 3)
+blb_exp_E <- round(quantile(int_exp_E_num, c(0.025, 0.975))[1], 3)
+bub_exp_E <- round(quantile(int_exp_E_num, c(0.025, 0.975))[2], 3)
   #Experimental
-blb_exp_T <- round(quantile(int_exp_e, c(0.025, 0.975))[1], 3)
-bub_exp_T <- round(quantile(int_exp_e, c(0.025, 0.975))[2], 3)
+blb_exp_T <- round(quantile(int_exp_T, c(0.025, 0.975))[1], 3)
+bub_exp_T <- round(quantile(int_exp_T, c(0.025, 0.975))[2], 3)
+
+#BOLDNESS FOR UNINFECTED (INTERCEPT)
+int_bold_c_num<- as.numeric(unlist(bold_int))
+mean_int_bold_c<-mean(int_bold_c_num)
+sd_int_bold_c<-sd(int_bold_c_num)
+
+#BOLDNESS FOR CONTRAST (TREATMENT T)
+int_bold_con_num<- as.numeric(unlist(bold_T))
+mean_con_bold<-mean(int_bold_con_num)
+sd_con_bold<-sd(int_bold_con_num)
+
+#EXPLORATION FOR CONTRAST (TREATMENT E)
+int_bold_con_E_num<- as.numeric(unlist(bold_E))
+mean_con_bold_E<-mean(int_bold_con_E_num)
+sd_con_bold_E<-sd(int_bold_con_E_num)
+
+#BOLDNESS FOR E
+int_bold_E<-(int_bold_con_E_num + int_bold_c_num)
+int_bold_E_num<- as.numeric(unlist(int_bold_E))
+mean_int_bold_E<-mean(int_bold_E_num)
+sd_int_bold_E<-sd(int_bold_E_num)
+
+#BOLDNESS FOR T
+int_bold_T<-(int_bold_con_num + int_bold_c_num)
+int_bold_T_num<- as.numeric(unlist(int_bold_T))
+mean_int_bold_T<-mean(int_bold_T_num)
+sd_int_bold_T<-sd(int_bold_T_num)
+
+#Boldness confidence intervals
+  #Control
+#blb_exp_c <- round(quantile(int_exp_c_num, c(0.025, 0.975))[1], 3)
+#bub_exp_c <- round(quantile(int_exp_c_num, c(0.025, 0.975))[2], 3)
+  #Experimental
+blb_bold_T <- round(quantile(int_bold_T, c(0.025, 0.975))[1], 3)
+bub_bold_T <- round(quantile(int_bold_T, c(0.025, 0.975))[2], 3)
+
+#ACTIVITY FOR UNINFECTED (INTERCEPT)
+int_act_c_num<- as.numeric(unlist(act_int))
+mean_int_act_c<-mean(int_act_c_num)
+sd_int_act_c<-sd(int_act_c_num)
+
+#ACTIVITY FOR CONTRAST (TREATMENT T)
+int_act_con_num<- as.numeric(unlist(act_T))
+mean_con_act<-mean(int_act_con_num)
+sd_con_act<-sd(int_act_con_num)
+
+#ACTIVITY FOR T
+int_act_T<-(int_act_con_num + int_act_c_num)
+int_act_T_num<- as.numeric(unlist(int_act_T))
+mean_int_act_T<-mean(int_act_T_num)
+sd_int_act_T<-sd(int_act_T_num)
+
+#Exploration confidence intervals
+  #Control
+#blb_exp_c <- round(quantile(int_exp_c_num, c(0.025, 0.975))[1], 3)
+#bub_exp_c <- round(quantile(int_exp_c_num, c(0.025, 0.975))[2], 3)
+  #Experimental
+blb_act_T <- round(quantile(int_act_T, c(0.025, 0.975))[1], 3)
+bub_act_T <- round(quantile(int_act_T, c(0.025, 0.975))[2], 3)
 
 ###################
 #EXPLORATION
 ###################
-#Extract post sd from model 2 for each traits and treatment
+#Extract post sd from model 2 for each traits and treatment T
 int_b <- as_draws_df(model2, variable = "^b", regex = TRUE)
 
 #intercept for control
@@ -805,8 +958,8 @@ mean_int_exp_c<-mean(int_exp_c_num)
 sd_int_exp_c<-sd(int_exp_c_num)
 
 #raw units
-raw_int_exp_c<-(int_exp_c_num*sd_int_exp_c)+mean_int_exp_c
-raw_exp_c_mean<-mean(raw_int)
+#raw_int_exp_c<-(int_exp_c_num*sd_int_exp_c)+mean_int_exp_c
+#raw_exp_c_mean<-mean(raw_int)
 
 #EXPLORATION FOR CONTRAST (TREATMENT E)
 int_exp_con_num<- as.numeric(unlist(int_exp_con))
@@ -824,24 +977,24 @@ mean_int_exp_e<-mean(int_exp_e_num)
 sd_int_exp_e<-sd(int_exp_e_num)
 
 #raw units
-raw_e<-(int_exp_e*sd_int_exp_e)+mean_int_exp_e
-raw_exp_e_mean<-mean(raw_e)
+#raw_e<-(int_exp_e*sd_int_exp_e)+mean_int_exp_e
+#raw_exp_e_mean<-mean(raw_e)
 
 #Exploration confidence intervals
   #Uninfected
-#blb_exp_c <- round(quantile(int_exp_c_num, c(0.025, 0.975))[1], 3)
-#bub_exp_c <- round(quantile(int_exp_c_num, c(0.025, 0.975))[2], 3)
+blb_exp_c <- round(quantile(int_exp_c_num, c(0.025, 0.975))[1], 3)
+bub_exp_c <- round(quantile(int_exp_c_num, c(0.025, 0.975))[2], 3)
   #Experimental
-#blb_exp_e <- round(quantile(int_exp_e, c(0.025, 0.975))[1], 3)
-#bub_exp_e <- round(quantile(int_exp_e, c(0.025, 0.975))[2], 3)
+blb_exp_e <- round(quantile(int_exp_e, c(0.025, 0.975))[1], 3)
+bub_exp_e <- round(quantile(int_exp_e, c(0.025, 0.975))[2], 3)
 
 #Exploration confidence intervals
   #Uninfected
-blb_exp_c <- round(quantile(raw_int_exp_c, c(0.025, 0.975))[1], 3)
-bub_exp_c <- round(quantile(raw_int_exp_c, c(0.025, 0.975))[2], 3)
+#blb_exp_c <- round(quantile(raw_int_exp_c, c(0.025, 0.975))[1], 3)
+#bub_exp_c <- round(quantile(raw_int_exp_c, c(0.025, 0.975))[2], 3)
   #Experimental
-blb_exp_e <- round(quantile(raw_e, c(0.025, 0.975))[1], 3)
-bub_exp_e <- round(quantile(raw_e, c(0.025, 0.975))[2], 3)
+#blb_exp_e <- round(quantile(raw_e, c(0.025, 0.975))[1], 3)
+#bub_exp_e <- round(quantile(raw_e, c(0.025, 0.975))[2], 3)
 
 ###################
 #BOLDNESS
@@ -896,7 +1049,7 @@ int_act_con_num<- as.numeric(unlist(int_act_con))
 mean_con_act<-mean(int_act_con_num)
 sd_con_act<-sd(int_act_con_num)
 
-#bacl to raw unit
+#back to raw unit
 #raw_con_act<-((int_act_con_num*sd_con_act)+mean_con_act)
 
 #ACTIVITY FOR INFECTED
@@ -917,112 +1070,122 @@ bub_act_e <- round(quantile(int_act_e, c(0.025, 0.975))[2], 3)
 pm_b<-pmcmc(int_b_c_num - int_b_e_num, twotail = TRUE) #significantly different
 pm_exp<-pmcmc(int_exp_c_num - int_exp_e_num, twotail = TRUE) #significantly different
 pm_act<-pmcmc(int_act_c_num - int_act_e_num, twotail = TRUE) #not significant
+pm_b_T<-pmcmc(int_bold_c_num - int_bold_T_num,twotail = TRUE) #significantly different
+pm_exp_T<-pmcmc(int_exp_c_num - int_exp_T_num,twotail = TRUE) #significantly different
+pm_act_T<-pmcmc(int_act_c_num - int_act_T_num,twotail = TRUE)#not significant
 
 ###################
 #Create data frame
 ###################
+dat_model<-data.frame(
+  trait=c("logboldness","logboldness","exploration","exploration","logactivity","logactivity","exploration","logboldness","logactivity"),
+  treatment=c("Uninfected","Infected","Uninfected","Infected","Uninfected","Infected","Control","Control","Control"), 
+ estimate = c(mean_int_b_c,mean_int_b_e,mean_int_exp_c,mean_int_exp_e, mean_int_act_c, mean_int_act_e, mean_int_exp_T,mean_int_bold_T,mean_int_act_T), 
+  Lower_CI = c(blb_b_c, blb_b_e, blb_exp_c, blb_exp_e, blb_act_c, blb_act_e,blb_exp_T,blb_bold_T,blb_act_T),
+Higher_CI = c(bub_b_c,bub_b_e,bub_exp_c,bub_exp_e,bub_act_c,bub_act_e,bub_exp_T,bub_bold_T,bub_act_T))
+
+all_data_T[all_data_T == 'C'] <- 'Uninfected'
+all_data_T[all_data_T == 'E'] <- 'Infected'
+all_data_T[all_data_T == 'T'] <- 'Control'
+
 #dat_model<-data.frame(
-  #trait=c("logboldness","logboldness","exploration","exploration","logactivity","logactivity"),
-  #treatment=c("Uninfected","Infected","Uninfected","Infected","Uninfected","Infected"), 
- # estimate = c(mean_int_b_c,mean_int_b_e,mean_int_exp_c,mean_int_exp_e, mean_int_act_c, mean_int_act_e), 
+ #trait=c("logboldness","logboldness","exploration","exploration","logactivity","logactivity"),
+ #treatment=c("Uninfected","Infected","Uninfected","Infected","Uninfected","Infected"), 
+  #estimate = c(mean_int_b_c,mean_int_b_e,raw_exp_c_mean,raw_exp_e_mean, mean_int_act_c, mean_int_act_e), 
   #Lower_CI = c(blb_b_c, blb_b_e, blb_exp_c, blb_exp_e, blb_act_c, blb_act_e),
-# Higher_CI = c(bub_b_c,bub_b_e,bub_exp_c,bub_exp_e,bub_act_c,bub_act_e))
+  #Higher_CI = c(bub_b_c,bub_b_e,bub_exp_c,bub_exp_e,bub_act_c,bub_act_e))
 
 #all_data[all_data == 'C'] <- 'Uninfected'
 #all_data[all_data == 'E'] <- 'Infected'
-
-dat_model<-data.frame(
-  trait=c("logboldness","logboldness","exploration","exploration","logactivity","logactivity"),
-  treatment=c("Uninfected","Infected","Uninfected","Infected","Uninfected","Infected"), 
-  estimate = c(mean_int_b_c,mean_int_b_e,raw_exp_c_mean,raw_exp_e_mean, mean_int_act_c, mean_int_act_e), 
-  Lower_CI = c(blb_b_c, blb_b_e, blb_exp_c, blb_exp_e, blb_act_c, blb_act_e),
-  Higher_CI = c(bub_b_c,bub_b_e,bub_exp_c,bub_exp_e,bub_act_c,bub_act_e))
-
-
-all_data[all_data == 'C'] <- 'Uninfected'
-all_data[all_data == 'E'] <- 'Infected'
 
 ###################
 #PLOTS
 ###################
 #plot model2      
-all_data$treatment <- factor(all_data$treatment, levels=c("Uninfected", "Infected"))
-trt <- as.factor(all_data$treatment)
+all_data_T$treatment <- factor(all_data_T$treatment, levels=c("Infected","Uninfected", "Control"))
+trt <- as.factor(all_data_T$treatment)
 
 dat1<-dat_model %>% 
   filter(trait == "logboldness")
 
 #boldness
 m1<-
-ggplot(all_data, aes(x = trt, y = z_log_boldness, group = trt, color = trt)) +
+ggplot(all_data_T, aes(x = trt, y = z_log_boldness, group = trt, color = trt)) +
 geom_violin(aes(), trim = FALSE) +
 geom_jitter(aes(colour = trt),shape=16, position=position_jitter(0.1))+
-scale_color_manual(labels = c("Uninfected", "Infected"), values = c("#472a7a", "#1f978b"))+
+scale_color_manual(labels = c("Infected","Uninfected","Control"), values = c("#472a7a", "#1f978b","#5EC656"))+
 geom_errorbar(data = dat1,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth =0.9, color = "red", inherit.aes = FALSE)+
 geom_point(data=dat1, mapping=aes(x= treatment, y= estimate), size=2, shape=21, fill = "yellow", inherit.aes = FALSE)+
 labs(x = (""), 
 y = TeX("$Shyness_{log_{2}}$")) +
 theme_classic() +
-  draw_image("./img/parasite.png", x= 1.5,y = 3, scale = 0.6)+
-  draw_image("./img/no_parasite.png", x= 0.5,y = 3, scale = 0.6)+
+  #draw_image("./img/parasite.png", x= 1.5,y = 3, scale = 0.6)+
+  #draw_image("./img/no_parasite.png", x= 0.5,y = 3, scale = 0.6)+
 theme(legend.position = "none",
  legend.title = element_blank()) +
-geom_segment(aes(x = 1, xend = 2, y = 3.85, yend = 3.85), color = "black") +
-annotate("text",  x = 1.5, y = 4, label = TeX(paste0("Contrast = -0.49, $pMCMC_{\\alpha = 0.05}$ = 0.0005***")), size =2.5)
+geom_segment(aes(x = 0.5, xend = 1.5, y = 3.25, yend = 3.25), color = "black") +
+annotate("text",  x = 1, y = 3.5, label = TeX(paste0("$Contrast_{U - I}$ = -0.47, $pMCMC_{\\alpha = 0.05}$ > 0.001***")), size =2.5) + 
+  geom_segment(aes(x = 2.5, xend = 3.5, y = 3.25, yend = 3.25), color = "black") + 
+annotate("text",  x = 3, y = 3.5, label = TeX(paste0("$Contrast_{U - C}$ = -1.11, $pMCMC_{\\alpha = 0.05}$ = 0.002**")), size =2.5)
 
 
 dat2<-dat_model %>% 
   filter(trait == "exploration")
-trt <- as.factor(all_data$treatment)
+trt <- as.factor(all_data_T$treatment)
 
 #exploration
-m2<-ggplot(all_data, aes(x = trt, y = exploration, group = trt, col = trt)) +
+m2<-ggplot(all_data_T, aes(x = trt, y = z_exploration, group = trt, col = trt)) +
 geom_violin(aes(), trim = FALSE) +
 geom_jitter(aes(colour = trt),shape=16, position=position_jitter(0.1)) +
-scale_color_manual(labels = c("Uninfected", "Infected"), values = c("#472a7a", "#1f978b"))+
+scale_color_manual(labels = c("Uninfected", "Infected","Control"), values = c("#472a7a", "#1f978b","#5EC656"))+
 geom_errorbar(data = dat2,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth = 0.9, color = "red", inherit.aes = FALSE)+
 geom_point(data=dat2, mapping=aes(x= treatment, y= estimate), size=2, shape=21, fill = "yellow", inherit.aes = FALSE)+
 labs(x = "Treatment", 
 y = "Exploration") +
 theme_classic() +
-  draw_image("./img/parasite.png", x= 1.5,y = 1, scale = 0.6)+
-  draw_image("./img/no_parasite.png", x= 0.5,y = 1, scale = 0.6)+
+  #draw_image("./img/parasite.png", x= 1.5,y = 1, scale = 0.6)+
+  #draw_image("./img/no_parasite.png", x= 0.5,y = 1, scale = 0.6)+
 theme(legend.position = "none",
  legend.title = element_blank()) +
-geom_segment(aes(x = 1, xend = 2, y = 1, yend = 1),color = "black") +
-annotate("text",  x = 1.5, y = 1, label = TeX(paste0("Contrast = 0.43, $pMCMC_{\\alpha = 0.05}$ = 0.0015**")), size =2.5)
+geom_segment(aes(x = 0.5, xend = 1.5, y = 3.85, yend = 3.85), color = "black") +
+annotate("text",  x = 1, y = 4.1, label = TeX(paste0("$Contrast_{U - I}$ = 0.42, $pMCMC_{\\alpha = 0.05}$ = 0.002**")), size =2.5) + 
+  geom_segment(aes(x = 2.5, xend = 3.5, y = 3.85, yend = 3.85), color = "black") + 
+annotate("text",  x = 3, y = 4.1, label = TeX(paste0("$Contrast_{U - C}$ = 1.13, $pMCMC_{\\alpha = 0.05}$ = 0.002**")), size =2.5) 
+ # geom_segment(aes(x = 2, xend = 2, y = 3.5, yend = 4.2), color = "black",linewidth = 1)
+
 
 #activity
 dat3<-dat_model %>% 
   filter(trait == "logactivity")
 
-m3<-ggplot(all_data, aes(x = trt, y = z_log_activity, group = trt, col = trt)) +
+m3<-ggplot(all_data_T, aes(x = trt, y = z_log_activity, group = trt, col = trt)) +
 geom_violin(aes(), trim = FALSE) +
 geom_jitter(aes(colour = trt), shape=16, position=position_jitter(0.1)) +
-scale_color_manual(labels = c("Uninfected", "Infected"), values = c("#472a7a", "#1f978b"))+
+scale_color_manual(labels = c("Uninfected", "Infected","Control"), values = c("#472a7a", "#1f978b","#5EC656"))+
 geom_errorbar(data = dat3,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth =0.9, color = "red", inherit.aes = FALSE)+
 geom_point(data=dat3, mapping=aes(x= treatment, y= estimate), size=2, shape=21, fill = "yellow", inherit.aes = FALSE)+
 labs(x = "", 
 y = TeX("$Activity_{log_{2}}$")) +
 theme_classic() +
-  draw_image("./img/parasite.png", x= 1.5,y = 3, scale = 0.6)+
-    draw_image("./img/no_parasite.png", x= 0.5,y = 3, scale = 0.6)+
+  #draw_image("./img/parasite.png", x= 1.5,y = 3, scale = 0.6)+
+   # draw_image("./img/no_parasite.png", x= 0.5,y = 3, scale = 0.6)+
 theme(legend.position = "none",
  legend.title = element_blank()) +
-geom_segment(aes(x = 1, xend = 2, y = 3.85, yend = 3.85), color = "black") +
-annotate("text",  x = 1.5, y = 4, label = TeX(paste0("Contrast = -0.26, $pMCMC_{\\alpha = 0.05}$ = 0.0666")), size =2.5)
+geom_segment(aes(x = 0.5, xend = 1.5, y = 3.85, yend = 3.85), color = "black") +
+annotate("text",  x = 1, y = 4.1, label = TeX(paste0("$Contrast_{U - I}$ = -0.26, $pMCMC_{\\alpha = 0.05}$ = 0.06")), size =2.5) + 
+  geom_segment(aes(x = 2.5, xend = 3.5, y = 3.85, yend = 3.85), color = "black") + 
+annotate("text",  x = 3, y = 4.1, label = TeX(paste0("$Contrast_{U - C}$ = -0.22, $pMCMC_{\\alpha = 0.05}$ = 0.381")), size =2.5)
 
  m<-plot_grid(
   m1,m2,m3,
   labels = "AUTO", ncol = 3)
-
- ggsave("./output/figures/sandra.png", plot = m3, width = 10, height = 13, units = "cm")
- act_sandra <- image_read("./output/figures/sandra.png") 
  
- ggsave("./output/figures/fig5.png", plot = m, width = 28, height = 13, units = "cm")
+ ggsave("./output/figures/fig5.png", plot = m, width = 42, height = 15, units = "cm")
 
 fig5 <- image_read("./output/figures/fig5.png") 
 fig5
+
+#so we see that control fish have significantly decrease in their shyness and exploration. Even more than experimentally infected fish. It could suggest that control fish (i.e. that stayed in the lab) were habituated to the boldness and exploration test. It didn't change their activity significantly though (like E fish). Confidence intervals are bigger but the model seemed to work well. 
 
 ```
 
