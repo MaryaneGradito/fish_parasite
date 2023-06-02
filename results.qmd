@@ -810,7 +810,7 @@ Mean shyness and exploration responses in the population were significantly diff
 #| fig-height: 5
 
 ######################
-#test for T treatment (NOT IMPORTANT FOR NOW, NEED TO WORK ON IT)
+#test for T treatment (NEED TO WORK ON IT)
 ######################
 all_data_T <- read.table("./output/all_data_p_T.csv",header=T, sep=",")
 int_w <- as_draws_df(model_T, variable = "^b", regex = TRUE)
@@ -833,8 +833,13 @@ mean_int_exp_c<-mean(int_exp_c_num)
 sd_int_exp_c<-sd(int_exp_c_num)
 
 #raw units
-raw_int_exp_c<-((int_exp_c_num*sd_int_exp_c))+mean_int_exp_c
+raw_int_exp_c<-(int_exp_c_num*sd_int_exp_c) + mean_int_exp_c
 raw_exp_c_mean<-mean(raw_int_exp_c)
+#negative values. It's the intercept
+
+#verification
+raw_int_exp_c == (int_exp_c_num*sd_int_exp_c)+mean_int_exp_c
+#TRUE
 
 #EXPLORATION FOR CONTRAST (TREATMENT T)
 int_exp_con_num<- as.numeric(unlist(exp_T))
