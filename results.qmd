@@ -757,7 +757,7 @@ We compared mean responses for each trait between the uninfected, infected and c
 #| fig-height: 5
 
 ######################
-#test for T treatment (NEED TO WORK ON IT)
+#Model T contrats + raw units
 ######################
 all_data_T <- read.table("./output/all_data_p_T.csv",header=T, sep=",")
 int_w <- as_draws_df(model_T, variable = "^b", regex = TRUE)
@@ -774,248 +774,170 @@ bold_E<-int_w[,grep("b_zlogboldness_treatmentE", colnames(int_w))]
 exp_E<-int_w[,grep("b_zexploration_treatmentE", colnames(int_w))]
 act_E<-int_w[,grep("b_zlogactivity_treatmentE", colnames(int_w))]
 
+######################
+#EXPLORATION
+######################
+
 #EXPLORATION FOR UNINFECTED (INTERCEPT). MARYANE: THIS ISN'T CORRECT BECAUSE YOU'RE DOING THIS WITH THE POSTERIOR DISTRIBUTION. YOU NEED TO USE THE SUMMARY (MEAN AND SD FOR Z FROM THE RAW DATA)
+#intercept from model
+int_exp_c_num<- as.numeric(unlist(exp_int))
 
 # First, get the mean and sd of the un-transformed raw data that was used to scale. Remember, you used "scale(exploration, center = TRUE, sd = TRUE)", so you used the SD and mean from the raw data to z-transform. See line 226 of 
 mean_exploration <- mean(all_data_T$exploration)
   sd_exploration <- sd(all_data_T$exploration)
 
 # Now, exp_int is the mean of the z-transformed variable. So, we need to use the raw data mean and sd to convert back to raw scale
-raw_int_exp_c<-(exp_int * sd_exploration) + mean_exploration
+raw_int_exp_c<-(int_exp_c_num * sd_exploration) + mean_exploration
 range(raw_int_exp_c) # Seems sensible
-
-
-# ------------- REPEAT ABOVE FOR MEANS IN OTHER TREATMENTS: You use the dame mean_exploration and sd_exploration -------#
+raw_exp_c<- as.numeric(unlist(raw_int_exp_c))
+raw_exp_c_mean<-mean(raw_exp_c)
 
 #EXPLORATION FOR CONTRAST (TREATMENT T)
-int_exp_con_num<- as.numeric(unlist(exp_T))
-mean_con_exp<-mean(int_exp_con_num)
-sd_con_exp<-sd(int_exp_con_num)
+int_exp_con_T_num<- as.numeric(unlist(exp_T))
 
 #EXPLORATION FOR CONTRAST (TREATMENT E)
 int_exp_con_E_num<- as.numeric(unlist(exp_E))
-mean_con_exp_E<-mean(int_exp_con_E_num)
-sd_con_exp_E<-sd(int_exp_con_E_num)
 
 #EXPLORATION FOR E
 int_exp_E<-(int_exp_con_E_num + int_exp_c_num)
 int_exp_E_num<- as.numeric(unlist(int_exp_E))
-mean_int_exp_E<-mean(int_exp_E_num)
-sd_int_exp_E<-sd(int_exp_E_num)
 
-#raw units
-#raw_int_exp_E<-(int_exp_E_num*sd_int_exp_E)+mean_int_exp_E
-#raw_exp_E_mean<-mean(raw_int_exp_E)
+#raw units for exploration E
+raw_int_exp_E<-(int_exp_E_num * sd_exploration) + mean_exploration
+range(raw_int_exp_E)
+raw_exp_E<- as.numeric(unlist(raw_int_exp_E))
+raw_exp_E_mean<-mean(raw_exp_E)
 
 #EXPLORATION FOR T
 int_exp_T<-(int_exp_con_num + int_exp_c_num)
 int_exp_T_num<- as.numeric(unlist(int_exp_T))
-mean_int_exp_T<-mean(int_exp_T_num)
-sd_int_exp_T<-sd(int_exp_T_num)
 
 #raw units
-#raw_int_exp_T<-(int_exp_T_num*sd_int_exp_T)+mean_int_exp_T
-#raw_exp_T_mean<-mean(raw_int_exp_T)
+raw_int_exp_T<-(int_exp_T_num * sd_exploration) + mean_exploration
+range(raw_int_exp_T)
+raw_exp_T<- as.numeric(unlist(raw_int_exp_T))
+raw_exp_T_mean<-mean(raw_exp_T)
 
-#pmcmc test
+#pmcmc test 
 pm_exp_T<-pmcmc(int_exp_c_num - int_exp_T_num,twotail = TRUE) #significantly different
 
 #Exploration confidence intervals
   #Control
-blb_exp_E <- round(quantile(int_exp_E_num, c(0.025, 0.975))[1], 3)
-bub_exp_E <- round(quantile(int_exp_E_num, c(0.025, 0.975))[2], 3)
-  #Experimental
-blb_exp_T <- round(quantile(int_exp_T, c(0.025, 0.975))[1], 3)
-bub_exp_T <- round(quantile(int_exp_T, c(0.025, 0.975))[2], 3)
+blb_exp_T <- round(quantile(raw_exp_T, c(0.025, 0.975))[1], 3)
+bub_exp_T <- round(quantile(raw_exp_T, c(0.025, 0.975))[2], 3)
+  #infected
+blb_exp_E <- round(quantile(raw_exp_E, c(0.025, 0.975))[1], 3)
+bub_exp_E <- round(quantile(raw_exp_E, c(0.025, 0.975))[2], 3)
+  #uninfected
+blb_exp_c <- round(quantile(raw_exp_c, c(0.025, 0.975))[1], 3)
+bub_exp_c <- round(quantile(raw_exp_c, c(0.025, 0.975))[2], 3)
+
+######################
+#BOLDNESS
+######################
 
 #BOLDNESS FOR UNINFECTED (INTERCEPT)
 int_bold_c_num<- as.numeric(unlist(bold_int))
-mean_int_bold_c<-mean(int_bold_c_num)
-sd_int_bold_c<-sd(int_bold_c_num)
+
+#get raw mean and sd from raw data
+mean_boldness <- mean(all_data_T$log_boldness)
+  sd_boldness <- sd(all_data_T$log_boldness)
+  
+#raw units
+raw_int_b_c<-(int_bold_c_num * sd_boldness) + mean_boldness
+range(raw_int_b_c)
+raw_bold_c<- as.numeric(unlist(raw_int_b_c))
+raw_bold_c_mean<-mean(raw_bold_c)
 
 #BOLDNESS FOR CONTRAST (TREATMENT T)
-int_bold_con_num<- as.numeric(unlist(bold_T))
-mean_con_bold<-mean(int_bold_con_num)
-sd_con_bold<-sd(int_bold_con_num)
+int_bold_con_T_num<- as.numeric(unlist(bold_T))
 
 #EXPLORATION FOR CONTRAST (TREATMENT E)
 int_bold_con_E_num<- as.numeric(unlist(bold_E))
-mean_con_bold_E<-mean(int_bold_con_E_num)
-sd_con_bold_E<-sd(int_bold_con_E_num)
 
 #BOLDNESS FOR E
 int_bold_E<-(int_bold_con_E_num + int_bold_c_num)
 int_bold_E_num<- as.numeric(unlist(int_bold_E))
-mean_int_bold_E<-mean(int_bold_E_num)
-sd_int_bold_E<-sd(int_bold_E_num)
+
+#raw units
+raw_int_b_E<-(int_bold_E_num * sd_boldness) + mean_boldness
+range(raw_int_b_E)
+raw_bold_E<- as.numeric(unlist(raw_int_b_E))
+raw_bold_E_mean<-mean(raw_bold_E)
 
 #BOLDNESS FOR T
-int_bold_T<-(int_bold_con_num + int_bold_c_num)
+int_bold_T<-(int_bold_con_T_num + int_bold_c_num)
 int_bold_T_num<- as.numeric(unlist(int_bold_T))
-mean_int_bold_T<-mean(int_bold_T_num)
-sd_int_bold_T<-sd(int_bold_T_num)
+
+#raw units
+raw_int_b_T<-(int_bold_T_num * sd_boldness) + mean_boldness
+range(raw_int_b_T)
+raw_bold_T<- as.numeric(unlist(raw_int_b_T))
+raw_bold_T_mean<-mean(raw_bold_T)
 
 #Boldness confidence intervals
   #Control
-#blb_exp_c <- round(quantile(int_exp_c_num, c(0.025, 0.975))[1], 3)
-#bub_exp_c <- round(quantile(int_exp_c_num, c(0.025, 0.975))[2], 3)
-  #Experimental
-blb_bold_T <- round(quantile(int_bold_T, c(0.025, 0.975))[1], 3)
-bub_bold_T <- round(quantile(int_bold_T, c(0.025, 0.975))[2], 3)
+blb_bold_T <- round(quantile(raw_bold_T, c(0.025, 0.975))[1], 3)
+bub_bold_T <- round(quantile(raw_bold_T, c(0.025, 0.975))[2], 3)
+  #infected
+blb_bold_E <- round(quantile(raw_bold_E, c(0.025, 0.975))[1], 3)
+bub_bold_E <- round(quantile(raw_bold_E, c(0.025, 0.975))[2], 3)
+  #uninfected
+blb_bold_c <- round(quantile(raw_bold_c, c(0.025, 0.975))[1], 3)
+bub_bold_c <- round(quantile(raw_bold_c, c(0.025, 0.975))[2], 3)
 
+######################
+#ACTIVITY
+######################
 #ACTIVITY FOR UNINFECTED (INTERCEPT)
 int_act_c_num<- as.numeric(unlist(act_int))
-mean_int_act_c<-mean(int_act_c_num)
-sd_int_act_c<-sd(int_act_c_num)
+
+#mean and sd from raw data
+mean_activity <- mean(all_data_T$log_activity)
+  sd_activity <- sd(all_data_T$log_activity)
+
+#raw units
+raw_int_act_c<-(int_act_c_num * sd_activity) + mean_activity
+range(raw_int_act_c)
+raw_act_c<- as.numeric(unlist(raw_int_act_c))
+raw_act_c_mean<-mean(raw_act_c)
 
 #ACTIVITY FOR CONTRAST (TREATMENT T)
-int_act_con_num<- as.numeric(unlist(act_T))
-mean_con_act<-mean(int_act_con_num)
-sd_con_act<-sd(int_act_con_num)
+int_act_con_T_num<- as.numeric(unlist(act_T))
 
 #ACTIVITY FOR T
-int_act_T<-(int_act_con_num + int_act_c_num)
+int_act_T<-(int_act_con_T_num + int_act_c_num)
 int_act_T_num<- as.numeric(unlist(int_act_T))
-mean_int_act_T<-mean(int_act_T_num)
-sd_int_act_T<-sd(int_act_T_num)
+
+#raw units
+raw_int_act_T<-(int_act_T_num * sd_activity) + mean_activity
+range(raw_int_act_T)
+raw_act_T<- as.numeric(unlist(raw_int_act_T))
+raw_act_T_mean<-mean(raw_act_T)
+
+#ACTIVITY FOR CONTRAST (TREATMENT E)
+int_act_con_E_num<- as.numeric(unlist(act_E))
+
+#ACTIVITY FOR E
+int_act_E<-(int_act_con_E_num + int_act_c_num)
+int_act_E_num<- as.numeric(unlist(int_act_E))
+
+#raw units
+raw_int_act_E<-(int_act_E_num * sd_activity) + mean_activity
+range(raw_int_act_E)
+raw_act_E<- as.numeric(unlist(raw_int_act_E))
+raw_act_E_mean<-mean(raw_act_E)
 
 #Exploration confidence intervals
   #Control
-#blb_exp_c <- round(quantile(int_exp_c_num, c(0.025, 0.975))[1], 3)
-#bub_exp_c <- round(quantile(int_exp_c_num, c(0.025, 0.975))[2], 3)
-  #Experimental
-blb_act_T <- round(quantile(int_act_T, c(0.025, 0.975))[1], 3)
-bub_act_T <- round(quantile(int_act_T, c(0.025, 0.975))[2], 3)
-
-###################
-#EXPLORATION
-###################
-#Extract post sd from model 2 for each traits and treatment T
-int_b <- as_draws_df(model2, variable = "^b", regex = TRUE)
-
-#intercept for control
-int_b_c<-int_b[,grep("zlogboldness_Intercept", colnames(int_b))]
-int_exp_c<-int_b[,grep("zexploration_Intercept", colnames(int_b))]
-int_act_c<-int_b[,grep("zlogactivity_Intercept", colnames(int_b))]
-
-#contrast between intercept C and E
-int_b_con<-int_b[,grep("b_zlogboldness_treatmentE", colnames(int_b))]
-int_exp_con<-int_b[,grep("b_zexploration_treatmentE", colnames(int_b))]
-int_act_con<-int_b[,grep("b_zlogactivity_treatmentE", colnames(int_b))]
-
-#EXPLORATION FOR UNINFECTED (INTERCEPT C)
-int_exp_c_num<- as.numeric(unlist(int_exp_c))
-mean_int_exp_c<-mean(int_exp_c_num)
-sd_int_exp_c<-sd(int_exp_c_num)
-
-#raw units
-#raw_int_exp_c<-(int_exp_c_num*sd_int_exp_c)+mean_int_exp_c
-#raw_exp_c_mean<-mean(raw_int)
-
-#EXPLORATION FOR CONTRAST (TREATMENT E)
-int_exp_con_num<- as.numeric(unlist(int_exp_con))
-mean_con_exp<-mean(int_exp_con_num)
-sd_con_exp<-sd(int_exp_con_num)
-
-#raw units
-#raw_contrast<-(int_exp_con_num*sd_con_exp)+mean_con_exp
-#raw_con_mean<-mean(raw_contrast)
-
-#EXPLORATION FOR INFECTED
-int_exp_e<-(int_exp_con_num + int_exp_c_num)
-int_exp_e_num<- as.numeric(unlist(int_exp_e))
-mean_int_exp_e<-mean(int_exp_e_num)
-sd_int_exp_e<-sd(int_exp_e_num)
-
-#raw units
-#raw_e<-(int_exp_e*sd_int_exp_e)+mean_int_exp_e
-#raw_exp_e_mean<-mean(raw_e)
-
-#Exploration confidence intervals
-  #Uninfected
-blb_exp_c <- round(quantile(int_exp_c_num, c(0.025, 0.975))[1], 3)
-bub_exp_c <- round(quantile(int_exp_c_num, c(0.025, 0.975))[2], 3)
-  #Experimental
-blb_exp_e <- round(quantile(int_exp_e, c(0.025, 0.975))[1], 3)
-bub_exp_e <- round(quantile(int_exp_e, c(0.025, 0.975))[2], 3)
-
-#Exploration confidence intervals
-  #Uninfected
-#blb_exp_c <- round(quantile(raw_int_exp_c, c(0.025, 0.975))[1], 3)
-#bub_exp_c <- round(quantile(raw_int_exp_c, c(0.025, 0.975))[2], 3)
-  #Experimental
-#blb_exp_e <- round(quantile(raw_e, c(0.025, 0.975))[1], 3)
-#bub_exp_e <- round(quantile(raw_e, c(0.025, 0.975))[2], 3)
-
-###################
-#BOLDNESS
-###################
-#BOLDNESS FOR UNINFECTED (INTERCEPT C)
-int_b_c_num<- as.numeric(unlist(int_b_c))
-mean_int_b_c<-mean(int_b_c_num)
-sd_int_b_c<-sd(int_b_c_num)
-
-#back to raw unit
-#raw_b_c<-((int_b_c_num*sd_int_b_c)+mean_int_b_c)
-#mean(exp(raw_b_c))
-
-#BOLDNESS FOR CONTRAST (TREATMENT_E)
-int_b_con_num<- as.numeric(unlist(int_b_con))
-mean_con_b<-mean(int_b_con_num)
-sd_con_b<-sd(int_b_con_num)
-
-#back to raw unit
-#raw_con_b<-((int_b_con_num*sd_con_b)+mean_con_b)
-#mean(raw_con_b)
-
-#BOLDNESS FOR INFECTED
-int_b_e<-(int_b_c_num + int_b_con_num)
-int_b_e_num<- as.numeric(unlist(int_b_e))
-mean_int_b_e<-mean(int_b_e_num)
-sd_int_b_e<-sd(int_b_e_num)
-
-#95% IC
-#Boldness
-  #Uninfected
-blb_b_c <- round(quantile(int_b_c_num, c(0.025, 0.975))[1], 3)
-bub_b_c <- round(quantile(int_b_c_num, c(0.025, 0.975))[2], 3)
-  #Experimental
-blb_b_e<- round(quantile(int_b_e, c(0.025, 0.975))[1], 3)
-bub_b_e<- round(quantile(int_b_e, c(0.025, 0.975))[2], 3)
-
-###################
-#ACTIVITY
-###################
-#ACTIVITY FOR UNINFECTED (INTERCEPT C)
-int_act_c_num<- as.numeric(unlist(int_act_c))
-mean_int_act_c<-mean(int_act_c_num)
-sd_int_act_c<-sd(int_act_c_num)
-
-#back to raw unit
-#raw_act_c<-((int_act_c_num*sd_int_act_c)+mean_int_act_c)
-#mean(exp(raw_act_c))
-
-#ACTIVITY FOR CONTRAST (TREATMENT_E)
-int_act_con_num<- as.numeric(unlist(int_act_con))
-mean_con_act<-mean(int_act_con_num)
-sd_con_act<-sd(int_act_con_num)
-
-#back to raw unit
-#raw_con_act<-((int_act_con_num*sd_con_act)+mean_con_act)
-
-#ACTIVITY FOR INFECTED
-#subtract intercept for C - contrast to get intercept for E
-int_act_e<-(int_act_con_num + int_act_c_num)
-int_act_e_num<- as.numeric(unlist(int_act_e))
-mean_int_act_e<-mean(int_act_e_num)
-
-#Activity
-  #Uninfected
-blb_act_c <- round(quantile(int_act_c_num, c(0.025, 0.975))[1], 3)
-bub_act_c <- round(quantile(int_act_c_num, c(0.025, 0.975))[2], 3)
-  #Experimental
-blb_act_e <- round(quantile(int_act_e, c(0.025, 0.975))[1], 3)
-bub_act_e <- round(quantile(int_act_e, c(0.025, 0.975))[2], 3)
+blb_act_T <- round(quantile(raw_act_T, c(0.025, 0.975))[1], 3)
+bub_act_T <- round(quantile(raw_act_T, c(0.025, 0.975))[2], 3)
+  #infected
+blb_act_E <- round(quantile(raw_act_E, c(0.025, 0.975))[1], 3)
+bub_act_E <- round(quantile(raw_act_E, c(0.025, 0.975))[2], 3)
+  #uninfected
+blb_act_c <- round(quantile(raw_act_c, c(0.025, 0.975))[1], 3)
+bub_act_c <- round(quantile(raw_act_c, c(0.025, 0.975))[2], 3)
 
 #is E and C significantly different for each trait?
 pm_b<-pmcmc(int_b_c_num - int_b_e_num, twotail = TRUE) #significantly different
@@ -1031,24 +953,13 @@ pm_act_T<-pmcmc(int_act_c_num - int_act_T_num,twotail = TRUE)#not significant
 dat_model<-data.frame(
   trait=c("logboldness","logboldness","exploration","exploration","logactivity","logactivity","exploration","logboldness","logactivity"),
   treatment=c("Uninfected","Infected","Uninfected","Infected","Uninfected","Infected","Control","Control","Control"), 
- estimate = c(mean_int_b_c,mean_int_b_e,mean_int_exp_c,mean_int_exp_e, mean_int_act_c, mean_int_act_e, mean_int_exp_T,mean_int_bold_T,mean_int_act_T), 
-  Lower_CI = c(blb_b_c, blb_b_e, blb_exp_c, blb_exp_e, blb_act_c, blb_act_e,blb_exp_T,blb_bold_T,blb_act_T),
-Higher_CI = c(bub_b_c,bub_b_e,bub_exp_c,bub_exp_e,bub_act_c,bub_act_e,bub_exp_T,bub_bold_T,bub_act_T))
+ estimate = c(raw_bold_c_mean,raw_bold_E_mean,raw_exp_c_mean,raw_exp_E_mean, raw_act_c_mean, raw_act_E_mean, raw_exp_T_mean,raw_bold_T_mean,raw_act_T_mean), 
+  Lower_CI = c(blb_bold_c, blb_bold_E, blb_exp_c, blb_exp_E, blb_act_c, blb_act_E,blb_exp_T,blb_bold_T,blb_act_T),
+Higher_CI = c(bub_bold_c,bub_bold_E,bub_exp_c,bub_exp_E,bub_act_c,bub_act_E,bub_exp_T,bub_bold_T,bub_act_T))
 
 all_data_T[all_data_T == 'C'] <- 'Uninfected'
 all_data_T[all_data_T == 'E'] <- 'Infected'
 all_data_T[all_data_T == 'T'] <- 'Control'
-
-#dataframe for raw data
-#dat_model<-data.frame(
- #trait=c("logboldness","logboldness","exploration","exploration","logactivity","logactivity"),
- #treatment=c("Uninfected","Infected","Uninfected","Infected","Uninfected","Infected"), 
-  #estimate = c(mean_int_b_c,mean_int_b_e,raw_exp_c_mean,raw_exp_e_mean, mean_int_act_c, mean_int_act_e), 
-  #Lower_CI = c(blb_b_c, blb_b_e, blb_exp_c, blb_exp_e, blb_act_c, blb_act_e),
-  #Higher_CI = c(bub_b_c,bub_b_e,bub_exp_c,bub_exp_e,bub_act_c,bub_act_e))
-
-#all_data[all_data == 'C'] <- 'Uninfected'
-#all_data[all_data == 'E'] <- 'Infected'
 
 ###################
 #PLOTS
@@ -1062,21 +973,26 @@ dat1<-dat_model %>%
 
 #boldness
 m1<-
-ggplot(all_data_T, aes(x = trt, y = z_log_boldness, group = trt, color = trt)) +
+ggplot(all_data_T, aes(x = trt, y = log_boldness, group = trt, color = trt)) +
 geom_violin(aes(), trim = FALSE) +
 geom_jitter(aes(colour = trt),shape=16, position=position_jitter(0.1))+
-scale_color_manual(labels = c("Infected","Uninfected","Control"), values = c("#472a7a", "#1f978b","#5EC656"))+
-geom_errorbar(data = dat1,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth =0.9, color = "red", inherit.aes = FALSE)+
-geom_point(data=dat1, mapping=aes(x= treatment, y= estimate), size=2, shape=21, fill = "yellow", inherit.aes = FALSE)+
+scale_color_manual(labels = c("Infected","Uninfected","Control"), values = c("#9A6FA5", "#6FA5A4","#FAFA8B"))+
+geom_errorbar(data = dat1,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth =0.9, color = "black", inherit.aes = FALSE)+
+geom_point(data=dat1, mapping=aes(x= treatment, y= estimate), size=2, shape=21, fill = "grey", inherit.aes = FALSE)+
 labs(x = (""), 
 y = TeX("$Shyness_{log_{2}}$")) +
 theme_classic() +
-  #draw_image("./img/parasite.png", x= 1.5,y = 3, scale = 0.6)+
-  #draw_image("./img/no_parasite.png", x= 0.5,y = 3, scale = 0.6)+
+  coord_cartesian(ylim = c (-4,5), xlim = c (1, 3))+
+  draw_image("./img/parasite.png", x= 0.5,y = 4, scale = 0.9)+
+  draw_image("./img/no_parasite.png", x= 1.5,y = 4, scale = 0.9)+
+   draw_image("./img/no_parasite.png", x= 2.5,y = 4, scale = 0.9)+
+   draw_image("./img/cage.png", x= 1,y = 4, scale = 0.9)+
+   draw_image("./img/fleche_gauche.png", x= 1,y = 3.5, scale = 0.6)+
+  draw_image("./img/fleche_droite.png", x= 2,y = 3.5, scale = 0.6)+
 theme(legend.position = "none",
  legend.title = element_blank()) +
 geom_segment(aes(x = 0.5, xend = 1.5, y = 3.25, yend = 3.25), color = "black") +
-annotate("text",  x = 1, y = 3.5, label = TeX(paste0("$Contrast_{U - I}$ = -0.47, $pMCMC_{\\alpha = 0.05}$ > 0.001***")), size =2.5) +
+annotate("text",  x = 1, y = 3.5, label = TeX(paste0("$Contrast_{U - I}$ = -0.47, $pMCMC_{\\alpha = 0.05}$ < 0.001***")), size =2.5) +
   geom_segment(aes(x = 2.5, xend = 3.5, y = 3.25, yend = 3.25), color = "black") +
 annotate("text",  x = 3, y = 3.5, label = TeX(paste0("$Contrast_{U - C}$ = -1.11, $pMCMC_{\\alpha = 0.05}$ = 0.002**")), size =2.5)
 
@@ -1086,24 +1002,22 @@ dat2<-dat_model %>%
 trt <- as.factor(all_data_T$treatment)
 
 #exploration
-m2<-ggplot(all_data_T, aes(x = trt, y = z_exploration, group = trt, col = trt)) +
+m2<-ggplot(all_data_T, aes(x = trt, y = exploration, group = trt, col = trt)) +
 geom_violin(aes(), trim = FALSE) +
-geom_jitter(aes(colour = trt),shape=16, position=position_jitter(0.1)) +
-scale_color_manual(labels = c("Infected","Uninfected","Control"), values = c("#472a7a", "#1f978b","#5EC656"))+
-geom_errorbar(data = dat2,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth = 0.9, color = "red", inherit.aes = FALSE)+
-geom_point(data=dat2, mapping=aes(x= treatment, y= estimate), size=2, shape=21, fill = "yellow", inherit.aes = FALSE)+
-labs(x = "Treatment", 
-y = "Exploration") +
+geom_jitter(aes(colour = trt),shape=16, position=position_jitter(0.1)) +  scale_color_manual(labels = c("Infected","Uninfected","Control"), values = c("#9A6FA5", "#6FA5A4","#FAFA8B"))+
+geom_errorbar(data = dat2,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth = 0.9, color = "black", inherit.aes = FALSE)+
+geom_point(data=dat2, mapping=aes(x= treatment, y= estimate), size=2, shape=21, fill = "grey", inherit.aes = FALSE)+
+labs(x = "", 
+y = "Exploration (%)") +
 theme_classic() +
   #draw_image("./img/parasite.png", x= 1.5,y = 1, scale = 0.6)+
   #draw_image("./img/no_parasite.png", x= 0.5,y = 1, scale = 0.6)+
 theme(legend.position = "none",
- legend.title = element_blank()) +
-geom_segment(aes(x = 0.5, xend = 1.5, y = 3.85, yend = 3.85), color = "black") +
-annotate("text",  x = 1, y = 4.1, label = TeX(paste0("$Contrast_{U - I}$ = 0.42, $pMCMC_{\\alpha = 0.05}$ = 0.002**")), size =2.5) + 
-  geom_segment(aes(x = 2.5, xend = 3.5, y = 3.85, yend = 3.85), color = "black") + 
-annotate("text",  x = 3, y = 4.1, label = TeX(paste0("$Contrast_{U - C}$ = 1.13, $pMCMC_{\\alpha = 0.05}$ = 0.002**")), size =2.5) 
- # geom_segment(aes(x = 2, xend = 2, y = 3.5, yend = 4.2), color = "black",linewidth = 1)
+ legend.title = element_blank())+
+geom_segment(aes(x = 0.5, xend = 1.5, y = 0.58, yend = 0.58), color = "black") +
+annotate("text",  x = 1, y = 0.6, label = TeX(paste0("$Contrast_{U - I}$ = 0.42, $pMCMC_{\\alpha = 0.05}$ = 0.002**")), size =2.5) + 
+ geom_segment(aes(x = 2.5, xend = 3.5, y = 0.58, yend = 0.58), color = "black") + 
+annotate("text",  x = 3, y = 0.6, label = TeX(paste0("$Contrast_{U - C}$ = 1.13, $pMCMC_{\\alpha = 0.05}$ = 0.002**")), size =2.5) 
 
 
 #activity
@@ -1113,10 +1027,10 @@ dat3<-dat_model %>%
 m3<-ggplot(all_data_T, aes(x = trt, y = z_log_activity, group = trt, col = trt)) +
 geom_violin(aes(), trim = FALSE) +
 geom_jitter(aes(colour = trt), shape=16, position=position_jitter(0.1)) +
-scale_color_manual(labels = c("Infected","Uninfected","Control"), values = c("#472a7a", "#1f978b","#5EC656"))+
-geom_errorbar(data = dat3,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth =0.9, color = "red", inherit.aes = FALSE)+
-geom_point(data=dat3, mapping=aes(x= treatment, y= estimate), size=2, shape=21, fill = "yellow", inherit.aes = FALSE)+
-labs(x = "", 
+scale_color_manual(labels = c("Infected","Uninfected","Control"), values = c("#9A6FA5", "#6FA5A4","#FAFA8B"))+
+geom_errorbar(data = dat3,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth =0.9, color = "black", inherit.aes = FALSE)+
+geom_point(data=dat3, mapping=aes(x= treatment, y= estimate), size=2, shape=21, fill = "grey", inherit.aes = FALSE)+
+labs(x = "Treatment", 
 y = TeX("$Activity_{log_{2}}$")) +
 theme_classic() +
   #draw_image("./img/parasite.png", x= 1.5,y = 3, scale = 0.6)+
@@ -1132,7 +1046,7 @@ annotate("text",  x = 3, y = 4.1, label = TeX(paste0("$Contrast_{U - C}$ = -0.22
   m1,m2,m3,
   labels = "AUTO", ncol = 1)
 
- ggsave("./output/figures/fig2.png", plot = m, width = 13, height = 27, units = "cm")
+ ggsave("./output/figures/fig2.png", plot = m, width = 15, height = 37, units = "cm")
 
 fig2 <- image_read("./output/figures/fig2.png") 
 fig2
@@ -1457,24 +1371,40 @@ dat_C <- read.table("./output/dat_models_C.csv",header=T, sep=",")
 newdat4 <- data.frame(intercept = 1,
                         z_bc = seq(min(dat_C$z_bc), max(dat_C$z_bc), length.out = 100))
 
-  #activity for parasite load
+  #activity for body condition
     pred_bc_c_brms <- posterior_epred(model5, re_formula = NA, newdata = newdat4)
   act_bc_c <- pred_bc_c_brms[,,"zlogactivity"]
   summ_act_bc_c <- apply(act_bc_c, 2, function(x) mean(x))
   summ_actL95_bc_c <- apply(act_bc_c, 2, function(x) quantile(x, 0.025))
   summ_actU95_bc_c <- apply(act_bc_c, 2, function(x) quantile(x, 0.975))
   
+  #mean and sd for body condition
+  #mean_bc <- mean(dat_C$body_condition)
+  #sd_bc <- sd(dat_C$body_condition)
+  #raw units
+  #for body condition
+  #newdat4$z_bc<-(newdat4$z_bc * sd_bc) + mean_bc
+#range(newdat4$z_bc)
+
+#raw_act_bc_c<-(summ_act_bc_c * sd_bc) + mean_bc
+#range(raw_act_bc_c) 
+#raw_act_bc_c<-(summ_actL95_bc_c * sd_bc) + mean_bc
+#raw_act_bc_c<-(summ_actU95_bc_c * sd_bc) + mean_bc
+
+#raw_act_bc<- as.numeric(unlist(raw_act_bc_c))
+#raw_act_bc_mean<-mean(raw_act_bc)
+  
   #create dataframe
 act_bc_c_dat <- cbind(newdat4, summ_act_bc_c, summ_actL95_bc_c, summ_actU95_bc_c)
 
 #plot
    x1<- ggplot(data=dat_C)+
-  geom_point(mapping = aes(x = z_bc, y = z_log_activity), shape = 16,color = "#1f978b")+
- geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = z_bc, y = summ_act_bc_c), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#1f978b", size=1) +
-  geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = z_bc, y = summ_actL95_bc_c), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#1f978b", size=0.8)+
-  geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = z_bc, y = summ_actU95_bc_c), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#1f978b", size=0.8)+
+  geom_point(mapping = aes(x = z_bc, y = z_log_activity), shape = 16,color = "#6FA5A4")+
+ geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = z_bc, y = summ_act_bc_c), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#6FA5A4", size=1) +
+  geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = z_bc, y = summ_actL95_bc_c), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#6FA5A4", size=0.8)+
+  geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = z_bc, y = summ_actU95_bc_c), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#6FA5A4", size=0.8)+
    theme_classic() +
-    draw_image("./img/no_parasite.png", x= 2,y = 2, scale = 1)+
+    draw_image("./img/no_parasite.png", x= 2,y = 1.8, scale = 1)+
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX("Body condition (g/cm)"), y = TeX("$Activity_{log_{2}}$"), title = "")+
       annotate("text", x = 0, y = 2.4, label = TeX(paste0("$beta_{bc}$ = ", " 0.21 ", " 95%CI: 0.04, 0.39**")), size =3, color = "black") 
@@ -1504,10 +1434,10 @@ act_bc_dat <- cbind(newdat4, summ_act_bc, summ_actL95_bc, summ_actU95_bc)
 
 #plot
 x2<- ggplot(data=dat_parasite)+
-  geom_point(mapping = aes(x = z_bc, y = z_log_activity), shape = 16,color = "#472a7a")+
- geom_smooth(data = act_bc_dat, ggplot2::aes(x = z_bc, y = summ_act_bc), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#472a7a", size=1) +
-  geom_smooth(data = act_bc_dat, ggplot2::aes(x = z_bc, y = summ_actL95_bc), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#472a7a", size=0.8)+
-  geom_smooth(data = act_bc_dat, ggplot2::aes(x = z_bc, y = summ_actU95_bc), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#472a7a", size=0.8)+
+  geom_point(mapping = aes(x = z_bc, y = z_log_activity), shape = 16,color = "#9A6FA5")+
+ geom_smooth(data = act_bc_dat, ggplot2::aes(x = z_bc, y = summ_act_bc), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#9A6FA5", size=1) +
+  geom_smooth(data = act_bc_dat, ggplot2::aes(x = z_bc, y = summ_actL95_bc), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#9A6FA5", size=0.8)+
+  geom_smooth(data = act_bc_dat, ggplot2::aes(x = z_bc, y = summ_actU95_bc), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#9A6FA5", size=0.8)+
    theme_classic() +
   draw_image("./img/parasite.png", x= 0.8,y = 1.2, scale = 1)+
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
@@ -1616,14 +1546,14 @@ boldness_bs_dat <- cbind(newdat2, summ_bold_bs, summ_boldL95_bs, summ_boldU95_bs
 
   #figure 1
   n1<- ggplot(data=dat_parasite)+
-  geom_point(mapping = aes(x = z_ces, y = z_log_boldness), color = "#9E60AE")+
-  geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = z_ces, y = summ_bold_ces), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#9E60AE", size=1) +
-  geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = z_ces, y = summ_boldL95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#9E60AE", size=0.8)+
-  geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = z_ces, y = summ_boldU95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#9E60AE", size=0.8) + 
-    geom_point(mapping = aes(x = z_bs, y = z_log_boldness), color = "#3CBBAE")+
-  geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = z_bs, y = summ_bold_bs), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#3CBBAE", size=1) +
-  geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = z_bs, y = summ_boldL95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#3CBBAE", size=0.8)+
-  geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = z_bs, y = summ_boldU95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#3CBBAE", size=0.8)+
+  geom_point(mapping = aes(x = z_ces, y = z_log_boldness), color = "#9A6FA5")+
+  geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = z_ces, y = summ_bold_ces), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#9A6FA5", size=1) +
+  geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = z_ces, y = summ_boldL95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#9A6FA5", size=0.8)+
+  geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = z_ces, y = summ_boldU95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#9A6FA5", size=0.8) + 
+    geom_point(mapping = aes(x = z_bs, y = z_log_boldness), color = "#6FA5A4")+
+  geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = z_bs, y = summ_bold_bs), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#6FA5A4", size=1) +
+  geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = z_bs, y = summ_boldL95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#6FA5A4", size=0.8)+
+  geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = z_bs, y = summ_boldU95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#6FA5A4", size=0.8)+
     #geom_point(mapping = aes(x = z_pl, y = log_boldness),shape = 21, color = "#A2A2A2") +
   # geom_smooth(data = bold_pl_dat, ggplot2::aes(x = z_pl, y = summ_bold_pl), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#A2A2A2", size=1) +
  # geom_smooth(data = bold_pl_dat, ggplot2::aes(x = z_pl, y = summ_boldL95_pl), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#A2A2A2", size=0.8)+
@@ -1671,14 +1601,14 @@ exp_bs_dat <- cbind(newdat2, summ_exp_bs, summ_expL95_bs, summ_expU95_bs)
   
 #figure 2
 n2<-ggplot(data=dat_parasite)+
-  geom_point(mapping = aes(x = z_ces, y = z_exploration), color = "#9E60AE")+
- geom_smooth(data = exp_ces_dat, ggplot2::aes(x = z_ces, y = summ_exp_ces), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#9E60AE", size=1) +
-  geom_smooth(data = exp_ces_dat, ggplot2::aes(x = z_ces, y = summ_expL95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#9E60AE", size=0.8)+
-  geom_smooth(data = exp_ces_dat, ggplot2::aes(x = z_ces, y = summ_expU95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#9E60AE", size=0.8)+
-  geom_point(mapping = aes(x = z_bs, y = z_exploration), color = "#3CBBAE") +
-   geom_smooth(data = exp_bs_dat, ggplot2::aes(x = z_bs, y = summ_exp_bs), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#3CBBAE", size=1) +
-  geom_smooth(data = exp_bs_dat, ggplot2::aes(x = z_bs, y = summ_expL95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#3CBBAE", size=0.8)+
-  geom_smooth(data = exp_bs_dat, ggplot2::aes(x = z_bs, y = summ_expU95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#3CBBAE", size=0.8)+
+  geom_point(mapping = aes(x = z_ces, y = z_exploration), color = "#9A6FA5")+
+ geom_smooth(data = exp_ces_dat, ggplot2::aes(x = z_ces, y = summ_exp_ces), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#9A6FA5", size=1) +
+  geom_smooth(data = exp_ces_dat, ggplot2::aes(x = z_ces, y = summ_expL95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#9A6FA5", size=0.8)+
+  geom_smooth(data = exp_ces_dat, ggplot2::aes(x = z_ces, y = summ_expU95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#9A6FA5", size=0.8)+
+  geom_point(mapping = aes(x = z_bs, y = z_exploration), color = "#6FA5A4") +
+   geom_smooth(data = exp_bs_dat, ggplot2::aes(x = z_bs, y = summ_exp_bs), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#6FA5A4", size=1) +
+  geom_smooth(data = exp_bs_dat, ggplot2::aes(x = z_bs, y = summ_expL95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#6FA5A4", size=0.8)+
+  geom_smooth(data = exp_bs_dat, ggplot2::aes(x = z_bs, y = summ_expU95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#6FA5A4", size=0.8)+
     # geom_point(mapping = aes(x = z_pl, y = exploration),shape = 21, color = "#A2A2A2") +
    #geom_smooth(data = exp_pl_dat, ggplot2::aes(x = z_pl, y = summ_exp_pl), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#A2A2A2", size=1) +
   #geom_smooth(data = exp_pl_dat, ggplot2::aes(x = z_pl, y = summ_expL95_pl), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#A2A2A2", size=0.8)+
@@ -1726,14 +1656,14 @@ act_bs_dat <- cbind(newdat2, summ_act_bs, summ_actL95_bs, summ_actU95_bs)
 
   #figure 3
 n3<-ggplot(data=dat_parasite)+
-geom_point(mapping = aes(x = z_ces, y = z_log_activity),color = "#9E60AE")+
- geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_ces, y = summ_act_ces), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#9E60AE", size=1) +
-  geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_ces, y = summ_actL95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#9E60AE", size=0.8)+
-  geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_ces, y = summ_actU95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#9E60AE", size=0.8)+
-  geom_point(mapping = aes(x = z_bs, y = z_log_activity), color = "#3CBBAE") +
-   geom_smooth(data = act_bs_dat, ggplot2::aes(x = z_bs, y = summ_act_bs), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#3CBBAE", size=1) +
-  geom_smooth(data = act_bs_dat, ggplot2::aes(x = z_bs, y = summ_actL95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#3CBBAE", size=0.8)+
-  geom_smooth(data = act_bs_dat, ggplot2::aes(x = z_bs, y = summ_actU95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#3CBBAE", size=0.8)+
+geom_point(mapping = aes(x = z_ces, y = z_log_activity),color = "#9A6FA5")+
+ geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_ces, y = summ_act_ces), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#9A6FA5", size=1) +
+  geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_ces, y = summ_actL95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#9A6FA5", size=0.8)+
+  geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_ces, y = summ_actU95_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#9A6FA5", size=0.8)+
+  geom_point(mapping = aes(x = z_bs, y = z_log_activity), color = "#6FA5A4") +
+   geom_smooth(data = act_bs_dat, ggplot2::aes(x = z_bs, y = summ_act_bs), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#6FA5A4", size=1) +
+  geom_smooth(data = act_bs_dat, ggplot2::aes(x = z_bs, y = summ_actL95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#6FA5A4", size=0.8)+
+  geom_smooth(data = act_bs_dat, ggplot2::aes(x = z_bs, y = summ_actU95_bs), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#6FA5A4", size=0.8)+
    theme_classic() +
    #geom_point(mapping = aes(x = z_pl, y = log_activity),shape = 21, color = "#A2A2A2") +
    #geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_pl, y = summ_act_pl), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#A2A2A2", size=1) +
