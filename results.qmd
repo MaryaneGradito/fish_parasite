@@ -668,20 +668,20 @@ bub_act_con <- round(quantile(mean_con_act, c(0.025, 0.975))[2], 3)
 int_b_con_num_T<- as.numeric(unlist(int_b_con_T))
 mean_con_b_T<-mean(int_b_con_num_T)
 
-blb_b_con_T <- round(quantile(int_b_con_num, c(0.025, 0.975))[1], 3)
-bub_b_con_T <- round(quantile(int_b_con_num, c(0.025, 0.975))[2], 3)
+blb_b_con_T <- round(quantile(int_b_con_num_T, c(0.025, 0.975))[1], 3)
+bub_b_con_T <- round(quantile(int_b_con_num_T, c(0.025, 0.975))[2], 3)
 
 int_exp_con_num_T<- as.numeric(unlist(int_exp_con_T))
 mean_con_exp_T<-mean(int_exp_con_num_T)
 
-blb_exp_con_T <- round(quantile(mean_con_exp_T, c(0.025, 0.975))[1], 3)
-bub_exp_con_T <- round(quantile(mean_con_exp_T, c(0.025, 0.975))[2], 3)
+blb_exp_con_T <- round(quantile(int_exp_con_num_T, c(0.025, 0.975))[1], 3)
+bub_exp_con_T <- round(quantile(int_exp_con_num_T, c(0.025, 0.975))[2], 3)
 
 int_act_con_num_T<- as.numeric(unlist(int_act_con_T))
 mean_con_act_T<-mean(int_act_con_num_T)
 
-blb_act_con_T <- round(quantile(mean_con_act_T, c(0.025, 0.975))[1], 3)
-bub_act_con_T <- round(quantile(mean_con_act_T, c(0.025, 0.975))[2], 3)
+blb_act_con_T <- round(quantile(int_act_con_num_T, c(0.025, 0.975))[1], 3)
+bub_act_con_T <- round(quantile(int_act_con_num_T, c(0.025, 0.975))[2], 3)
 
 
 #subtract intercept for C - contrast E to get intercept for E
