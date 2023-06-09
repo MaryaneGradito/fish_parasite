@@ -524,7 +524,7 @@ With a threshold of 10%, only activity was repeatable across trials regardless o
 We found evidence of behavioural syndromes between some traits depending on the infection status (@fig-fig2). Activity and shyness were negatively and significantly correlated in the uninfected state (cor = `r b_act_C_mean`,95% CI = `r blb_bul_b_act_C`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_b_act_C`), but not when fish were experimentally infected (cor = `r b_act_E_mean`,95% CI = `r blb_bul_b_act_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_b_act_E`). Activity and exploration were positively and significantly correlated in the uninfected state as well (cor = `r act_exp_C_mean`,95% CI = `r blb_bul_act_exp_C`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_act_exp_C`), but not after the experimental infection (cor = `r act_exp_E_mean`,95% CI = `r blb_bul_act_exp_E`, $pMCMC_{\alpha = 0.05}$ = `r pmcmc_act_exp_E`). Shyness and exploration were not significantly correlated in both treatment (cor = `r mean(bsyn_b_exp)`,95% CI = `r q_b_exp`). Correlations were not significantly different between the uninfected and experimentally infected status for these syndromes (Shyness-Activity: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_b_act`; Shyness-Exploration: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_b_exp`; Activity-Exploration: $pMCMC_{\alpha = 0.05}$ =  `r pmcmc_act_exp`).
 
 ```{r}
-#| label: difference between uninfected and infected
+#| label: diff_infected_uninfected
 #| output: false
 #| warning: false
 
@@ -743,9 +743,6 @@ bub_act_c <- round(quantile(int_act_c_num, c(0.025, 0.975))[2], 3)
   #Experimental
 blb_act_e <- round(quantile(int_act_e, c(0.025, 0.975))[1], 3)
 bub_act_e <- round(quantile(int_act_e, c(0.025, 0.975))[2], 3)
-
-
-
 ```
 
 #### *Shyness and exploration responses differ between uninfected and infected state*
@@ -777,19 +774,18 @@ bold_E<-int_w[,grep("b_zlogboldness_treatmentE", colnames(int_w))]
 exp_E<-int_w[,grep("b_zexploration_treatmentE", colnames(int_w))]
 act_E<-int_w[,grep("b_zlogactivity_treatmentE", colnames(int_w))]
 
-#EXPLORATION FOR UNINFECTED (INTERCEPT)
-int_exp_c_num<- as.numeric(unlist(exp_int))
-mean_int_exp_c<-mean(int_exp_c_num)
-sd_int_exp_c<-sd(int_exp_c_num)
+#EXPLORATION FOR UNINFECTED (INTERCEPT). MARYANE: THIS ISN'T CORRECT BECAUSE YOU'RE DOING THIS WITH THE POSTERIOR DISTRIBUTION. YOU NEED TO USE THE SUMMARY (MEAN AND SD FOR Z FROM THE RAW DATA)
 
-#raw units
-#raw_int_exp_c<-(int_exp_c_num*sd_int_exp_c) + mean_int_exp_c
-#raw_exp_c_mean<-mean(raw_int_exp_c)
-#negative values. It's the intercept
+# First, get the mean and sd of the un-transformed raw data that was used to scale. Remember, you used "scale(exploration, center = TRUE, sd = TRUE)", so you used the SD and mean from the raw data to z-transform. See line 226 of 
+mean_exploration <- mean(all_data_T$exploration)
+  sd_exploration <- sd(all_data_T$exploration)
 
-#verification
-#raw_int_exp_c == (int_exp_c_num*sd_int_exp_c)+mean_int_exp_c
-#TRUE
+# Now, exp_int is the mean of the z-transformed variable. So, we need to use the raw data mean and sd to convert back to raw scale
+raw_int_exp_c<-(exp_int * sd_exploration) + mean_exploration
+range(raw_int_exp_c) # Seems sensible
+
+
+# ------------- REPEAT ABOVE FOR MEANS IN OTHER TREATMENTS: You use the dame mean_exploration and sd_exploration -------#
 
 #EXPLORATION FOR CONTRAST (TREATMENT T)
 int_exp_con_num<- as.numeric(unlist(exp_T))
