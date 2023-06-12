@@ -285,25 +285,25 @@ all_dat <- read.table("./output/all_data_p.csv",header=T, sep=",")
 all_dat$ces_tot<- (all_dat$P04_alive + all_data$P06)
 
 dat_trial1<-all_dat  %>% 
-  select(ID_fish, trial, cage, treatment, z_log_boldness, z_log_activity, z_exploration, fulton1, dens_tot, dens_bs, dens_ces, BS_pre, BS_post_tot) %>% 
+  select(ID_fish, trial, cage, treatment, log_boldness, exploration, log_activity, z_log_boldness, z_log_activity, z_exploration, fulton1, dens_tot, dens_bs, dens_ces, BS_pre, BS_post_tot) %>% 
   filter(trial == 1) %>% 
   pivot_longer("fulton1",
                values_to='body_condition') %>% arrange(ID_fish)
 
 dat_trial2<-all_dat  %>% 
-  select(ID_fish, trial, cage, treatment, z_log_boldness, z_log_activity, z_exploration,fulton2, dens_tot, dens_bs, dens_ces, BS_pre, BS_post_tot) %>%
+  select(ID_fish, trial, cage, treatment, log_boldness, exploration, log_activity, z_log_boldness, z_log_activity, z_exploration,fulton2, dens_tot, dens_bs, dens_ces, BS_pre, BS_post_tot) %>%
   filter(trial == 2) %>% 
   pivot_longer("fulton2",
                values_to='body_condition') %>% arrange(ID_fish)
 
 dat_trial3<-all_dat  %>% 
-  select(ID_fish, trial, cage, treatment, z_log_boldness, z_log_activity, z_exploration,fulton3, dens_tot, dens_bs, dens_ces, BS_pre, BS_post_tot) %>%
+  select(ID_fish, trial, cage, treatment, log_boldness, exploration, log_activity,  z_log_boldness, z_log_activity, z_exploration,fulton3, dens_tot, dens_bs, dens_ces, BS_pre, BS_post_tot) %>%
   filter(trial == 3) %>% 
   pivot_longer("fulton3",
                values_to='body_condition') %>% arrange(ID_fish)
 
 dat_trial4<-all_dat  %>% 
-  select(ID_fish, trial, cage, treatment, z_log_boldness, z_log_activity, z_exploration, fulton4, dens_tot, dens_bs, dens_ces, BS_pre, BS_post_tot) %>%
+  select(ID_fish, trial, cage, treatment, log_boldness, exploration, log_activity, z_log_boldness, z_log_activity, z_exploration, fulton4, dens_tot, dens_bs, dens_ces, BS_pre, BS_post_tot) %>%
   filter(trial == 4) %>% 
   pivot_longer("fulton4",
                values_to='body_condition') %>% arrange(ID_fish)
