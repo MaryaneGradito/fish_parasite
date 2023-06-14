@@ -1412,7 +1412,7 @@ act_bc_c_dat <- cbind(newdat4, raw_act_bc_c, raw_act_L95, raw_act_U95)
   geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = bc, y = raw_act_L95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#6FA5A4", size=0.8)+
   geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = bc, y = raw_act_U95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#6FA5A4", size=0.8)+
    theme_classic() +
-    draw_image("./img/no_parasite.png", x= -2,y = 5, scale = 10) +
+    draw_image("./img/no_parasite.png", x= -1,y = 4, scale = 20) +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX("Body condition (g/cm)"), y = TeX("Distance swam$_{log_{2}}$"), title = "")+
       annotate("text", x = 0.028, y = 2.4, label = TeX(paste0("$beta_{bc}$ = ", " 0.21 ", " 95%CI: 0.04, 0.39**")), size =3, color = "black") 
@@ -1465,10 +1465,10 @@ x2<- ggplot(data=dat_parasite)+
   geom_smooth(data = act_bc_dat, ggplot2::aes(x = bc, y = raw_act_L95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#9A6FA5", size=0.8)+
   geom_smooth(data = act_bc_dat, ggplot2::aes(x = bc, y = raw_act_U95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#9A6FA5", size=0.8)+
    theme_classic() +
- draw_image("./img/parasite.png", x= 0.028,y = 1.7, scale = 0.8)+
+ draw_image("./img/parasite.png", x= -1,y = 1, scale = 100)+
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX("Body condition (g/cm)"), y = TeX("Distance swam$_{log_{2}}$"), title = "")+
- annotate("text", x = 0.025, y = 1.7, label = TeX(paste0("$beta_{bc}$ = "," 0.25 ", " 95%CI: 0.09, 0.42**")), size=3, color = "black")
+ annotate("text", x = 0.025, y = 1.7, label = TeX(paste0("$beta_{bc}$ = "," 0.26 ", " 95%CI: 0.089,0.426**")), size=3, color = "black")
 
   
  x<- plot_grid(
