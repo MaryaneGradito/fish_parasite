@@ -25,6 +25,17 @@ as.factor(all_data$bassin_bold)
 as.factor(all_data$bassin_exp)
 as.factor(all_data$gonade)
 
+install.packages("plotrix")
+library(plotrix)
+
+#length and mass
+mean(all_data$mass_1)
+sd(all_data$mass_1)
+std.error(all_data$mass_1)
+
+mean(all_data$SL_1)
+std.error(all_data$SL_1)
+
 
 #############################
 # Explore the data
@@ -36,6 +47,17 @@ hist(all_data$BS_post_tot)
 min(all_data$BS_post_tot)
 max(all_data$BS_post_tot)
 median(all_data$BS_post_tot)
+
+min(all_data$BS_pre)
+max(all_data$BS_pre)
+median(all_data$BS_pre)
+
+#parasite metrics
+bs_post<-(all_data$BS_post_tot - all_data$BS_pre)
+max(bs_post)
+min(bs_post)
+median(bs_post)
+mean(bs_post)
 
 ### Cestodes distribution
 hist(all_data$P04_alive)
@@ -118,10 +140,6 @@ ggplot(data = all_data,
 all_data$P04_tot<-all_data$P04_alive + all_data$P04_dead
 all_data$P04_tot #we have all cestodes together, dead or alive, to know their weight 
 
-###Add new column in dataset for parasite loads (BS post infection + cestodes alive combined)
-all_data$parasite_load<- (all_data$BS_post_tot + (all_data$P04_alive + all_data$P06))
-all_data$parasite_load #this will be useful later in the models
-
 ###Calculate adjusted fish mass (total fish mass - parasite mass)
 ###Mean average for adult cestodes: 0.003g, larval form: 0.0008g
 ## P04_tot*0.003 / P06*0008
@@ -133,11 +151,16 @@ all_data$adj_mass3<-(all_data$mass_3-((0.003*all_data$P04_tot)+(0.0008*all_data$
 ###Adjusted mass before sacrifice
 all_data$adj_mass4<-(all_data$mass_4-((0.003*all_data$P04_tot)+(0.0008*all_data$P06)))
 
-###Add new column for parasite density in total
-all_data$dens_tot<-((all_data$BS_post_tot + (all_data$P04_alive + all_data$P06)/all_data$adj_mass4))
 
+#number of black spot that we want in our models
+all_data$bs_mod<-(all_data$BS_post_tot - all_data$BS_pre)
+
+###Add new column for parasite density in total (co-infection)
+all_data$dens_tot<-(all_data$bs_mod + (all_data$P04_alive + all_data$P06)/all_data$adj_mass4)
+  
 ###Add new column for BS density
-all_data$dens_bs<-(all_data$BS_post_tot/all_data$adj_mass4)
+#all_data$dens_bs<-(all_data$BS_post_tot/all_data$adj_mass4)
+all_data$dens_bs2<-(all_data$BS_post_tot - all_data$BS_pre)/all_data$adj_mass4
 
 ###Add new column for cestode density
 all_data$dens_ces<-((all_data$P04_alive + all_data$P06)/all_data$adj_mass4)
@@ -146,19 +169,15 @@ all_data$dens_ces<-((all_data$P04_alive + all_data$P06)/all_data$adj_mass4)
 #############################FULTON INDEX : adjusted mass/standard length3 in CM (*0.1 to change mm to cm)
 ###Body condition when first arrived at the lab (normal fish mass)
 all_data$fulton1<-(all_data$mass_1/(all_data$SL_1*0.1)^3)
-all_data$fulton1
 
 ###Body condition before caging experiment (normal fish mass, we assume they don't have any parasite after the anti parasite treatment)
 all_data$fulton2<-(all_data$mass_2/(all_data$SL_2*0.1)^3)
-all_data$fulton2
 
 ###Body condition after caging experiment
 all_data$fulton3<-(all_data$adj_mass3/(all_data$SL_3*0.1)^3)
-all_data$fulton3
 
 ###Body condition before sacrifice
 all_data$fulton4<-(all_data$adj_mass4/(all_data$SL_4*0.1)^3)
-all_data$fulton4
 
 #############################
 # Data distribution and normality
@@ -219,6 +238,7 @@ shapiro.test(log(all_data$boldness)) ## we are visually CLOSE to normality with 
 # Get the raw data. We need this for back transformation from z-scale making
 # sure fish_ID is coded as a factor
 
+#data transformationt to meet normality assumptions
 all_data$log_boldness<-scale(log(all_data$boldness))
 all_data$log_activity<-scale(log(all_data$activity))
 
@@ -232,9 +252,11 @@ dat <- dat %>%
 write.table(dat, file = "all_data_p.csv",
             sep = ",", row.names = F)
 
-#data processing for models
+#############################
+# Processing data for model5 and model6
+#############################
 #pivot data for each trial
-#we need parasite load z-transform and body condition z-transform for the next model
+#we need parasite density z-transform and body condition z-transform for the next model
 all_dat <- read.table("./output/all_data_p.csv",header=T, sep=",")
 
 dat_trial1<-all_dat  %>% 
@@ -280,30 +302,32 @@ write.table(dat_6, file = "dat_models_E.csv",
 write.table(dat_5, file = "dat_models_C.csv",
             sep = ",", row.names = F)
 
-###Processing data for type of parasites
+#############################
+# Processing data for model7
+#############################
 all_dat <- read.table("./output/all_data_p.csv",header=T, sep=",")
-all_dat$ces_tot<- (all_dat$P04_alive + all_data$P06)
+all_dat$ces_tot<- (all_dat$P04_alive + all_dat$P06)
 
 dat_trial1<-all_dat  %>% 
-  select(ID_fish, trial, cage, treatment, log_boldness, exploration, log_activity, z_log_boldness, z_log_activity, z_exploration, fulton1, dens_tot, dens_bs, dens_ces, BS_pre, BS_post_tot) %>% 
+  select(ID_fish, trial, cage, treatment, log_boldness, exploration, log_activity, z_log_boldness, z_log_activity, z_exploration, fulton1, dens_tot, dens_bs, dens_ces, BS_pre, BS_post_tot, dens_bs2) %>% 
   filter(trial == 1) %>% 
   pivot_longer("fulton1",
                values_to='body_condition') %>% arrange(ID_fish)
 
 dat_trial2<-all_dat  %>% 
-  select(ID_fish, trial, cage, treatment, log_boldness, exploration, log_activity, z_log_boldness, z_log_activity, z_exploration,fulton2, dens_tot, dens_bs, dens_ces, BS_pre, BS_post_tot) %>%
+  select(ID_fish, trial, cage, treatment, log_boldness, exploration, log_activity, z_log_boldness, z_log_activity, z_exploration,fulton2, dens_tot, dens_bs, dens_ces, BS_pre, BS_post_tot, dens_bs2) %>%
   filter(trial == 2) %>% 
   pivot_longer("fulton2",
                values_to='body_condition') %>% arrange(ID_fish)
 
 dat_trial3<-all_dat  %>% 
-  select(ID_fish, trial, cage, treatment, log_boldness, exploration, log_activity,  z_log_boldness, z_log_activity, z_exploration,fulton3, dens_tot, dens_bs, dens_ces, BS_pre, BS_post_tot) %>%
+  select(ID_fish, trial, cage, treatment, log_boldness, exploration, log_activity,  z_log_boldness, z_log_activity, z_exploration,fulton3, dens_tot, dens_bs, dens_ces, BS_pre, BS_post_tot, dens_bs2) %>%
   filter(trial == 3) %>% 
   pivot_longer("fulton3",
                values_to='body_condition') %>% arrange(ID_fish)
 
 dat_trial4<-all_dat  %>% 
-  select(ID_fish, trial, cage, treatment, log_boldness, exploration, log_activity, z_log_boldness, z_log_activity, z_exploration, fulton4, dens_tot, dens_bs, dens_ces, BS_pre, BS_post_tot) %>%
+  select(ID_fish, trial, cage, treatment, log_boldness, exploration, log_activity, z_log_boldness, z_log_activity, z_exploration, fulton4, dens_tot, dens_bs, dens_ces, BS_pre, BS_post_tot, dens_bs2) %>%
   filter(trial == 4) %>% 
   pivot_longer("fulton4",
                values_to='body_condition') %>% arrange(ID_fish)
@@ -317,7 +341,8 @@ dat_par_type <- dat_trials %>% filter(treatment == "E") %>%  mutate(z_bc = scale
                                                              z_bs = scale(dens_bs),
                                                             z_ces = scale (dens_ces),
                                                             z_bs_pre = scale(BS_pre),
-                                                            z_bs_post = scale(BS_post_tot))
+                                                            z_bs_post = scale(BS_post_tot),
+                                                            z_bs_2 =scale(dens_bs2))
 #Save data
 write.table(dat_par_type, file = "dat_models_parasite.csv",
             sep = ",", row.names = F)
