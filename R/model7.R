@@ -14,18 +14,18 @@ pacman::p_load(lme4, rstan, tidyverse, StanHeaders, jsonlite, rstantools, brms, 
 
 ### Model 7
 
-boldness_7 <- bf(z_log_boldness ~ 1 + z_ces + z_bs + z_bc + (1 | ID_fish) + (1 | cage)) + gaussian()
-activity_7 <- bf(z_log_activity ~ 1 + z_ces + z_bs + z_bc + (1 | ID_fish) + (1 | cage)) + gaussian()
-explore_7 <- bf(z_exploration  ~ 1 + z_ces + z_bs + z_bc + (1 | ID_fish) + (1 | cage)) + gaussian()
+boldness_7 <- bf(z_log_boldness ~ 1 + z_ces + z_bs_2 + z_bc + (1 | ID_fish) + (1 | cage)) + gaussian()
+activity_7 <- bf(z_log_activity ~ 1 + z_ces + z_bs_2 + z_bc + (1 | ID_fish) + (1 | cage)) + gaussian()
+explore_7 <- bf(z_exploration  ~ 1 + z_ces + z_bs_2 + z_bc + (1 | ID_fish) + (1 | cage)) + gaussian()
 
 
-model_7 <- brms::brm(boldness_7 + activity_7 + explore_7 + set_rescor(TRUE), 
+model_7_2 <- brms::brm(boldness_7 + activity_7 + explore_7 + set_rescor(TRUE), 
                      data = dat_parasite, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
-                     save_pars = save_pars(), file = "./output/models/model_7", file_refit = "on_change",
+                     save_pars = save_pars(), file = "./output/models/model_7_2", file_refit = "on_change",
                      control = list(adapt_delta = 0.98))
 
 # Look at the MCMC chains.
 plot(model_7)
 
 # Look at the model
-summary(model_7)
+summary(model_7_2)
