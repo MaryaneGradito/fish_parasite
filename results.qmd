@@ -54,6 +54,7 @@ editor_options:
   model5 <- readRDS(file = "./output/models/model_5.rds")
   model6 <- readRDS(file = "./output/models/model_6.rds")
   model7 <- readRDS(file = "./output/models/model_7.rds")
+  model7_2<-readRDS(file = "./output/models/model_7_2.rds")
   model8<-readRDS(file = "./output/models/model_8.rds")
   model9<-readRDS(file = "./output/models/model_9.rds")
   model_T<-readRDS(file = "./output/models/model2_T.rds")
@@ -980,7 +981,7 @@ scale_color_manual(labels = c("Infected","Uninfected","Control"), values = c("#9
 geom_errorbar(data = dat1,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth =0.9, color = "black", inherit.aes = FALSE)+
 geom_point(data=dat1, mapping=aes(x= treatment, y= estimate), size=2, shape=21, fill = "grey", inherit.aes = FALSE)+
 labs(x = (""), 
-y = TeX("$Shyness_{log_{2}}$")) +
+y = TeX("Emergence time$_{log_{2}}$")) +
 theme_classic() +
   coord_cartesian(ylim = c (-4,5), xlim = c (1, 3))+
   draw_image("./img/parasite.png", x= 0.5,y = 4, scale = 0.9)+
@@ -1008,7 +1009,7 @@ geom_jitter(aes(colour = trt),shape=16, position=position_jitter(0.1)) +  scale_
 geom_errorbar(data = dat2,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth = 0.9, color = "black", inherit.aes = FALSE)+
 geom_point(data=dat2, mapping=aes(x= treatment, y= estimate), size=2, shape=21, fill = "grey", inherit.aes = FALSE)+
 labs(x = "", 
-y = "Exploration (%)") +
+y = "Surface covered (%)") +
 theme_classic() +
   #draw_image("./img/parasite.png", x= 1.5,y = 1, scale = 0.6)+
   #draw_image("./img/no_parasite.png", x= 0.5,y = 1, scale = 0.6)+
@@ -1031,7 +1032,7 @@ scale_color_manual(labels = c("Infected","Uninfected","Control"), values = c("#9
 geom_errorbar(data = dat3,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth =0.9, color = "black", inherit.aes = FALSE)+
 geom_point(data=dat3, mapping=aes(x= treatment, y= estimate), size=2, shape=21, fill = "grey", inherit.aes = FALSE)+
 labs(x = "Treatment", 
-y = TeX("$Activity_{log_{2}}$")) +
+y = TeX("Distance swam$_{log_{2}}$")) +
 theme_classic() +
   #draw_image("./img/parasite.png", x= 1.5,y = 3, scale = 0.6)+
    # draw_image("./img/no_parasite.png", x= 0.5,y = 3, scale = 0.6)+
@@ -1271,12 +1272,12 @@ act_bc_6<-post_sd_pl_bc[,grep("b_zlogactivity_z_bc", colnames(post_sd_pl_bc))]
 #################################
 
   #Extract post sd from model 7
-post_sd_2_p <- as_draws_df(model7, variable = "^b", regex = TRUE)
+post_sd_2_p <- as_draws_df(model7_2, variable = "^b", regex = TRUE)
 
 #extrait effect of parasite load on each traits
-bold_bs<-post_sd_2_p[,grep("b_zlogboldness_z_bs", colnames(post_sd_2_p))]
-exp_bs<-post_sd_2_p[,grep("b_zexploration_z_bs", colnames(post_sd_2_p))]
-act_bs<-post_sd_2_p[,grep("b_zlogactivity_z_bs", colnames(post_sd_2_p))]
+bold_bs<-post_sd_2_p[,grep("b_zlogboldness_z_bs_2", colnames(post_sd_2_p))]
+exp_bs<-post_sd_2_p[,grep("b_zexploration_z_bs_2", colnames(post_sd_2_p))]
+act_bs<-post_sd_2_p[,grep("b_zlogactivity_z_bs_2", colnames(post_sd_2_p))]
 
 bold_ces<-post_sd_2_p[,grep("b_zlogboldness_z_ces", colnames(post_sd_2_p))]
 exp_ces<-post_sd_2_p[,grep("b_zexploration_z_ces", colnames(post_sd_2_p))]
@@ -1293,8 +1294,8 @@ act_ces<-post_sd_2_p[,grep("b_zlogactivity_z_ces", colnames(post_sd_2_p))]
   p_act_bs<-pmcmc(act_bs_num, twotail = TRUE) #significant
 
   #R2
-  R2_m_7 <- bayes_R2(model7, re.form = NA) #marginal
-  R2_c_7 <- bayes_R2(model7) #conditional
+  R2_m_7 <- bayes_R2(model7_2, re.form = NA) #marginal
+  R2_c_7 <- bayes_R2(model7_2) #conditional
   
   R2_act_7_m<-R2_m_7[2,1]
   R2_act_7_c<-R2_c_7[2,1]
@@ -1410,9 +1411,9 @@ act_bc_c_dat <- cbind(newdat4, raw_act_bc_c, raw_act_L95, raw_act_U95)
   geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = bc, y = raw_act_L95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#6FA5A4", size=0.8)+
   geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = bc, y = raw_act_U95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#6FA5A4", size=0.8)+
    theme_classic() +
-    draw_image("./img/no_parasite.png", x= 0.020,y = 1, scale = 0.8) +
+    draw_image("./img/no_parasite.png", x= -2,y = 5, scale = 10) +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
-    theme(legend.position="none") + labs(x = TeX("Body condition (g/cm)"), y = TeX("$Activity_{log_{2}}$"), title = "")+
+    theme(legend.position="none") + labs(x = TeX("Body condition (g/cm)"), y = TeX("Distance swam$_{log_{2}}$"), title = "")+
       annotate("text", x = 0.028, y = 2.4, label = TeX(paste0("$beta_{bc}$ = ", " 0.21 ", " 95%CI: 0.04, 0.39**")), size =3, color = "black") 
 
 
@@ -1465,7 +1466,7 @@ x2<- ggplot(data=dat_parasite)+
    theme_classic() +
  draw_image("./img/parasite.png", x= 0.028,y = 1.7, scale = 0.8)+
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
-    theme(legend.position="none") + labs(x = TeX("Body condition (g/cm)"), y = TeX("$Activity_{log_{2}}$"), title = "")+
+    theme(legend.position="none") + labs(x = TeX("Body condition (g/cm)"), y = TeX("Distance swam$_{log_{2}}$"), title = "")+
  annotate("text", x = 0.025, y = 1.7, label = TeX(paste0("$beta_{bc}$ = "," 0.25 ", " 95%CI: 0.09, 0.42**")), size=3, color = "black")
 
   
@@ -1495,7 +1496,7 @@ dat_parasite <- read.table("./output/dat_models_parasite.csv",header=T, sep=",")
 # Lets create the predictions with the posterior for each variable. Here, we want to vary ces, but keep the other variables at the mean
 # First we want to create a design matrix. 
   newdat <- data.frame(intercept = 1, z_ces = seq(min(dat_parasite$z_ces), max(dat_parasite$z_ces), length.out = 100),
-                        z_bs = 0,
+                        z_bs_2 = 0,
                         z_bc = 0)
 
   # Now extract the posterior dist for each parameter for boldness 
@@ -1518,7 +1519,7 @@ dat_parasite <- read.table("./output/dat_models_parasite.csv",header=T, sep=",")
   #Make predictions from our model to build slope and confidence intervals
   #FOR CESTODES
 
-  pred_ces_brms <- posterior_epred(model7, re_formula = NA, newdata = newdat)
+  pred_ces_brms <- posterior_epred(model7_2, re_formula = NA, newdata = newdat)
   bold_ces <- pred_ces_brms[,,"zlogboldness"]
   summ_bold_ces <- apply(bold_ces, 2, function(x) mean(x))
   summ_boldL95_ces <- apply(bold_ces, 2, function(x) quantile(x, 0.025))
@@ -1529,8 +1530,8 @@ dat_parasite <- read.table("./output/dat_models_parasite.csv",header=T, sep=",")
   mean_bold <- mean(dat_parasite$log_boldness)
   sd_bold <- sd(dat_parasite$log_boldness)
   #bs
-  mean_bs<- mean(dat_parasite$dens_bs)
-  sd_bs<- sd(dat_parasite$dens_bs)
+  mean_bs<- mean(dat_parasite$dens_bs2)
+  sd_bs<- sd(dat_parasite$dens_bs2)
   #cestode
   mean_ces<- mean(dat_parasite$dens_ces)
   sd_ces<- sd(dat_parasite$dens_ces)
@@ -1556,10 +1557,10 @@ boldness_ces_dat <- cbind(newdat, raw_bold_ces, raw_bold_ces_L95, raw_bold_ces_U
 
   #FOR BS NOW
    newdat2 <- data.frame(intercept = 1, z_ces = 0,
-                        z_bs = seq(min(dat_parasite$z_bs), max(dat_parasite$z_bs), length.out = 100),
+                        z_bs_2 = seq(min(dat_parasite$z_bs_2), max(dat_parasite$z_bs_2), length.out = 100),
                         z_bc = 0)
 
-pred_bs_brms <- posterior_epred(model7, re_formula = NA, newdata = newdat2)
+pred_bs_brms <- posterior_epred(model7_2, re_formula = NA, newdata = newdat2)
   boldness_bs <- pred_bs_brms[,,"zlogboldness"]
   summ_bold_bs <- apply(boldness_bs, 2, function(x) mean(x))
   summ_boldL95_bs <- apply(boldness_bs, 2, function(x) quantile(x, 0.025))
@@ -1567,7 +1568,7 @@ pred_bs_brms <- posterior_epred(model7, re_formula = NA, newdata = newdat2)
   
    #raw units
   #for bs
-  newdat2$bs<-(newdat2$z_bs * sd_bs) + mean_bs
+  newdat2$bs<-(newdat2$z_bs_2 * sd_bs) + mean_bs
   range(newdat2$bs)
   
   #for boldness-bs
@@ -1611,7 +1612,7 @@ boldness_bs_dat <- cbind(newdat2, raw_bold_bs, raw_bold_bs_L95, raw_bold_bs_U95)
   geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = ces, y = raw_bold_ces), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#9A6FA5", size=1) +
   geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = ces, y = raw_bold_ces_L95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#9A6FA5", size=0.8)+
   geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = ces, y = raw_bold_ces_U95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#9A6FA5", size=0.8) + 
-    geom_point(mapping = aes(x = dens_bs, y = log_boldness), color = "#6FA5A4")+
+    geom_point(mapping = aes(x = dens_bs2, y = log_boldness), color = "#6FA5A4")+
   geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = bs, y = raw_bold_bs), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#6FA5A4", size=1) +
   geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = bs, y = raw_bold_bs_L95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#6FA5A4", size=0.8)+
   geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = bs, y = raw_bold_bs_U95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#6FA5A4", size=0.8)+
@@ -1620,18 +1621,18 @@ boldness_bs_dat <- cbind(newdat2, raw_bold_bs, raw_bold_bs_L95, raw_bold_bs_U95)
  # geom_smooth(data = bold_pl_dat, ggplot2::aes(x = z_pl, y = summ_boldL95_pl), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#A2A2A2", size=0.8)+
  # geom_smooth(data = bold_pl_dat, ggplot2::aes(x = z_pl, y = summ_boldU95_pl), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#A2A2A2", size=0.8)+
    theme_classic() +
- draw_image("./img/blackspots.png", x = 28, y = -1.2, scale = 6)+
- draw_image("./img/cestodes.png", x = 28, y = -0.5, scale = 6) +
+ draw_image("./img/blackspots.png", x = 20, y = -1.2, scale = 6)+
+ draw_image("./img/cestodes.png", x = 24, y = -0.5, scale = 6) +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
-    theme(legend.position="none") + labs(x = TeX(""), y = TeX("$Shyness_{log_{2}}$"), title = "") +
-    annotate("text", x = 15, y = 1.6, label = TeX(paste0("$beta_{bs}$ = ", " -0.08 ", " 95%CI: -0.28, 0.12")), size =3, color = "#059687") + 
-  annotate("text", x = 15, y = 1.8, label = TeX(paste0("$beta_{ces}$ = "," 0.10 ", " 95%CI: -0.11, 0.30")), size=3, color = "#8F05B3")
+    theme(legend.position="none") + labs(x = TeX(""), y = TeX("Emergence time$_{log_{2}}$"), title = "") +
+    annotate("text", x = 15, y = 1.6, label = TeX(paste0("$beta_{bs}$ = ", " -0.09 ", " 95%CI: -0.29, 0.10")), size =3, color = "#059687") + 
+  annotate("text", x = 15, y = 1.8, label = TeX(paste0("$beta_{ces}$ = "," 0.11 ", " 95%CI: -0.06, 0.39")), size=3, color = "#8F05B3")
   
 #################################
 # EXPLORATION PREDICTIONS
 #################################
   #for cestode
-    pred_ces_brms <- posterior_epred(model7, re_formula = NA, newdata = newdat)
+    pred_ces_brms <- posterior_epred(model7_2, re_formula = NA, newdata = newdat)
   exp_ces <- pred_ces_brms[,,"zexploration"]
   summ_exp_ces <- apply(exp_ces, 2, function(x) mean(x))
   summ_expL95_ces <- apply(exp_ces, 2, function(x) quantile(x, 0.025))
@@ -1658,7 +1659,7 @@ boldness_bs_dat <- cbind(newdat2, raw_bold_bs, raw_bold_bs_L95, raw_bold_bs_U95)
 exp_ces_dat <- cbind(newdat, raw_exp_ces, raw_exp_ces_L95, raw_exp_ces_U95)
   
   #for bs
-   pred_bs_brms <- posterior_epred(model7, re_formula = NA, newdata = newdat2)
+   pred_bs_brms <- posterior_epred(model7_2, re_formula = NA, newdata = newdat2)
   exp_bs <- pred_bs_brms[,,"zexploration"]
   summ_exp_bs <- apply(exp_bs, 2, function(x) mean(x))
   summ_expL95_bs <- apply(exp_bs, 2, function(x) quantile(x, 0.025))
@@ -1691,7 +1692,7 @@ n2<-ggplot(data=dat_parasite)+
  geom_smooth(data = exp_ces_dat, ggplot2::aes(x = ces, y = raw_exp_ces), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#9A6FA5", size=1) +
   geom_smooth(data = exp_ces_dat, ggplot2::aes(x = ces, y = raw_exp_ces_L95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#9A6FA5", size=0.8)+
   geom_smooth(data = exp_ces_dat, ggplot2::aes(x = ces, y = raw_exp_ces_U95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#9A6FA5", size=0.8)+
-  geom_point(mapping = aes(x = dens_bs, y = exploration), color = "#6FA5A4") +
+  geom_point(mapping = aes(x = dens_bs2, y = exploration), color = "#6FA5A4") +
    geom_smooth(data = exp_bs_dat, ggplot2::aes(x = bs, y = raw_exp_bs), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#6FA5A4", size=1) +
   geom_smooth(data = exp_bs_dat, ggplot2::aes(x = bs, y = raw_exp_bs_L95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#6FA5A4", size=0.8)+
   geom_smooth(data = exp_bs_dat, ggplot2::aes(x = bs, y = raw_exp_bs_U95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#6FA5A4", size=0.8)+
@@ -1700,18 +1701,18 @@ n2<-ggplot(data=dat_parasite)+
   #geom_smooth(data = exp_pl_dat, ggplot2::aes(x = z_pl, y = summ_expL95_pl), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#A2A2A2", size=0.8)+
   #geom_smooth(data = exp_pl_dat, ggplot2::aes(x = z_pl, y = summ_expU95_pl), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#A2A2A2", size=0.8)+
    theme_classic() +
- draw_image("./img/blackspots.png", x = 28, y = -0.16, scale = 6)+
-  draw_image("./img/cestodes.png", x = 28, y = -0.22, scale = 6) +
+ draw_image("./img/blackspots.png", x = 20, y = -0.16, scale = 6)+
+  draw_image("./img/cestodes.png", x = 24, y = -0.22, scale = 6) +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
-    theme(legend.position="none") + labs(x = TeX("Parasite density"), y = TeX("Exploration"), title = "") +
-  annotate("text", x = 15, y = 0.45, label = TeX(paste0("$beta_{bs}$ = ", " 0.14 ", " 95%CI: -0.03, 0.31")), size =3, color = "#059687") + 
-  annotate("text", x = 15, y = 0.47, label = TeX(paste0("$beta_{ces}$ = "," -0.09 ", " 95%CI: -0.27, 0.10")), size=3, color = "#8F05B3")
+    theme(legend.position="none") + labs(x = TeX("Parasite density (no/g)"), y = TeX("Surface covered (%)"), title = "") +
+  annotate("text", x = 15, y = 0.45, label = TeX(paste0("$beta_{bs}$ = ", " 0.10 ", " 95%CI: 0.09, -0.07")), size =3, color = "#059687") + 
+  annotate("text", x = 15, y = 0.47, label = TeX(paste0("$beta_{ces}$ = "," -0.11  ", " 95%CI: -0.29, 0.07")), size=3, color = "#8F05B3")
 
 #################################
 # ACTIVITY PREDICTIONS
 #################################
   #for cestode
-    pred_ces_brms <- posterior_epred(model7, re_formula = NA, newdata = newdat)
+    pred_ces_brms <- posterior_epred(model7_2, re_formula = NA, newdata = newdat)
   act_ces <- pred_ces_brms[,,"zlogactivity"]
   summ_act_ces <- apply(act_ces, 2, function(x) mean(x))
   summ_actL95_ces <- apply(act_ces, 2, function(x) quantile(x, 0.025))
@@ -1733,7 +1734,7 @@ n2<-ggplot(data=dat_parasite)+
 act_ces_dat <- cbind(newdat, raw_act_ces, raw_act_ces_L95, raw_act_ces_U95)
 
   #for bs
-   pred_bs_brms <- posterior_epred(model7, re_formula = NA, newdata = newdat2)
+   pred_bs_brms <- posterior_epred(model7_2, re_formula = NA, newdata = newdat2)
   act_bs <- pred_bs_brms[,,"zlogactivity"]
   summ_act_bs <- apply(act_bs, 2, function(x) mean(x))
   summ_actL95_bs <- apply(act_bs, 2, function(x) quantile(x, 0.025))
@@ -1766,7 +1767,7 @@ geom_point(mapping = aes(x = dens_ces, y = log_activity),color = "#9A6FA5")+
  geom_smooth(data = act_ces_dat, ggplot2::aes(x = ces, y = raw_act_ces), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#9A6FA5", size=1) +
   geom_smooth(data = act_ces_dat, ggplot2::aes(x = ces, y = raw_act_ces_L95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#9A6FA5", size=0.8)+
   geom_smooth(data = act_ces_dat, ggplot2::aes(x = ces, y = raw_act_ces_U95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#9A6FA5", size=0.8)+
-  geom_point(mapping = aes(x = dens_bs, y = log_activity), color = "#6FA5A4") +
+  geom_point(mapping = aes(x = dens_bs2, y = log_activity), color = "#6FA5A4") +
    geom_smooth(data = act_bs_dat, ggplot2::aes(x = bs, y = raw_act_bs), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#6FA5A4", size=1) +
   geom_smooth(data = act_bs_dat, ggplot2::aes(x = bs, y = raw_act_bs_L95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#6FA5A4", size=0.8)+
   geom_smooth(data = act_bs_dat, ggplot2::aes(x = bs, y = raw_act_bs_U95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#6FA5A4", size=0.8)+
@@ -1775,12 +1776,12 @@ geom_point(mapping = aes(x = dens_ces, y = log_activity),color = "#9A6FA5")+
    #geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_pl, y = summ_act_pl), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#A2A2A2", size=1) +
   #geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_pl, y = summ_actL95_pl), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#A2A2A2", size=0.8)+
   #geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_pl, y = summ_actU95_pl), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#A2A2A2", size=0.8)+
-  draw_image("./img/blackspots.png", x = 28, y = -1.5, scale = 6) +
-  draw_image("./img/cestodes.png", x = 28, y = -0.8, scale = 6) +
+  draw_image("./img/blackspots.png", x = 20, y = -1.5, scale = 6) +
+  draw_image("./img/cestodes.png", x = 24, y = -0.8, scale = 6) +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
-    theme(legend.position="none") + labs(x = TeX(""), y = TeX("$Activity_{log_{2}}$"), title = "") +
-      annotate("text", x = 15, y = 1.6, label = TeX(paste0("$beta_{bs}$ = ", " -0.22 ", " 95%CI: -0.40, -0.04 **")), size =3, color = "#059687") +
- annotate("text", x = 15, y = 1.8, label = TeX(paste0("$beta_{ces}$ = "," 0.01 ", " 95%CI: -0.18, 0.19")), size=3, color = "#8F05B3")
+    theme(legend.position="none") + labs(x = TeX(""), y = TeX("Distance swam$_{log_{2}}$"), title = "") +
+      annotate("text", x = 15, y = 1.6, label = TeX(paste0("$beta_{bs}$ = ", " -0.21 ", " 95%CI: -0.39, -0.03 **")), size =3, color = "#059687") +
+ annotate("text", x = 15, y = 1.8, label = TeX(paste0("$beta_{ces}$ = "," 0.05 ", " 95%CI: -0.13, 0.24")), size=3, color = "#8F05B3")
 
 p<-plot_grid(
   n1, n2, n3,
@@ -1832,7 +1833,7 @@ moy_dens_parasite<-aggregate(dens_tot ~ cage, all_data, mean)
 
 ```{r}
 #| label: fig-fig5
-#| fig-cap: (A) Correlation of slopes of change between traits (shyness, exploration and activity) and their standard error in pumpkinseed sunfish (Lepomis gibbosus) after an experimental infection. Blue dots are individuals, n = 60; blue lines are standard errors; red lines are the mean behaviourz. Above the red line is a positive change in the slope, below is a negative change. All variables are z-scaled. (B) Correlation between the slope of change of traits and their average behaviour (shyness, exploration and activity) and their standard error in pumpkinseed sunfish (Lepomis gibbosus) after an experimental infection. Gold dots are individuals, n = 60; gold lines are the standard errors; red lines are the intercept behaviours. On the x-axis; above the red line is above the average behaviour and below the red line is below average. On the y-axis; above the red line is a positive change in the slope of a trait, below is a negative change. All variables are z-scaled.
+#| fig-cap: (A) Correlation of slopes of change between traits (emergence time, surface covered and distance swam) and their standard error in pumpkinseed sunfish (Lepomis gibbosus) after an experimental infection. Blue dots are individuals, n = 60; blue lines are standard errors; red lines are the mean behaviours. Above the red line is a positive change in the slope, below is a negative change. All variables are z-scaled. (B) Correlation between the slope of change of traits and their average behaviour (emergence time, surface covered and distance swam) and their standard error in pumpkinseed sunfish (Lepomis gibbosus) after an experimental infection. Gold dots are individuals, n = 60; gold lines are the standard errors; red lines are the intercept behaviours. On the x-axis; above the red line is above the average behaviour and below the red line is below average. On the y-axis; above the red line is a positive change in the slope of a trait, below is a negative change. All variables are z-scaled.
 #| out-width: 100%
 #| fig-width: 7
 #| fig-height: 4
@@ -1863,8 +1864,8 @@ k1<-ggplot(data= dat_slopes)+
                ) +
   geom_vline(xintercept=0, color = "red2")+
   geom_hline(yintercept=0, color = "red2") +
-      labs(y = TeX(paste0("Exploration", " Slope ", "$\\beta_{id}$")),
-           x = TeX(paste0("$Shyness_{log_{2}}$", " Slope ", "$\\beta_{id}$")))+
+      labs(y = TeX(paste0("Surface covered (%)", " Slope ", "$\\beta_{id}$")),
+           x = TeX(paste0("Emergence time$_{log_{2}}$", " Slope ", "$\\beta_{id}$")))+
   annotate("text", x = -1, y = -0.25, label = TeX(paste0("$cor_{id}$ = ", " -0.14 ", " 95%CI: -0.76, 0.59")), size =2.5, color = "red3")
 #boldness and activity E
 k2<-ggplot(data= dat_slopes)+
@@ -1888,8 +1889,8 @@ k2<-ggplot(data= dat_slopes)+
                ) +
   geom_vline(xintercept=0, color = "red2")+
   geom_hline(yintercept=0, color = "red2") +
-      labs(y = TeX(paste0("$Activity_{log_{2}}$", " Slope ", "$\\beta_{id}$")),
-           x = TeX(paste0("$Shyness_{log_{2}}$", " Slope ", "$\\beta_{id}$")))+
+      labs(y = TeX(paste0("Distance swam$_{log_{2}}$", " Slope ", "$\\beta_{id}$")),
+           x = TeX(paste0("Emergence time$_{log_{2}}$", " Slope ", "$\\beta_{id}$")))+
     annotate("text", x = -1, y = -1.5, label = TeX(paste0("$cor_{id}$ = ", " -0.31 ", " 95%CI: -0.82, 0.42")), size =2.5, color = "red3")
 
 #activity and exploration E
@@ -1914,8 +1915,8 @@ k3<-ggplot(data= dat_slopes)+
                )+
   geom_vline(xintercept=0, color = "red2")+
   geom_hline(yintercept=0, color = "red2") +
-      labs(y = TeX(paste0("$Activity_{log_{2}}$", " Slope ", "$\\beta_{id}$")),
-           x = TeX(paste0("Exploration", " Slope ", "$\\beta_{id}$")))+
+      labs(y = TeX(paste0("Distance swam$_{log_{2}}$", " Slope ", "$\\beta_{id}$")),
+           x = TeX(paste0("Surface covered (%)", " Slope ", "$\\beta_{id}$")))+
   annotate("text", x = 0.8, y = -1.5, label = TeX(paste0("$cor_{id}$ = ", " 0.25 ", " 95%CI: -0.51, 0.80")), size =2.5, color = "red3")
 
  
@@ -1940,8 +1941,8 @@ k4<-ggplot(data= dat_slopes)+
                ) +
   geom_vline(xintercept=0, color = "red2")+
   geom_hline(yintercept=0, color = "red2") +
-     labs(x = TeX(paste0("$Shyness_{log_{2}}$ Behaviour", " (personality - intercept)")),
-           y = TeX(paste0("$Shyness_{log_{2}}$", " Slope ", " $\\beta_{id}$")))+
+     labs(x = TeX(paste0("Emergence time$_{log_{2}}$", " (personality - intercept)")),
+           y = TeX(paste0("Emergence time$_{log_{2}}$", " Slope ", " $\\beta_{id}$")))+
   annotate("text", x = 0.6, y = -1.3, label = TeX(paste0("$cor_{id}$ = ", " -0.20 ", " 95%CI: -0.74, 0.54")), size =2.5, color = "red3")
 
 #Exp I  vs Exp E
@@ -1966,8 +1967,8 @@ k5<-ggplot(data= dat_slopes)+
                ) +
   geom_vline(xintercept=0, color = "red2")+
   geom_hline(yintercept=0, color = "red2") +
-      labs(x = TeX(paste0("Exploratory Behaviour", " (personality - intercept)")),
-           y = TeX(paste0("Exploration", " Slope ", " $\\beta_{id}$")))+
+      labs(x = TeX(paste0("Surface covered (%)", " (personality - intercept)")),
+           y = TeX(paste0("Surface covered (%)", " Slope ", " $\\beta_{id}$")))+
   annotate("text", x = -1.0, y = -0.1, label = TeX(paste0("$cor_{id}$ = ", " -0.27 ", " 95%CI: -0.80, 0.51")), size =2.5, color = "red3")
 
 #act I  vs act E
@@ -1992,8 +1993,8 @@ k6<-ggplot(data= dat_slopes)+
                ) +
   geom_vline(xintercept=0, color = "red2")+
   geom_hline(yintercept=0, color = "red2") +
-      labs(x = TeX(paste0("$Activity_{log_{2}}$ Behaviour", " (personality - intercept)")),
-           y = TeX(paste0("$Activity_{log_{2}}$", " Slope ", " $\\beta_{id}$")))+
+      labs(x = TeX(paste0("Distance swam$_{log_{2}}$", " (personality - intercept)")),
+           y = TeX(paste0("Distance swam$_{log_{2}}$", " Slope ", " $\\beta_{id}$")))+
    annotate("text", x = -0.8, y = -1, label = TeX(paste0("$cor_{id}$ = ", " -0.49 ", " 95%CI: -0.81, 0.11")), size =2.5, color = "red3")
 
 
@@ -2219,7 +2220,7 @@ plot(rep3.2, cex.main = 1)
 #created dataset for all repeatability measures
   #Create data frame
 dat_rep<-data.frame(
-  "R"=c("Shyness","Exploration","Activity","Shyness","Exploration","Activity","Shyness","Exploration","Activity","Shyness","Exploration","Activity"),
+  "R"=c("Emergence time","Surface covered","Distance swam","Emergence time","Surface covered","Distance swam","Emergence time","Surface covered","Distance swam","Emergence time","Surface covered","Distance swam"),
   "Treatment" = c("Overall", "Overall","Overall","Uninfected","Uninfected","Uninfected","Infected","Infected","Infected","Control","Control","Control"),
   "Repeatability"=c(R_bold_mean,R_exp_mean,R_act_mean
                     ,R_C_bold,R_exp_C_mean,R_act_C,R_E_bold,R_exp_E_mean,R_act_E,R_T_bold,R_T_exp,R_T_act), 
@@ -2241,7 +2242,7 @@ ggplot(dat_rep)+
 geom_point(data=dat_rep, mapping=aes(x= Repeatability, y= R), size=3)+
 geom_errorbarh(aes(y = R, xmin= Lower_CI, xmax=Higher_CI), height = 0.2, linewidth =0.9, inherit.aes = FALSE)+scale_x_continuous()+facet_grid(Treatment ~ .)+geom_vline(xintercept=0.1, color = "red2", linetype = 2)+geom_hline(yintercept= "Shyness_Exploration", color = "red2", linetype = 2)+ xlab("Repeatability (R)") + ylab("")+ theme_classic()+ theme(strip.text.y = element_text(size=12, face="bold", angle = 360),strip.background = element_rect(colour="white", fill="white"))
 
-ggsave("./output/figures/fig6.png", plot = w1, width = 18, height = 16, units = "cm")
+ggsave("./output/figures/fig6.png", plot = w1, width = 17, height = 12, units = "cm")
 
 fig6 <- image_read("./output/figures/fig6.png")  
 fig6
@@ -2256,7 +2257,7 @@ fig6
 #created dataset for all correlations
   #Create data frame
 dat_cor<-data.frame(
-  "BS"=c("Shyness-Activity","Shyness-Exploration","Activity-Exploration","Shyness-Activity","Shyness-Exploration","Activity-Exploration","Shyness-Activity","Shyness-Exploration","Activity-Exploration"),
+  "BS"=c("Emergence time-Distance swam","Emergence time-Surface covered","Distance swam-Surface covered","Emergence time-Distance swam","Emergence time-Surface covered","Distance swam-Surface covered","Emergence time-Distance swam","Emergence time-Surface covered","Distance swam-Surface covered"),
   "Treatment" = c("Overall", "Overall","Overall","Uninfected","Uninfected","Uninfected","Infected","Infected","Infected"),
   "Correlation"=c(b_act_o,b_exp_o,act_exp_o,b_act_C_mean,b_exp_C_mean,act_exp_C_mean,b_act_E_mean,b_exp_E_mean,act_exp_E_mean), 
   "Lower_CI_o" = c(low_b_act_o,low_b_exp_o,low_act_exp_o,low_b_act_C,low_b_exp_C,low_act_exp_C,low_b_act_E,low_b_exp_E,low_act_exp_E),
@@ -2278,7 +2279,7 @@ geom_point(data=dat_cor, mapping=aes(x= Correlation, y= BS), size=3)+
 geom_errorbarh(aes(y = BS, xmin= Lower_CI_o, xmax=Higher_CI_o), height = 0.2, linewidth =0.9, inherit.aes = FALSE)+scale_x_continuous()+facet_grid(Treatment ~ .)+geom_vline(xintercept=0, color = "red2", linetype = 2)+geom_hline(yintercept= "Shyness_Exploration", color = "red2", linetype = 2)+ xlab("Correlation") + ylab("")+ theme_classic()+ theme(strip.text.y = element_text(size=12, face="bold", angle = 360),strip.background = element_rect(colour="white", fill="white"))
 
 m1
-ggsave("./output/figures/fig7.png", plot = m1, width = 18, height = 16, units = "cm")
+ggsave("./output/figures/fig7.png", plot = m1, width = 17, height = 12, units = "cm")
 
 fig7 <- image_read("./output/figures/fig7.png")  
 fig7
@@ -2287,7 +2288,7 @@ fig7
 
 ```{r}
 #| label: fig-fig8
-#| fig-cap: Correlations between activity-shyness (A), exploration-shyness (B) and exploration-activity (C) of pumpkinseed sunfish (Lepomis gibbosus) for the uninfected (N=72) and experimentally infected group (N=60)
+#| fig-cap: Correlations and their 95% confidence intervals between distance swam-emergence time (A), surface covered-emergence time (B) and surface covered-distance swamexploration-activity (C) of pumpkinseed sunfish (Lepomis gibbosus) for the uninfected (n = 72) and infected group (n = 60). Each line of color link the same individual (dot) for two trials (trial 1-2 for uninfected; trial 3-4 for infected).rb(cor) is the correlation at the population level (inter-individuals), rw(cor) is the correlation at the individual level (intra-individual). 
 #| out-width: 100%
 #| fig-width: 7
 #| fig-height: 8
@@ -2389,7 +2390,7 @@ fig8
 
 ```{r}
 #| label: fig-fig9
-#| fig-cap: Change in black spots density and body condition of pumpkinseed sunfish in relation with the slope of change in activity
+#| fig-cap: Change in black spots density and body condition of pumpkinseed sunfish in relation with the slope of change in activity. Red line is the mean for change in black spot density. Blue shades in the legend show low body condition (dark blue) to high body condition change (light blue) after the experimental infection. All variables are z-scaled. Change in black spot density is the difference between pre-infection black spot number vs post-infection. Change in body condition is the difference before and after the experimental infection. 
 #| out-width: 100%
 #| fig-width: 7
 #| fig-height: 4
