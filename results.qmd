@@ -53,6 +53,7 @@ editor_options:
   model4 <- readRDS(file = "./output/models/model_4.rds")
   model5 <- readRDS(file = "./output/models/model_5.rds")
   model6 <- readRDS(file = "./output/models/model_6.rds")
+  model6_1 <- readRDS(file = "./output/models/model_6_1.rds")
   model7 <- readRDS(file = "./output/models/model_7.rds")
   model7_2<-readRDS(file = "./output/models/model_7_2.rds")
   model8<-readRDS(file = "./output/models/model_8.rds")
@@ -1225,7 +1226,7 @@ act_bc<-post_sd_bc[,grep("b_zlogactivity_z_bc", colnames(post_sd_bc))]
 # MODEL 6: body condition and parasite load on infected fish
 #################################
 #Extract post sd from model 6
-post_sd_pl_bc<- as_draws_df(model6, variable = "^b", regex = TRUE)
+post_sd_pl_bc<- as_draws_df(model6_1, variable = "^b", regex = TRUE)
 
 #extrait effect of body condition and parasite load on each traits
 bold_bc_6<-post_sd_pl_bc[,grep("b_zlogboldness_z_bc", colnames(post_sd_pl_bc))]
@@ -1242,8 +1243,8 @@ act_bc_6<-post_sd_pl_bc[,grep("b_zlogactivity_z_bc", colnames(post_sd_pl_bc))]
   p_act_bc_6<-pmcmc(act_bc_num_6, twotail = TRUE) #significant
 
   #R2
-  R2_m_6 <- bayes_R2(model6, re.form = NA) #marginal
-  R2_c_6 <- bayes_R2(model6) #conditional
+  R2_m_6 <- bayes_R2(model6_1, re.form = NA) #marginal
+  R2_c_6 <- bayes_R2(model6_1) #conditional
   
   R2_act_6_m<-R2_m_6[2,1]
   R2_act_6_c<-R2_c_6[2,1]
@@ -1430,7 +1431,7 @@ newdat4 <- data.frame(intercept = 1,
                         z_dens = 0)
 
   #activity for body condition
-    pred_bc_brms <- posterior_epred(model6, re_formula = NA, newdata = newdat4)
+    pred_bc_brms <- posterior_epred(model6_1, re_formula = NA, newdata = newdat4)
   act_bc <- pred_bc_brms[,,"zlogactivity"]
   summ_act_bc <- apply(act_bc, 2, function(x) mean(x))
   summ_actL95_bc <- apply(act_bc, 2, function(x) quantile(x, 0.025))
@@ -1805,14 +1806,12 @@ Looking at how individuals changes in their behaviour compared to the average of
 #| warning: false
 
 #looking at the correlation between bs and cestodes
-cor1<-cor(all_data$dens_bs,all_data$dens_ces)
-plot1<-plot(all_data$dens_bs,all_data$dens_ces)
+cor1<-cor(all_data$dens_bs2,all_data$dens_ces)
+plot1<-plot(all_data$dens_bs2,all_data$dens_ces)
 
 #effect of cage in parasite density
-all_data$cage <- factor(all_data$cage, levels=c("1","2","3","4","5","6","7","8","9","10","C1","C2"))
-
 plot2<- ggplot(data=all_data)+
-  geom_point(mapping = aes(x = cage, y = dens_bs, color = factor(ID_fish))) +
+  geom_point(mapping = aes(x = cage, y = dens_bs2, color = factor(ID_fish))) +
    theme_classic()+ theme(legend.position = "none") + xlab("Cage number") + ylab("Black spot density")
 
  
@@ -1821,7 +1820,7 @@ plot3<- ggplot(data=all_data)+
    theme_classic() + theme(legend.position = "none") + xlab("Cage number") + ylab("Cestode density") 
 
 
-moy_dens_bs<-aggregate(dens_bs ~ cage, all_data, mean)
+moy_dens_bs<-aggregate(dens_bs2 ~ cage, all_data, mean)
 moy_dens_ces<-aggregate(dens_ces ~ cage, all_data, mean)
 moy_dens_parasite<-aggregate(dens_tot ~ cage, all_data, mean)
 
@@ -2481,8 +2480,8 @@ raw_pl_mean<-mean(all_data$dens_tot)
 raw_pl_sd<-sd(all_data$dens_tot)
 
 #BS density post
-raw_bs_mean<-mean(all_data$dens_bs)
-raw_bs_sd<-sd(all_data$dens_bs)
+raw_bs_mean<-mean(all_data$dens_bs2)
+raw_bs_sd<-sd(all_data$dens_bs2)
 
 #cestode density
 raw_ces_mean<-mean(all_data$dens_ces)
