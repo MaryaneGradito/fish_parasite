@@ -657,14 +657,14 @@ bub_b_con <- round(quantile(int_b_con_num, c(0.025, 0.975))[2], 3)
 int_exp_con_num<- as.numeric(unlist(int_exp_con))
 mean_con_exp<-mean(int_exp_con_num)
 
-blb_exp_con <- round(quantile(mean_con_exp, c(0.025, 0.975))[1], 3)
-bub_exp_con <- round(quantile(mean_con_exp, c(0.025, 0.975))[2], 3)
+blb_exp_con <- round(quantile(int_exp_con_num, c(0.025, 0.975))[1], 3)
+bub_exp_con <- round(quantile(int_exp_con_num, c(0.025, 0.975))[2], 3)
 
 int_act_con_num<- as.numeric(unlist(int_act_con))
 mean_con_act<-mean(int_act_con_num)
 
-blb_act_con <- round(quantile(mean_con_act, c(0.025, 0.975))[1], 3)
-bub_act_con <- round(quantile(mean_con_act, c(0.025, 0.975))[2], 3)
+blb_act_con <- round(quantile(int_act_con_num, c(0.025, 0.975))[1], 3)
+bub_act_con <- round(quantile(int_act_con_num, c(0.025, 0.975))[2], 3)
 
 #mean estimates for contrast C-T
 int_b_con_num_T<- as.numeric(unlist(int_b_con_T))
@@ -967,7 +967,7 @@ all_data_T[all_data_T == 'T'] <- 'Control'
 #PLOTS
 ###################
 #plot model2      
-all_data_T$treatment <- factor(all_data_T$treatment, levels=c("Infected","Uninfected", "Control"))
+all_data_T$treatment <- factor(all_data_T$treatment, levels=c("Uninfected","Infected", "Control"))
 trt <- as.factor(all_data_T$treatment)
 
 dat1<-dat_model %>% 
@@ -978,25 +978,25 @@ m1<-
 ggplot(all_data_T, aes(x = trt, y = log_boldness, group = trt, color = trt)) +
 geom_violin(aes(), trim = FALSE) +
 geom_jitter(aes(colour = trt),shape=16, position=position_jitter(0.1))+
-scale_color_manual(labels = c("Infected","Uninfected","Control"), values = c("#9A6FA5", "#6FA5A4","#FAFA8B"))+
+scale_color_manual(labels = c("Uninfected","Infected","Control"), values = c("#9A6FA5", "#6FA5A4","#FAFA8B"))+
 geom_errorbar(data = dat1,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth =0.9, color = "black", inherit.aes = FALSE)+
 geom_point(data=dat1, mapping=aes(x= treatment, y= estimate), size=2, shape=21, fill = "grey", inherit.aes = FALSE)+
 labs(x = (""), 
 y = TeX("Emergence time$_{log_{2}}$")) +
 theme_classic() +
-  coord_cartesian(ylim = c (-4,5), xlim = c (1, 3))+
-  draw_image("./img/parasite.png", x= 0.5,y = 4, scale = 0.9)+
-  draw_image("./img/no_parasite.png", x= 1.5,y = 4, scale = 0.9)+
-   draw_image("./img/no_parasite.png", x= 2.5,y = 4, scale = 0.9)+
-   draw_image("./img/cage.png", x= 1,y = 4, scale = 0.9)+
-   draw_image("./img/fleche_gauche.png", x= 1,y = 3.5, scale = 0.6)+
-  draw_image("./img/fleche_droite.png", x= 2,y = 3.5, scale = 0.6)+
+  #coord_cartesian(ylim = c (-4,5), xlim = c (1, 3))+
+ # draw_image("./img/parasite.png", x= 0.5,y = 4, scale = 0.9)+
+  #draw_image("./img/no_parasite.png", x= 1.5,y = 4, scale = 0.9)+
+   #draw_image("./img/no_parasite.png", x= 2.5,y = 4, scale = 0.9)+
+   #draw_image("./img/cage.png", x= 1,y = 4, scale = 0.9)+
+   #raw_image("./img/fleche_gauche.png", x= 1,y = 3.5, scale = 0.6)+
+  #draw_image("./img/fleche_droite.png", x= 2,y = 3.5, scale = 0.6)+
 theme(legend.position = "none",
  legend.title = element_blank()) +
-geom_segment(aes(x = 0.5, xend = 1.5, y = 3.25, yend = 3.25), color = "black") +
-annotate("text",  x = 1, y = 3.5, label = TeX(paste0("$Contrast_{U - I}$ = -0.47, $pMCMC_{\\alpha = 0.05}$ < 0.001***")), size =2.5) +
-  geom_segment(aes(x = 2.5, xend = 3.5, y = 3.25, yend = 3.25), color = "black") +
-annotate("text",  x = 3, y = 3.5, label = TeX(paste0("$Contrast_{U - C}$ = -1.11, $pMCMC_{\\alpha = 0.05}$ = 0.002**")), size =2.5)
+geom_segment(aes(x = 1.5, xend = 2.5, y = -3.7, yend = -3.7), color = "black") +
+annotate("text",  x = 2, y = -3.5, label = TeX(paste0("$Contrast_{U - I}$ = -0.47, $pMCMC_{\\alpha = 0.05}$ < 0.001***")), size =2.5) +
+  geom_segment(aes(x = 2.5, xend = 3.5, y = 2.8, yend = 2.8), color = "black") +
+annotate("text",  x = 3, y = 3, label = TeX(paste0("$Contrast_{U - C}$ = -1.11, $pMCMC_{\\alpha = 0.05}$ = 0.002**")), size =2.5)
 
 
 dat2<-dat_model %>% 
@@ -1412,7 +1412,7 @@ act_bc_c_dat <- cbind(newdat4, raw_act_bc_c, raw_act_L95, raw_act_U95)
   geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = bc, y = raw_act_L95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#6FA5A4", size=0.8)+
   geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = bc, y = raw_act_U95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#6FA5A4", size=0.8)+
    theme_classic() +
-    draw_image("./img/no_parasite.png", x= -1,y = 4, scale = 20) +
+    draw_image("./img/no_parasite.png", x= 0.5,y = 4, scale = 50) +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX("Body condition (g/cm)"), y = TeX("Distance swam$_{log_{2}}$"), title = "")+
       annotate("text", x = 0.028, y = 2.4, label = TeX(paste0("$beta_{bc}$ = ", " 0.21 ", " 95%CI: 0.04, 0.39**")), size =3, color = "black") 
