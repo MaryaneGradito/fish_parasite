@@ -851,7 +851,7 @@ range(raw_int_b_c)
 raw_bold_c<- as.numeric(unlist(raw_int_b_c))
 raw_bold_c_mean<-mean(raw_bold_c)
 
-#BOLDNESS FOR CONTRAST (TREATMENT T)
+#BOLDNESS FOR CONTRAST (TREATMENT T) U-T
 int_bold_con_T_num<- as.numeric(unlist(bold_T))
 
 #EXPLORATION FOR CONTRAST (TREATMENT E)
@@ -870,6 +870,15 @@ raw_bold_E_mean<-mean(raw_bold_E)
 #BOLDNESS FOR T
 int_bold_T<-(int_bold_con_T_num + int_bold_c_num)
 int_bold_T_num<- as.numeric(unlist(int_bold_T))
+
+#Contrast T and E
+#int_bold_E_T<-(int_bold_E_num - int_bold_T_num)
+#raw_int_b_E_T<-(int_bold_E_T * sd_boldness) + mean_boldness
+#range(raw_int_b_E_T)
+#raw_bold_T<- as.numeric(unlist(raw_int_b_E_T))
+#raw_bold_T_mean<-mean(raw_int_b_E_T)
+#blb_bold_T <- round(quantile(raw_int_b_E_T, c(0.025, 0.975))[1], 3)
+#bub_bold_T <- round(quantile(raw_int_b_E_T, c(0.025, 0.975))[2], 3)
 
 #raw units
 raw_int_b_T<-(int_bold_T_num * sd_boldness) + mean_boldness
@@ -954,12 +963,12 @@ pm_act_T<-pmcmc(int_act_c_num - int_act_T_num,twotail = TRUE)#not significant
 ###################
 dat_model<-data.frame(
   trait=c("logboldness","logboldness","exploration","exploration","logactivity","logactivity","exploration","logboldness","logactivity"),
-  treatment=c("Uninfected","Infected","Uninfected","Infected","Uninfected","Infected","Control","Control","Control"), 
+  treatment=c("Uninfected/Control","Infected","Uninfected/Control","Infected","Uninfected/Control","Infected","Control","Control","Control"), 
  estimate = c(raw_bold_c_mean,raw_bold_E_mean,raw_exp_c_mean,raw_exp_E_mean, raw_act_c_mean, raw_act_E_mean, raw_exp_T_mean,raw_bold_T_mean,raw_act_T_mean), 
   Lower_CI = c(blb_bold_c, blb_bold_E, blb_exp_c, blb_exp_E, blb_act_c, blb_act_E,blb_exp_T,blb_bold_T,blb_act_T),
 Higher_CI = c(bub_bold_c,bub_bold_E,bub_exp_c,bub_exp_E,bub_act_c,bub_act_E,bub_exp_T,bub_bold_T,bub_act_T))
 
-all_data_T[all_data_T == 'C'] <- 'Uninfected'
+all_data_T[all_data_T == 'C'] <- 'Uninfected/Control'
 all_data_T[all_data_T == 'E'] <- 'Infected'
 all_data_T[all_data_T == 'T'] <- 'Control'
 
@@ -967,7 +976,7 @@ all_data_T[all_data_T == 'T'] <- 'Control'
 #PLOTS
 ###################
 #plot model2      
-all_data_T$treatment <- factor(all_data_T$treatment, levels=c("Uninfected","Infected", "Control"))
+all_data_T$treatment <- factor(all_data_T$treatment, levels=c("Uninfected/Control","Infected", "Control"))
 trt <- as.factor(all_data_T$treatment)
 
 dat1<-dat_model %>% 
@@ -978,7 +987,7 @@ m1<-
 ggplot(all_data_T, aes(x = trt, y = log_boldness, group = trt, color = trt)) +
 geom_violin(aes(), trim = FALSE) +
 geom_jitter(aes(colour = trt),shape=16, position=position_jitter(0.1))+
-scale_color_manual(labels = c("Uninfected","Infected","Control"), values = c("#9A6FA5", "#6FA5A4","#FAFA8B"))+
+scale_color_manual(labels = c("Uninfected/Control","Infected","Control"), values = c("#9A6FA5", "#6FA5A4","#FAFA8B"))+
 geom_errorbar(data = dat1,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth =0.9, color = "black", inherit.aes = FALSE)+
 geom_point(data=dat1, mapping=aes(x= treatment, y= estimate), size=2, shape=21, fill = "grey", inherit.aes = FALSE)+
 labs(x = (""), 
@@ -993,10 +1002,14 @@ theme_classic() +
   #draw_image("./img/fleche_droite.png", x= 2,y = 3.5, scale = 0.6)+
 theme(legend.position = "none",
  legend.title = element_blank()) +
-geom_segment(aes(x = 1.5, xend = 2.5, y = -3.9, yend = -3.9), color = "black") +
-annotate("text",  x = 2, y = -3.7, label = TeX(paste0("$Contrast_{U - I}$ = -0.47, $pMCMC_{\\alpha = 0.05}$ > 0.001***")), size =2.5) +
-  geom_segment(aes(x = 2.5, xend = 3.5, y = 2.8, yend = 2.8), color = "black") +
-annotate("text",  x = 3, y = 3, label = TeX(paste0("$Contrast_{U - C}$ = -1.11, $pMCMC_{\\alpha = 0.05}$ = 0.002**")), size =2.5)
+geom_segment(aes(x = 1, xend = 2, y = 3, yend = 3), color = "black") +
+annotate("text",  x = 1.5, y = 3.2, label = TeX(paste0("$Contrast_{U - I}$ = -0.47, CI = -0.72, -0.22**")), size =2.5) +
+  geom_segment(aes(x = 1, xend = 3, y = 3.5, yend = 3.5), color = "black") +
+annotate("text",  x = 2, y = 3.7, label = TeX(paste0("$Contrast_{U - C}$ = -1.11, CI = -1.70, -0.50**")), size =2.5) + 
+  annotate("text",  x = 1, y = -4.2, label = TeX(paste0("T1 & T2")), size =3.5) +
+   annotate("text",  x = 2, y = -4.2, label = TeX(paste0("T3 & T4")), size =3.5) +
+   annotate("text",  x = 3, y = -4.2, label = TeX(paste0("T3 & T4")), size =3.5)
+  
 
 
 dat2<-dat_model %>% 
@@ -1006,7 +1019,7 @@ trt <- as.factor(all_data_T$treatment)
 #exploration
 m2<-ggplot(all_data_T, aes(x = trt, y = exploration, group = trt, col = trt)) +
 geom_violin(aes(), trim = FALSE) +
-geom_jitter(aes(colour = trt),shape=16, position=position_jitter(0.1)) +  scale_color_manual(labels = c("Uninfected","Infected","Control"), values = c("#9A6FA5", "#6FA5A4","#FAFA8B"))+
+geom_jitter(aes(colour = trt),shape=16, position=position_jitter(0.1)) +  scale_color_manual(labels = c("Uninfected/Control","Infected","Control"), values = c("#9A6FA5", "#6FA5A4","#FAFA8B"))+
 geom_errorbar(data = dat2,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth = 0.9, color = "black", inherit.aes = FALSE)+
 geom_point(data=dat2, mapping=aes(x= treatment, y= estimate), size=2, shape=21, fill = "grey", inherit.aes = FALSE)+
 labs(x = "", 
@@ -1016,10 +1029,13 @@ theme_classic() +
   #draw_image("./img/no_parasite.png", x= 0.5,y = 1, scale = 0.6)+
 theme(legend.position = "none",
  legend.title = element_blank())+
-geom_segment(aes(x = 1.5, xend = 2.5, y = 0.02, yend = 0.02), color = "black") +
-annotate("text",  x = 2, y = 0.04, label = TeX(paste0("$Contrast_{U - I}$ = 0.42, $pMCMC_{\\alpha = 0.05}$ = 0.001**")), size =2.5) + 
- geom_segment(aes(x = 2.5, xend = 3.5, y = 0.53, yend = 0.53), color = "black") + 
-annotate("text",  x = 3, y = 0.55, label = TeX(paste0("$Contrast_{U - C}$ = 1.13, $pMCMC_{\\alpha = 0.05}$ > 0.001**")), size =2.5) 
+geom_segment(aes(x = 1, xend = 2, y = 0.53, yend = 0.53), color = "black") +
+annotate("text",  x = 1.5, y = 0.55, label = TeX(paste0("$Contrast_{U - I}$ = 0.42, CI = 0.18, 0.67**")), size =2.5) + 
+ geom_segment(aes(x = 1, xend = 3, y = 0.58, yend = 0.58), color = "black") + 
+annotate("text",  x = 2, y = 0.6, label = TeX(paste0("$Contrast_{U - C}$ = 1.13, CI =  0.67, 1.62**")), size =2.5) + 
+  annotate("text",  x = 1, y = -0.05, label = TeX(paste0("T1 & T2")), size =3.5) +
+   annotate("text",  x = 2, y = -0.05, label = TeX(paste0("T3 & T4")), size =3.5) +
+   annotate("text",  x = 3, y = -0.05, label = TeX(paste0("T3 & T4")), size =3.5)
 
 
 #activity
@@ -1029,7 +1045,7 @@ dat3<-dat_model %>%
 m3<-ggplot(all_data_T, aes(x = trt, y = z_log_activity, group = trt, col = trt)) +
 geom_violin(aes(), trim = FALSE) +
 geom_jitter(aes(colour = trt), shape=16, position=position_jitter(0.1)) +
-scale_color_manual(labels = c("Uninfected","Infected","Control"), values = c("#9A6FA5", "#6FA5A4","#FAFA8B"))+
+scale_color_manual(labels = c("Uninfected/Control","Infected","Control"), values = c("#9A6FA5", "#6FA5A4","#FAFA8B"))+
 geom_errorbar(data = dat3,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth =0.9, color = "black", inherit.aes = FALSE)+
 geom_point(data=dat3, mapping=aes(x= treatment, y= estimate), size=2, shape=21, fill = "grey", inherit.aes = FALSE)+
 labs(x = "Treatment", 
@@ -1039,10 +1055,14 @@ theme_classic() +
    # draw_image("./img/no_parasite.png", x= 0.5,y = 3, scale = 0.6)+
 theme(legend.position = "none",
  legend.title = element_blank()) +
-geom_segment(aes(x = 1.5, xend = 2.5, y = -3.4, yend = -3.4), color = "black") +
-annotate("text",  x = 2, y = -3.2, label = TeX(paste0("$Contrast_{U - I}$ = -0.26, $pMCMC_{\\alpha = 0.05}$ = 0.06")), size =2.5) + 
-  geom_segment(aes(x = 2.5, xend = 3.5, y = 3, yend = 3), color = "black") + 
-annotate("text",  x = 3, y = 3.2, label = TeX(paste0("$Contrast_{U - C}$ = -0.22, $pMCMC_{\\alpha = 0.05}$ = 0.341")), size =2.5)
+geom_segment(aes(x = 1, xend = 2, y = 3.6, yend = 3.6), color = "black") +
+annotate("text",  x = 1.5, y = 3.8, label = TeX(paste0("$Contrast_{U - I}$ = -0.26, CI = -0.54, 0.02")), size =2.5) + 
+  geom_segment(aes(x = 1, xend = 3, y = 4, yend = 4), color = "black") + 
+annotate("text",  x = 2, y = 4.2, label = TeX(paste0("$Contrast_{U - C}$ = -0.22, CI = -0.69, 0.25")), size =2.5) + 
+  annotate("text",  x = 1, y = -4, label = TeX(paste0("T1 & T2")), size =3.5) +
+   annotate("text",  x = 2, y = -4, label = TeX(paste0("T3 & T4")), size =3.5) +
+   annotate("text",  x = 3, y = -4, label = TeX(paste0("T3 & T4")), size =3.5)
+  
 
  m<-plot_grid(
   m1,m2,m3,
@@ -2534,13 +2554,14 @@ tab2 <- data.frame("Raw variables" = c("Emergence time (sec)", "Surface covered 
 ```
 
 ```{r}
-tab3 <- data.frame("Models" = c("Model 1", "Model 2","Model 3","Model 4"),
-"Shyness" = c("shyness ~ 1 + treatment + (-1 + treatment |q| ID_fish) + (1|cage), sigma ~ -1 + treatment","shyness ~ 1 + body condition + (1|ID_fish) + (1|cage)","shyness ~ 1 + parasite density + body condition + (1|ID_fish) + (1|cage)",
+tab3 <- data.frame("Models" = c("Model 1", "Model 2","Model 3","Model 4","Model 5"),
+"Shyness" = c("shyness ~ 1 + treatment + (-1 + treatment |q| ID_fish) + (1|cage), sigma ~ -1 + treatment", "shyness ~ 1 + treatment + (treatment |q| ID_fish) + (1 | cage), sigma ~ -1 + treatment","shyness ~ 1 + body condition + (1|ID_fish) + (1|cage)", "shyness ~ 1 + parasite density + body condition + (1|ID_fish) + (1|cage)",
 "shyness ~ 1 + cestode density + black spot density + body condition + (1|ID_fish) + (1|cage)"),
-"Activity" = c("activity ~ 1 + treatment + (-1 + treatment |q| ID_fish) + (1|cage), sigma ~ -1 + treatment",
-"activity~ 1 + body condition + (1|ID_fish) + (1|cage)","activity ~ 1 + parasite density + body condition + (1|ID_fish) + (1|cage)",
+"Activity" = c("activity ~ 1 + treatment + (-1 + treatment |q| ID_fish) + (1|cage), sigma ~ -1 + treatment","activity ~ 1 + treatment + (treatment |q| ID_fish) + (1 | cage), sigma ~ -1 + treatment",
+"activity~ 1 + body condition + (1|ID_fish) + (1|cage)",
+"activity ~ 1 + parasite density + body condition + (1|ID_fish) + (1|cage)",
 "activity ~ 1 + cestode density + black spot density + body condition + (1|ID_fish) + (1|cage)"),
-"Exploration" = c("exploration ~ 1 + treatment + (-1 + treatment |q| ID_fish) + (1|cage), sigma ~ -1 + treatment", "exploration~ 1 + body condition+ (1|ID_fish) + (1|cage)"," exploration ~ 1 + parasite density + body condition + (1|ID_fish) + (1|cage)",
+"Exploration" = c("exploration ~ 1 + treatment + (-1 + treatment |q| ID_fish) + (1|cage), sigma ~ -1 + treatment","exploration ~ 1 + treatment + (treatment |q| ID_fish) + (1 | cage), sigma ~ -1 + treatment", "exploration~ 1 + body condition+ (1|ID_fish) + (1|cage)"," exploration ~ 1 + parasite density + body condition + (1|ID_fish) + (1|cage)",
 "exploration ~ 1 + cestode density + black spot density + body condition + (1|ID_fish) + (1|cage)"),
 
 check.names = FALSE)
@@ -2552,13 +2573,15 @@ tab3<-gt(tab3)  %>%
     tab_style(style = cell_borders(sides = c("top", "bottom")),
           locations = list(cells_column_labels()))  %>% 
     tab_style(style = cell_borders(sides = "bottom", weight = px(2)),
-         locations =  cells_body(rows = 4))%>%
+         locations =  cells_body(rows = 5))%>%
       tab_style(style = cell_borders(sides = "bottom", weight = px(1)),
          locations =  cells_body(rows = 1))%>%
       tab_style(style = cell_borders(sides = "bottom", weight = px(0.5)),
          locations =  cells_body(rows = 2))%>%
       tab_style(style = cell_borders(sides = "bottom", weight = px(0.5)),
-         locations =  cells_body(rows = 3))
+         locations =  cells_body(rows = 3))%>%
+      tab_style(style = cell_borders(sides = "bottom", weight = px(0.5)),
+         locations =  cells_body(rows = 4))
 
   gtsave(tab3, filename = "tab3.html")
 
