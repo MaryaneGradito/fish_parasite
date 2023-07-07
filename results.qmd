@@ -814,6 +814,15 @@ raw_exp_E_mean<-mean(raw_exp_E)
 int_exp_T<-(int_exp_con_num + int_exp_c_num)
 int_exp_T_num<- as.numeric(unlist(int_exp_T))
 
+#Contrast I - T
+int_exp_E_T<-(int_exp_T_num - int_exp_E_num)
+raw_int_exp_E_T<-(int_exp_E_T * sd_exploration) + mean_exploration
+range(raw_int_exp_E_T)
+raw_exp_E_T<- as.numeric(unlist(raw_int_exp_E_T))
+raw_exp_E_T_mean<-mean(raw_int_exp_E_T)
+blb_exp_E_T <- round(quantile(raw_int_exp_E_T, c(0.025, 0.975))[1], 3)
+bub_exp_E_T <- round(quantile(raw_int_exp_E_T, c(0.025, 0.975))[2], 3)
+
 #raw units
 raw_int_exp_T<-(int_exp_T_num * sd_exploration) + mean_exploration
 range(raw_int_exp_T)
@@ -872,13 +881,13 @@ int_bold_T<-(int_bold_con_T_num + int_bold_c_num)
 int_bold_T_num<- as.numeric(unlist(int_bold_T))
 
 #Contrast T and E
-#int_bold_E_T<-(int_bold_E_num - int_bold_T_num)
-#raw_int_b_E_T<-(int_bold_E_T * sd_boldness) + mean_boldness
-#range(raw_int_b_E_T)
-#raw_bold_T<- as.numeric(unlist(raw_int_b_E_T))
-#raw_bold_T_mean<-mean(raw_int_b_E_T)
-#blb_bold_T <- round(quantile(raw_int_b_E_T, c(0.025, 0.975))[1], 3)
-#bub_bold_T <- round(quantile(raw_int_b_E_T, c(0.025, 0.975))[2], 3)
+int_bold_E_T<-(int_bold_T_num - int_bold_E_num)
+raw_int_b_E_T<-(int_bold_E_T * sd_boldness) + mean_boldness
+range(raw_int_b_E_T)
+raw_bold_E_T<- as.numeric(unlist(raw_int_b_E_T))
+raw_bold_E_T_mean<-mean(raw_int_b_E_T)
+blb_bold_E_T <- round(quantile(raw_int_b_E_T, c(0.025, 0.975))[1], 3)
+bub_bold_E_T <- round(quantile(raw_int_b_E_T, c(0.025, 0.975))[2], 3)
 
 #raw units
 raw_int_b_T<-(int_bold_T_num * sd_boldness) + mean_boldness
@@ -933,6 +942,15 @@ int_act_con_E_num<- as.numeric(unlist(act_E))
 int_act_E<-(int_act_con_E_num + int_act_c_num)
 int_act_E_num<- as.numeric(unlist(int_act_E))
 
+#Contrast T and E
+int_act_E_T<-(int_act_T_num - int_act_E_num)
+raw_int_act_E_T<-(int_act_E_T * sd_activity) + mean_activity
+range(raw_int_act_E_T)
+raw_act_E_T<- as.numeric(unlist(raw_int_act_E_T))
+raw_act_E_T_mean<-mean(raw_int_act_E_T)
+blb_act_E_T <- round(quantile(raw_int_act_E_T, c(0.025, 0.975))[1], 3)
+bub_act_E_T <- round(quantile(raw_int_act_E_T, c(0.025, 0.975))[2], 3)
+
 #raw units
 raw_int_act_E<-(int_act_E_num * sd_activity) + mean_activity
 range(raw_int_act_E)
@@ -964,7 +982,7 @@ pm_act_T<-pmcmc(int_act_c_num - int_act_T_num,twotail = TRUE)#not significant
 dat_model<-data.frame(
   trait=c("logboldness","logboldness","exploration","exploration","logactivity","logactivity","exploration","logboldness","logactivity"),
   treatment=c("Uninfected/Control","Infected","Uninfected/Control","Infected","Uninfected/Control","Infected","Control","Control","Control"), 
- estimate = c(raw_bold_c_mean,raw_bold_E_mean,raw_exp_c_mean,raw_exp_E_mean, raw_act_c_mean, raw_act_E_mean, raw_exp_T_mean,raw_bold_T_mean,raw_act_T_mean), 
+estimate = c(raw_bold_c_mean,raw_bold_E_mean,raw_exp_c_mean,raw_exp_E_mean, raw_act_c_mean, raw_act_E_mean, raw_exp_T_mean,raw_bold_T_mean,raw_act_T_mean), 
   Lower_CI = c(blb_bold_c, blb_bold_E, blb_exp_c, blb_exp_E, blb_act_c, blb_act_E,blb_exp_T,blb_bold_T,blb_act_T),
 Higher_CI = c(bub_bold_c,bub_bold_E,bub_exp_c,bub_exp_E,bub_act_c,bub_act_E,bub_exp_T,bub_bold_T,bub_act_T))
 
@@ -1002,10 +1020,12 @@ theme_classic() +
   #draw_image("./img/fleche_droite.png", x= 2,y = 3.5, scale = 0.6)+
 theme(legend.position = "none",
  legend.title = element_blank()) +
-geom_segment(aes(x = 1, xend = 2, y = 3, yend = 3), color = "black") +
-annotate("text",  x = 1.5, y = 3.2, label = TeX(paste0("$Contrast_{U - I}$ = -0.47, CI = -0.72, -0.22**")), size =2.5) +
-  geom_segment(aes(x = 1, xend = 3, y = 3.5, yend = 3.5), color = "black") +
-annotate("text",  x = 2, y = 3.7, label = TeX(paste0("$Contrast_{U - C}$ = -1.11, CI = -1.70, -0.50**")), size =2.5) + 
+geom_segment(aes(x = 1, xend = 2, y = 3.5, yend = 3.5), color = "black") +
+annotate("text",  x = 1.5, y = 3.7, label = TeX(paste0("$Contrast_{U - I}$ = -0.47, CI = -0.72, -0.22**")), size =2.5) +
+  geom_segment(aes(x = 1, xend = 3, y = 4, yend = 4), color = "black") +
+annotate("text",  x = 2, y = 4.2, label = TeX(paste0("$Contrast_{U - C}$ = -1.11, CI = -1.70, -0.50**")), size =2.5) + 
+geom_segment(aes(x = 2, xend = 3, y = 3, yend = 3), color = "black") +
+annotate("text",  x = 2.5, y = 3.2, label = TeX(paste0("$Contrast_{C - I}$ = -0.64, CI = -1.24, -0.025**")), size =2.5) +
   annotate("text",  x = 1, y = -4.2, label = TeX(paste0("T1 & T2")), size =3.5) +
    annotate("text",  x = 2, y = -4.2, label = TeX(paste0("T3 & T4")), size =3.5) +
    annotate("text",  x = 3, y = -4.2, label = TeX(paste0("T3 & T4")), size =3.5)
@@ -1022,17 +1042,19 @@ geom_violin(aes(), trim = FALSE) +
 geom_jitter(aes(colour = trt),shape=16, position=position_jitter(0.1)) +  scale_color_manual(labels = c("Uninfected/Control","Infected","Control"), values = c("#9A6FA5", "#6FA5A4","#FAFA8B"))+
 geom_errorbar(data = dat2,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth = 0.9, color = "black", inherit.aes = FALSE)+
 geom_point(data=dat2, mapping=aes(x= treatment, y= estimate), size=2, shape=21, fill = "grey", inherit.aes = FALSE)+
-labs(x = "", 
+labs(x = "Treatment", 
 y = "Surface covered (%)") +
 theme_classic() +
   #draw_image("./img/parasite.png", x= 1.5,y = 1, scale = 0.6)+
   #draw_image("./img/no_parasite.png", x= 0.5,y = 1, scale = 0.6)+
 theme(legend.position = "none",
  legend.title = element_blank())+
-geom_segment(aes(x = 1, xend = 2, y = 0.53, yend = 0.53), color = "black") +
-annotate("text",  x = 1.5, y = 0.55, label = TeX(paste0("$Contrast_{U - I}$ = 0.42, CI = 0.18, 0.67**")), size =2.5) + 
- geom_segment(aes(x = 1, xend = 3, y = 0.58, yend = 0.58), color = "black") + 
-annotate("text",  x = 2, y = 0.6, label = TeX(paste0("$Contrast_{U - C}$ = 1.13, CI =  0.67, 1.62**")), size =2.5) + 
+geom_segment(aes(x = 1, xend = 2, y = 0.58, yend = 0.58), color = "black") +
+annotate("text",  x = 1.5, y = 0.6, label = TeX(paste0("$Contrast_{U - I}$ = 0.42, CI = 0.18, 0.67**")), size =2.5) + 
+ geom_segment(aes(x = 1, xend = 3, y = 0.64, yend = 0.64), color = "black") + 
+annotate("text",  x = 2, y = 0.66, label = TeX(paste0("$Contrast_{U - C}$ = 1.13, CI =  0.67, 1.62**")), size =2.5) + 
+  geom_segment(aes(x = 2, xend = 3, y = 0.53, yend = 0.53), color = "black") + 
+annotate("text",  x = 2.5, y = 0.55, label = TeX(paste0("$Contrast_{C - I}$ = 0.34, CI =  0.30, 0.37**")), size =2.5) + 
   annotate("text",  x = 1, y = -0.05, label = TeX(paste0("T1 & T2")), size =3.5) +
    annotate("text",  x = 2, y = -0.05, label = TeX(paste0("T3 & T4")), size =3.5) +
    annotate("text",  x = 3, y = -0.05, label = TeX(paste0("T3 & T4")), size =3.5)
@@ -1048,7 +1070,7 @@ geom_jitter(aes(colour = trt), shape=16, position=position_jitter(0.1)) +
 scale_color_manual(labels = c("Uninfected/Control","Infected","Control"), values = c("#9A6FA5", "#6FA5A4","#FAFA8B"))+
 geom_errorbar(data = dat3,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth =0.9, color = "black", inherit.aes = FALSE)+
 geom_point(data=dat3, mapping=aes(x= treatment, y= estimate), size=2, shape=21, fill = "grey", inherit.aes = FALSE)+
-labs(x = "Treatment", 
+labs(x = "", 
 y = TeX("Distance swam$_{log_{2}}$ (cm)")) +
 theme_classic() +
   #draw_image("./img/parasite.png", x= 1.5,y = 3, scale = 0.6)+
@@ -1057,8 +1079,10 @@ theme(legend.position = "none",
  legend.title = element_blank()) +
 geom_segment(aes(x = 1, xend = 2, y = 3.6, yend = 3.6), color = "black") +
 annotate("text",  x = 1.5, y = 3.8, label = TeX(paste0("$Contrast_{U - I}$ = -0.26, CI = -0.54, 0.02")), size =2.5) + 
-  geom_segment(aes(x = 1, xend = 3, y = 4, yend = 4), color = "black") + 
-annotate("text",  x = 2, y = 4.2, label = TeX(paste0("$Contrast_{U - C}$ = -0.22, CI = -0.69, 0.25")), size =2.5) + 
+  geom_segment(aes(x = 1, xend = 3, y = 4.2, yend = 4.2), color = "black") + 
+annotate("text",  x = 2, y = 4.4, label = TeX(paste0("$Contrast_{U - C}$ = -0.22, CI = -0.69, 0.25")), size =2.5) + 
+    geom_segment(aes(x = 2, xend = 3, y = 2.8, yend = 2.8), color = "black") + 
+annotate("text",  x = 2.5, y = 3, label = TeX(paste0("$Contrast_{C - I}$ = 0.04, CI = -0.43, 0.53")), size =2.5) + 
   annotate("text",  x = 1, y = -4, label = TeX(paste0("T1 & T2")), size =3.5) +
    annotate("text",  x = 2, y = -4, label = TeX(paste0("T3 & T4")), size =3.5) +
    annotate("text",  x = 3, y = -4, label = TeX(paste0("T3 & T4")), size =3.5)
@@ -1068,11 +1092,11 @@ annotate("text",  x = 2, y = 4.2, label = TeX(paste0("$Contrast_{U - C}$ = -0.22
   m1,m2,m3,
   labels = "AUTO", ncol = 1)
  
-  m2<-plot_grid(
+  m4<-plot_grid(
   m1,m2,m3,
   labels = "AUTO", ncol = 3)
 
- ggsave("./output/figures/fig2.2.png", plot = m2, width = 42, height = 15, units = "cm")
+ ggsave("./output/figures/fig2.2.png", plot = m4, width = 42, height = 15, units = "cm")
  ggsave("./output/figures/fig2.png", plot = m, width = 15, height = 37, units = "cm")
 
 fig2 <- image_read("./output/figures/fig2.png") 
