@@ -40,6 +40,10 @@ editor_options:
 # Import processed data
 #############################
   all_data <- read.table("./output/all_data_p.csv",header=T, sep=",")
+#all_data2 <- read.table("./output/dat_bc.csv",header=T, sep=",")
+
+#all_data2$trial <- as.factor(all_data2$trial )
+#boxplot(all_data2$body_condition ~ all_data2$trial)
 
 ############################
 # Load model
