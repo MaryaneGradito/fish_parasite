@@ -1,15 +1,15 @@
 ID_fish;visual tag of colour for each fish (3 colours)
-num_fish;fish number 
+num_fish;fish number (1 to 72)
 cage;cage number, used for the caging experiment to infect the fish (6 fish per cage). There is 10 cages and 2 control groups who stayed in the lab (C1 and C2)
 trial;trial number (1-2-3-4)
-boldness;boldness trials, latency to emerge from a shelter (seconds, for a max of 1200s) after a 15 minutes acclimatation
-bassin_bold;bassin number used during the boldness trials
+boldness;boldness-shyness data, latency to emerge from a shelter (seconds, for a max of 1200s) after a 15 minutes acclimatation
+bassin_bold;tank number used during the boldness trials
 date_bold;day-month-year of the boldness trials
 exp_bold;experimenter who manipulated the fish during the boldness trials (person's initials)
 video_bold;video number associated with the boldness trials
-exploration;exploration trials, pourcentage of surface explored (%) in an open field for 5 minutes
-activity;activity trials, cumulative distance moved (in centimeters) in an open field for 5 minutes
-bassin_exp;bassin number used during the exploration and activity trials
+exploration;exploration data, percentage of surface explored (%) in an open field for 5 minutes
+activity;activity data, cumulative distance moved (in centimeters) in an open field for 5 minutes
+bassin_exp;tank number used during the exploration and activity trials
 date_act;day-month-year of the exploration and activity trials
 video_act;video number associated with the exploration and activity trials
 exp_act;experimenter who manipulated the fish during the exploration and activity trials (person's initials)
@@ -35,4 +35,4 @@ P013_alive;number of nematode alive, i.e. moving when dissecting the fish
 P013_dead;number of nematode dead, i.e. not moving when dissecting the fish
 P06;number of cestodes in larval form
 gonade;presence (1) or absence (0) of gonads in the fish
-treatment;treatment group associated with the fish : C (Control, not infected experimentally, during trial 1 and 2) or E (Experimentally infected, during trial 3 and 4)
+treatment;"treatment group : C (uninfected state; all fish, including control fish and the ones that will be infected, during trial 1 and 2), E (Experimentally infected, during trial 3 and 4), T (control fish for trial 3-4)"
