@@ -40,10 +40,6 @@ editor_options:
 # Import processed data
 #############################
   all_data <- read.table("./output/all_data_p.csv",header=T, sep=",")
-#all_data2 <- read.table("./output/dat_bc.csv",header=T, sep=",")
-
-#all_data2$trial <- as.factor(all_data2$trial )
-#boxplot(all_data2$body_condition ~ all_data2$trial)
 
 ############################
 # Load model
@@ -135,21 +131,18 @@ editor_options:
        post_sd_sig_E_2 <- exp(post_sd_sig_2[,grepl("E", colnames(post_sd_sig_2))]) #ID experimentally infected
        post_sd_sig_T_2 <- exp(post_sd_sig_2[,grepl("T", colnames(post_sd_sig_2))]) #ID control
        
-#repeatability doesn't change when using model_T (include control fish n = 12)
-############################
-##     CONTROL GROUP
-############################
+###################################
+##     CONTROL GROUP & UNINFECTED
+###################################
 
 #Boldness for uninfected group
   fish_c_b <- post_sd_C_2[,grep("zlogboldness", colnames(post_sd_C_2))]^2
   cage_c_b <- post_sd_cage_2[ ,grep("zlogboldness", colnames(post_sd_cage_2))]^2
    res_c_b <- post_sd_sig_C_2[,grep("b_sigma_zlogboldness_treatmentC", colnames(post_sd_sig_C_2))]^2
 
+  #repeatability
   R_C_boldness <-   fish_c_b / (fish_c_b + cage_c_b + res_c_b)
-
-#verification
- 0.40^2 / (0.15^2 + 0.40^2 + exp(-0.14)^2)
- 
+  
   hist(R_C_boldness[,1])
     R_C_bold <- mean(R_C_boldness[,1])
   R_Blb_bold_C <- round(quantile(R_C_boldness[,1], c(0.025, 0.975))[1], 3)
@@ -160,75 +153,60 @@ editor_options:
   cage_t_b <- post_sd_cage_2[ ,grep("zlogboldness", colnames(post_sd_cage_2))]^2
    res_t_b <- post_sd_sig_T_2[,grep("b_sigma_zlogboldness_treatmentT", colnames(post_sd_sig_T_2))]^2
 
+  #repeatability
   R_T_boldness <-   fish_t_b / (fish_t_b + cage_t_b + res_t_b)
-  
-  
-    0.43^2 / (0.14^2 + 0.43^2 + exp(0.06)^2)
-  
+
     hist(R_T_boldness[,1])
     R_T_bold <- mean(R_T_boldness[,1])
   R_Blb_bold_T <- round(quantile(R_T_boldness[,1], c(0.025, 0.975))[1], 3)
   R_Bub_bold_T <- round(quantile(R_T_boldness[,1], c(0.025, 0.975))[2], 3)
-  
-   p_value_bold_T<-pmcmc(R_T_boldness[,1]*100, null = 10, twotail = FALSE)#significant
 
 #exploration for uninfected group
   fish_c_ex <- post_sd_C_2[,grep("zexploration", colnames(post_sd_C_2))]^2
   cage_c_ex <- post_sd_cage_2[ ,grep("zexploration", colnames(post_sd_cage_2))]^2
    res_c_ex <- post_sd_sig_C_2[,grep("b_sigma_zexploration_treatmentC", colnames(post_sd_sig_C_2))]^2
 
+  #repeatability
   R_C_exploration <-   fish_c_ex / (fish_c_ex + cage_c_ex + res_c_ex)
-  
-#verification
-  0.57^2 / (exp(-0.11)^2 + 0.57^2 + 0.16^2) #same number
 
   hist(R_C_exploration[,1])
   R_exp_C_mean<-mean(R_C_exploration[,1])
   R_Blb_exp_C <- round(quantile(R_C_exploration[,1], c(0.025, 0.975))[1], 3)
   R_Bub_exp_C <- round(quantile(R_C_exploration[,1], c(0.025, 0.975))[2], 3)
   
-   #Exploration for control group
+#Exploration for control group
   fish_t_ex <- post_sd_T_2[,grep("zexploration", colnames(post_sd_T_2))]^2
   cage_t_ex <- post_sd_cage_2[ ,grep("zexploration", colnames(post_sd_cage_2))]^2
    res_t_ex <- post_sd_sig_T_2[,grep("b_sigma_zexploration_treatmentT", colnames(post_sd_sig_T_2))]^2
 
+  #repeatability
   R_T_exploration <-   fish_t_ex / (fish_t_ex + cage_t_ex + res_t_ex)
-  
-  
-    0.27^2 / (0.15 ^2 + 0.27^2 + exp(-0.21)^2)
   
     hist(R_T_exploration[,1])
     R_T_exp <- mean(R_T_exploration[,1])
   R_Blb_exp_T <- round(quantile(R_T_exploration[,1], c(0.025, 0.975))[1], 3)
   R_Bub_exp_T <- round(quantile(R_T_exploration[,1], c(0.025, 0.975))[2], 3)
-  
-   p_value_exp_T<-pmcmc(R_T_exploration[,1]*100, null = 10, twotail = FALSE)#not significant
-
 
 #activity for uninfected group
   fish_c_ac <- post_sd_C_2[,grep("zlogactivity", colnames(post_sd_C_2))]^2
   cage_c_ac <- post_sd_cage_2[ ,grep("zlogactivity", colnames(post_sd_cage_2))]^2
   res_c_ac <- post_sd_sig_C_2[,grep("b_sigma_zlogactivity_treatmentC", colnames(post_sd_sig_C_2))]^2
 
+  #repeatability
   R_C_activity <-   fish_c_ac / (fish_c_ac + cage_c_ac + res_c_ac)
-  
-#verification
-  0.64^2 / (exp(-0.15)^2 + 0.64^2 + 0.11^2) 
 
   hist(R_C_activity[,1])
  R_act_C<- mean(R_C_activity[,1])
   R_Blb_act_C <- round(quantile(R_C_activity[,1], c(0.025, 0.975))[1], 3)
   R_Bub_act_C <- round(quantile(R_C_activity[,1], c(0.025, 0.975))[2], 3)
   
-     #Activity for control group
+#Activity for control group
   fish_t_act <- post_sd_T_2[,grep("zlogactivity", colnames(post_sd_T_2))]^2
   cage_t_act <- post_sd_cage_2[ ,grep("zlogactivity", colnames(post_sd_cage_2))]^2
    res_t_act <- post_sd_sig_T_2[,grep("b_sigma_zlogactivity_treatmentT", colnames(post_sd_sig_T_2))]^2
 
+  #repeatability
   R_T_activity <-   fish_t_act / (fish_t_act + cage_t_act + res_t_act)
-  
-  
-     0.43^2 / ( 0.11^2 +  0.43^2 + exp(-0.40)^2)
   
     hist(R_T_activity[,1])
     R_T_act <- mean(R_T_activity[,1])
@@ -247,10 +225,8 @@ editor_options:
   cage_e_b <- post_sd_cage_2[ ,grep("zlogboldness", colnames(post_sd_cage_2))]^2
   res_e_b <- post_sd_sig_E_2[,grep("b_sigma_zlogboldness_treatmentE", colnames(post_sd_sig_E_2))]^2
 
+  #repeatability
   R_E_boldness <-   fish_e_b / (fish_e_b + cage_e_b + res_e_b)
-  
-#verification
-  0.42^2 / (exp(-0.11)^2 + 0.42^2 + 0.15^2)
 
   hist(R_E_boldness[,1])
   R_E_bold<-mean(R_E_boldness[,1])
@@ -262,10 +238,8 @@ editor_options:
   cage_e_ex <- post_sd_cage_2[ ,grep("zexploration", colnames(post_sd_cage_2))]^2
   res_e_ex <- post_sd_sig_E_2[,grep("b_sigma_zexploration_treatmentE", colnames(post_sd_sig_E_2))]^2
 
+  #repeatability
   R_E_exploration <-   fish_e_ex / (fish_e_ex + cage_e_ex + res_e_ex)
-  
-#verification
-  0.38^2 / (exp(-0.28)^2 + 0.38^2 + 0.16^2) 
 
   hist(R_E_exploration[,1])
   R_exp_E_mean<-mean(R_E_exploration[,1])
@@ -277,10 +251,8 @@ editor_options:
   cage_e_ac <- post_sd_cage_2[ ,grep("zlogactivity", colnames(post_sd_cage_2))]^2
   res_e_ac <- post_sd_sig_E_2[,grep("b_sigma_zlogactivity_treatmentE", colnames(post_sd_sig_E_2))]^2
 
+  #repeatability
   R_E_activity <-   fish_e_ac / (fish_e_ac + cage_e_ac + res_e_ac)
-
-#verification
-  0.51^2 / (exp(-0.26)^2 + 0.51^2 + 0.11^2) 
   
   hist(R_E_activity[,1])
     R_act_E<-mean(R_E_activity[,1])
@@ -291,7 +263,7 @@ editor_options:
 # Overall Repeatability
 #############################
 
-  # Boldness
+  #Boldness
    R_bold  <-  overall_repeatability(post_sd_C_2, post_sd_E_2, post_sd_cage_2, post_sd_sig_C_2, post_sd_sig_E_2, trait = "zlogboldness")
   
         R_bold_mean <- mean(R_bold)
@@ -632,12 +604,15 @@ int_exp_c<-int_b[,grep("zexploration_Intercept", colnames(int_b))]
 int_act_c<-int_b[,grep("zlogactivity_Intercept", colnames(int_b))]
 
 #mean estimates for uninfected
+#boldness
 int_b_c_num<- as.numeric(unlist(int_b_c))
 mean_int_b_c<-mean(int_b_c_num)
 
+#exploration
 int_exp_c_num<- as.numeric(unlist(int_exp_c))
 mean_int_exp_c<-mean(int_exp_c_num)
 
+#activity
 int_act_c_num<- as.numeric(unlist(int_act_c))
 mean_int_act_c<-mean(int_act_c_num)
 
@@ -652,18 +627,21 @@ int_exp_con_T<-int_b[,grep("b_zexploration_treatmentT", colnames(int_b))]
 int_act_con_T<-int_b[,grep("b_zlogactivity_treatmentT", colnames(int_b))]
 
 #mean estimates for contrast C-E
+#boldness
 int_b_con_num<- as.numeric(unlist(int_b_con))
 mean_con_b<-mean(int_b_con_num)
 
 blb_b_con <- round(quantile(int_b_con_num, c(0.025, 0.975))[1], 3)
 bub_b_con <- round(quantile(int_b_con_num, c(0.025, 0.975))[2], 3)
 
+#exploration
 int_exp_con_num<- as.numeric(unlist(int_exp_con))
 mean_con_exp<-mean(int_exp_con_num)
 
 blb_exp_con <- round(quantile(int_exp_con_num, c(0.025, 0.975))[1], 3)
 bub_exp_con <- round(quantile(int_exp_con_num, c(0.025, 0.975))[2], 3)
 
+#activity
 int_act_con_num<- as.numeric(unlist(int_act_con))
 mean_con_act<-mean(int_act_con_num)
 
@@ -671,52 +649,59 @@ blb_act_con <- round(quantile(int_act_con_num, c(0.025, 0.975))[1], 3)
 bub_act_con <- round(quantile(int_act_con_num, c(0.025, 0.975))[2], 3)
 
 #mean estimates for contrast C-T
+#boldness
 int_b_con_num_T<- as.numeric(unlist(int_b_con_T))
 mean_con_b_T<-mean(int_b_con_num_T)
 
 blb_b_con_T <- round(quantile(int_b_con_num_T, c(0.025, 0.975))[1], 3)
 bub_b_con_T <- round(quantile(int_b_con_num_T, c(0.025, 0.975))[2], 3)
 
+#exploration
 int_exp_con_num_T<- as.numeric(unlist(int_exp_con_T))
 mean_con_exp_T<-mean(int_exp_con_num_T)
 
 blb_exp_con_T <- round(quantile(int_exp_con_num_T, c(0.025, 0.975))[1], 3)
 bub_exp_con_T <- round(quantile(int_exp_con_num_T, c(0.025, 0.975))[2], 3)
 
+#activity
 int_act_con_num_T<- as.numeric(unlist(int_act_con_T))
 mean_con_act_T<-mean(int_act_con_num_T)
 
 blb_act_con_T <- round(quantile(int_act_con_num_T, c(0.025, 0.975))[1], 3)
 bub_act_con_T <- round(quantile(int_act_con_num_T, c(0.025, 0.975))[2], 3)
 
-
 #subtract intercept for C - contrast E to get intercept for E
+#boldness
 int_b_e<-(int_b_c_num + int_b_con_num)
 int_b_e_num<- as.numeric(unlist(int_b_e))
 mean_int_b_e<-mean(int_b_e_num)
 
+#exploration
 int_exp_e<-(int_exp_con_num + int_exp_c_num)
 int_exp_e_num<- as.numeric(unlist(int_exp_e))
 mean_int_exp_e<-mean(int_exp_e_num)
 
+#activity
 int_act_e<-(int_act_con_num + int_act_c_num)
 int_act_e_num<- as.numeric(unlist(int_act_e))
 mean_int_act_e<-mean(int_act_e_num)
 
 #subtract intercept for C - contrast T to get intercept for T
+#boldness
 int_b_e_T<-(int_b_c_num + int_b_con_num_T)
 int_b_e_num_T<- as.numeric(unlist(int_b_e_T))
 mean_int_b_e_T<-mean(int_b_e_num_T)
 
+#exploration
 int_exp_e_T<-(int_exp_con_num_T + int_exp_c_num)
 int_exp_e_num_T<- as.numeric(unlist(int_exp_e_T))
 mean_int_exp_e_T<-mean(int_exp_e_num_T)
 
+#activity
 int_act_e_T<-(int_act_con_num_T + int_act_c_num)
 int_act_e_num_T<- as.numeric(unlist(int_act_e_T))
 mean_int_act_e_T<-mean(int_act_e_num_T)
 
- 
 #is E and C significantly different for each trait?
 pm_b<-pmcmc(int_b_c_num - int_b_e_num, twotail = TRUE) #significantly different
 pm_exp<-pmcmc(int_exp_c_num - int_exp_e_num, twotail = TRUE) #significantly different
@@ -1273,8 +1258,6 @@ act_bc<-post_sd_bc[,grep("b_zlogactivity_z_bc", colnames(post_sd_bc))]
   #pmcmc value for boldness
   p_bold_bc<-pmcmc(bold_bc_num, twotail = TRUE) 
 
-  
-  
 #################################
 # MODEL 6: body condition and parasite load on infected fish
 #################################
@@ -1319,7 +1302,6 @@ act_bc_6<-post_sd_pl_bc[,grep("b_zlogactivity_z_bc", colnames(post_sd_pl_bc))]
   
   #pmcmc value for boldness
   p_bold_bc_6<-pmcmc(bold_bc_num_6, twotail = TRUE) #not significant
-
   
 #################################
 # MODEL 7: looking at two species of parasites
@@ -2475,9 +2457,9 @@ fig9
 
 tab1 <- data.frame(Trait = c("Log emergence time (sec)", "Surface covered (%)","Log distance swam (cm)"), 
 "Overall" = c(R_bold_mean, R_exp_mean, R_act_mean),
-"95% CI (O)" = c("[0.007, 0.362]","[0.019, 0.437]","[0.095, 0.497]*"),
+"95% CI (O)" = c("[0.007, 0.362]","[0.019, 0.437]","[0.095, 0.497]**"),
 "Uninfected" = c(mean(R_C_boldness[,1]), mean(R_C_exploration[,1]), mean(R_C_activity[,1])), 
-"95% CI (U)" = c("[0.010, 0.366]","[0.106, 0.468]*","[0.160, 0.516]**"),
+"95% CI (U)" = c("[0.010, 0.366]","[0.106, 0.468]**","[0.160, 0.516]**"),
 "Infected" = c(mean(R_E_boldness[,1]), mean(R_E_exploration[,1]), mean(R_E_activity[,1])),
 "95% CI (I)" = c("[0.003, 0.388]","[0.004, 0.433]","[0.047, 0.515]"), 
 "Control" = c(R_T_bold, R_T_exp,R_T_act),
