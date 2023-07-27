@@ -56,7 +56,7 @@ editor_options:
   model6_1 <- readRDS(file = "./output/models/model_6_1.rds")
   model7 <- readRDS(file = "./output/models/model_7.rds")
   model7_2<-readRDS(file = "./output/models/model_7_2.rds")
-  model8<-readRDS(file = "./output/models/model_8.rds")
+                         model8<-readRDS(file = "./output/models/model_8.rds")
   model9<-readRDS(file = "./output/models/model_9.rds")
   model_T<-readRDS(file = "./output/models/model2_T.rds")
 
@@ -991,12 +991,14 @@ dat1<-dat_model %>%
 
 #boldness
 m1<-
-ggplot(all_data_T, aes(x = trt, y = log_boldness, group = trt, color = trt)) +
-geom_violin(aes(), trim = FALSE) +
+ggplot(all_data_T, aes(x = trt, y = log_boldness, group = trt, color = trt, fill = trt)) +
+geom_violin(aes(),trim = FALSE) +
 geom_jitter(aes(colour = trt),shape=16, position=position_jitter(0.1))+
-scale_color_manual(labels = c("Uninfected/Control","Infected","Control"), values = c("#9A6FA5", "#6FA5A4","#FAFA8B"))+
-geom_errorbar(data = dat1,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth =0.9, color = "black", inherit.aes = FALSE)+
-geom_point(data=dat1, mapping=aes(x= treatment, y= estimate), size=2, shape=21, fill = "grey", inherit.aes = FALSE)+
+#scale_color_manual(labels = c("Uninfected/Control","Infected","Control"), values = c("#9A6FA5", "#6FA5A4","#FAFA8B"))
+scale_color_manual(labels = c("Uninfected/Control","Infected","Control"), values = c("#8A05A9", "#26ABA5","#FEE502"))+
+scale_fill_manual(values = c("#D4A5DF", "#91E5E1","#FFF9C0")) +
+geom_errorbar(data = dat1,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth =1, color = "black", inherit.aes = FALSE)+
+geom_point(data=dat1, mapping=aes(x= treatment, y= estimate), size=2.5, shape=21, fill = "white", inherit.aes = FALSE)+
 labs(x = (""), 
 y = TeX("Emergence time$_{log_{2}}$(sec)")) +
 theme_classic() +
@@ -1026,12 +1028,13 @@ dat2<-dat_model %>%
 trt <- as.factor(all_data_T$treatment)
 
 #exploration
-m2<-ggplot(all_data_T, aes(x = trt, y = exploration, group = trt, col = trt)) +
+m2<-ggplot(all_data_T, aes(x = trt, y = exploration, group = trt, col = trt, fill = trt)) +
 geom_violin(aes(), trim = FALSE) +
-geom_jitter(aes(colour = trt),shape=16, position=position_jitter(0.1)) +  scale_color_manual(labels = c("Uninfected/Control","Infected","Control"), values = c("#9A6FA5", "#6FA5A4","#FAFA8B"))+
+geom_jitter(aes(colour = trt),shape=16, position=position_jitter(0.1)) +  scale_color_manual(labels = c("Uninfected/Control","Infected","Control"), values = c("#8A05A9", "#26ABA5","#FEE502"))+
+scale_fill_manual(values = c("#D4A5DF", "#91E5E1","#FFF9C0")) +
 geom_errorbar(data = dat2,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth = 0.9, color = "black", inherit.aes = FALSE)+
-geom_point(data=dat2, mapping=aes(x= treatment, y= estimate), size=2, shape=21, fill = "grey", inherit.aes = FALSE)+
-labs(x = "Treatment", 
+geom_point(data=dat2, mapping=aes(x= treatment, y= estimate), size=2, shape=21, fill = "white", inherit.aes = FALSE)+
+labs(x = "", 
 y = "Surface covered (%)") +
 theme_classic() +
   #draw_image("./img/parasite.png", x= 1.5,y = 1, scale = 0.6)+
@@ -1053,13 +1056,14 @@ annotate("text",  x = 2.5, y = 0.55, label = TeX(paste0("$Contrast_{C - I}$ = 0.
 dat3<-dat_model %>% 
   filter(trait == "logactivity")
 
-m3<-ggplot(all_data_T, aes(x = trt, y = z_log_activity, group = trt, col = trt)) +
+m3<-ggplot(all_data_T, aes(x = trt, y = z_log_activity, group = trt, col = trt, fill = trt)) +
 geom_violin(aes(), trim = FALSE) +
 geom_jitter(aes(colour = trt), shape=16, position=position_jitter(0.1)) +
-scale_color_manual(labels = c("Uninfected/Control","Infected","Control"), values = c("#9A6FA5", "#6FA5A4","#FAFA8B"))+
+scale_color_manual(labels = c("Uninfected/Control","Infected","Control"), values = c("#8A05A9", "#26ABA5","#FEE502"))+
+scale_fill_manual(values = c("#D4A5DF", "#91E5E1","#FFF9C0")) +
 geom_errorbar(data = dat3,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth =0.9, color = "black", inherit.aes = FALSE)+
-geom_point(data=dat3, mapping=aes(x= treatment, y= estimate), size=2, shape=21, fill = "grey", inherit.aes = FALSE)+
-labs(x = "", 
+geom_point(data=dat3, mapping=aes(x= treatment, y= estimate), size=2, shape=21, fill = "white", inherit.aes = FALSE)+
+labs(x = "Treatment", 
 y = TeX("Distance swam$_{log_{2}}$ (cm)")) +
 theme_classic() +
   #draw_image("./img/parasite.png", x= 1.5,y = 3, scale = 0.6)+
@@ -1081,11 +1085,11 @@ annotate("text",  x = 2.5, y = 3, label = TeX(paste0("$Contrast_{C - I}$ = 0.04,
   m1,m2,m3,
   labels = "AUTO", ncol = 1)
  
-  m4<-plot_grid(
-  m1,m2,m3,
+ # m4<-plot_grid(
+ # m1,m2,m3,
   labels = "AUTO", ncol = 3)
 
- ggsave("./output/figures/fig2.2.png", plot = m4, width = 42, height = 15, units = "cm")
+ #ggsave("./output/figures/fig2.2.png", plot = m4, width = 42, height = 15, units = "cm")
  ggsave("./output/figures/fig2.png", plot = m, width = 15, height = 37, units = "cm")
 
 fig2 <- image_read("./output/figures/fig2.png") 
@@ -1644,25 +1648,25 @@ boldness_bs_dat <- cbind(newdat2, raw_bold_bs, raw_bold_bs_L95, raw_bold_bs_U95)
 
   #figure 1
   n1<- ggplot(data=dat_parasite)+
-  geom_point(mapping = aes(x = dens_ces, y = log_boldness), color = "#9A6FA5")+
-  geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = ces, y = raw_bold_ces), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#9A6FA5", size=1) +
-  geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = ces, y = raw_bold_ces_L95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#9A6FA5", size=0.8)+
-  geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = ces, y = raw_bold_ces_U95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#9A6FA5", size=0.8) + 
-    geom_point(mapping = aes(x = dens_bs2, y = log_boldness), color = "#6FA5A4")+
-  geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = bs, y = raw_bold_bs), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#6FA5A4", size=1) +
-  geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = bs, y = raw_bold_bs_L95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#6FA5A4", size=0.8)+
-  geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = bs, y = raw_bold_bs_U95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#6FA5A4", size=0.8)+
+  geom_point(mapping = aes(x = dens_ces, y = log_boldness), color = "#26ABA5")+
+  geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = ces, y = raw_bold_ces), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#26ABA5", size=1) +
+  geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = ces, y = raw_bold_ces_L95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#26ABA5", size=0.8)+
+  geom_smooth(data = boldness_ces_dat, ggplot2::aes(x = ces, y = raw_bold_ces_U95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#26ABA5", size=0.8) + 
+    geom_point(mapping = aes(x = dens_bs2, y = log_boldness), color = "#8A05A9")+
+  geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = bs, y = raw_bold_bs), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#8A05A9", size=1) +
+  geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = bs, y = raw_bold_bs_L95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#8A05A9", size=0.8)+
+  geom_smooth(data = boldness_bs_dat, ggplot2::aes(x = bs, y = raw_bold_bs_U95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#8A05A9", size=0.8)+
     #geom_point(mapping = aes(x = z_pl, y = log_boldness),shape = 21, color = "#A2A2A2") +
   # geom_smooth(data = bold_pl_dat, ggplot2::aes(x = z_pl, y = summ_bold_pl), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#A2A2A2", size=1) +
  # geom_smooth(data = bold_pl_dat, ggplot2::aes(x = z_pl, y = summ_boldL95_pl), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#A2A2A2", size=0.8)+
  # geom_smooth(data = bold_pl_dat, ggplot2::aes(x = z_pl, y = summ_boldU95_pl), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#A2A2A2", size=0.8)+
    theme_classic() +
  draw_image("./img/blackspots.png", x = 20, y = -1.2, scale = 6)+
- draw_image("./img/cestodes.png", x = 24, y = -0.5, scale = 6) +
+ draw_image("./img/cestode.png", x = 24, y = -0.5, scale = 6) +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX(""), y = TeX("Emergence time$_{log_{2}}$"), title = "") +
-    annotate("text", x = 15, y = 1.6, label = TeX(paste0("$beta_{bs}$ = ", " -0.09 ", " 95%CI: -0.29, 0.10")), size =3, color = "#059687") + 
-  annotate("text", x = 15, y = 1.8, label = TeX(paste0("$beta_{ces}$ = "," 0.11 ", " 95%CI: -0.06, 0.39")), size=3, color = "#8F05B3")
+    annotate("text", x = 15, y = 1.6, label = TeX(paste0("$beta_{bs}$ = ", " -0.09 ", " 95%CI: -0.29, 0.10")), size =3, color = "#440154") + 
+  annotate("text", x = 15, y = 1.8, label = TeX(paste0("$beta_{ces}$ = "," 0.11 ", " 95%CI: -0.06, 0.39")), size=3, color = "#21918c")
   
 #################################
 # EXPLORATION PREDICTIONS
@@ -1724,25 +1728,25 @@ exp_bs_dat <- cbind(newdat2, raw_exp_bs, raw_exp_bs_L95, raw_exp_bs_U95)
   
 #figure 2
 n2<-ggplot(data=dat_parasite)+
-  geom_point(mapping = aes(x = dens_ces, y = exploration), color = "#9A6FA5")+
- geom_smooth(data = exp_ces_dat, ggplot2::aes(x = ces, y = raw_exp_ces), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#9A6FA5", size=1) +
-  geom_smooth(data = exp_ces_dat, ggplot2::aes(x = ces, y = raw_exp_ces_L95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#9A6FA5", size=0.8)+
-  geom_smooth(data = exp_ces_dat, ggplot2::aes(x = ces, y = raw_exp_ces_U95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#9A6FA5", size=0.8)+
-  geom_point(mapping = aes(x = dens_bs2, y = exploration), color = "#6FA5A4") +
-   geom_smooth(data = exp_bs_dat, ggplot2::aes(x = bs, y = raw_exp_bs), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#6FA5A4", size=1) +
-  geom_smooth(data = exp_bs_dat, ggplot2::aes(x = bs, y = raw_exp_bs_L95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#6FA5A4", size=0.8)+
-  geom_smooth(data = exp_bs_dat, ggplot2::aes(x = bs, y = raw_exp_bs_U95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#6FA5A4", size=0.8)+
+  geom_point(mapping = aes(x = dens_ces, y = exploration), color = "#26ABA5")+
+ geom_smooth(data = exp_ces_dat, ggplot2::aes(x = ces, y = raw_exp_ces), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#26ABA5", size=1) +
+  geom_smooth(data = exp_ces_dat, ggplot2::aes(x = ces, y = raw_exp_ces_L95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#26ABA5", size=0.8)+
+  geom_smooth(data = exp_ces_dat, ggplot2::aes(x = ces, y = raw_exp_ces_U95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#26ABA5", size=0.8)+
+  geom_point(mapping = aes(x = dens_bs2, y = exploration), color = "#8A05A9") +
+   geom_smooth(data = exp_bs_dat, ggplot2::aes(x = bs, y = raw_exp_bs), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#8A05A9", size=1) +
+  geom_smooth(data = exp_bs_dat, ggplot2::aes(x = bs, y = raw_exp_bs_L95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#8A05A9", size=0.8)+
+  geom_smooth(data = exp_bs_dat, ggplot2::aes(x = bs, y = raw_exp_bs_U95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#8A05A9", size=0.8)+
     # geom_point(mapping = aes(x = z_pl, y = exploration),shape = 21, color = "#A2A2A2") +
    #geom_smooth(data = exp_pl_dat, ggplot2::aes(x = z_pl, y = summ_exp_pl), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#A2A2A2", size=1) +
   #geom_smooth(data = exp_pl_dat, ggplot2::aes(x = z_pl, y = summ_expL95_pl), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#A2A2A2", size=0.8)+
   #geom_smooth(data = exp_pl_dat, ggplot2::aes(x = z_pl, y = summ_expU95_pl), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#A2A2A2", size=0.8)+
    theme_classic() +
  draw_image("./img/blackspots.png", x = 20, y = -0.16, scale = 6)+
-  draw_image("./img/cestodes.png", x = 24, y = -0.22, scale = 6) +
+  draw_image("./img/cestode.png", x = 24, y = -0.22, scale = 6) +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX("Parasite density (no/g)"), y = TeX("Surface covered (%)"), title = "") +
-  annotate("text", x = 15, y = 0.45, label = TeX(paste0("$beta_{bs}$ = ", " 0.10 ", " 95%CI: 0.09, -0.07")), size =3, color = "#059687") + 
-  annotate("text", x = 15, y = 0.47, label = TeX(paste0("$beta_{ces}$ = "," -0.11  ", " 95%CI: -0.29, 0.07")), size=3, color = "#8F05B3")
+  annotate("text", x = 15, y = 0.45, label = TeX(paste0("$beta_{bs}$ = ", " 0.10 ", " 95%CI: 0.09, -0.07")), size =3, color = "#440154") + 
+  annotate("text", x = 15, y = 0.47, label = TeX(paste0("$beta_{ces}$ = "," -0.11  ", " 95%CI: -0.29, 0.07")), size=3, color = "#21918c")
 
 #################################
 # ACTIVITY PREDICTIONS
@@ -1799,25 +1803,25 @@ act_bs_dat <- cbind(newdat2, raw_act_bs, raw_act_bs_L95, raw_act_bs_U95)
 
   #figure 3
 n3<-ggplot(data=dat_parasite)+
-geom_point(mapping = aes(x = dens_ces, y = log_activity),color = "#9A6FA5")+
- geom_smooth(data = act_ces_dat, ggplot2::aes(x = ces, y = raw_act_ces), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#9A6FA5", size=1) +
-  geom_smooth(data = act_ces_dat, ggplot2::aes(x = ces, y = raw_act_ces_L95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#9A6FA5", size=0.8)+
-  geom_smooth(data = act_ces_dat, ggplot2::aes(x = ces, y = raw_act_ces_U95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#9A6FA5", size=0.8)+
-  geom_point(mapping = aes(x = dens_bs2, y = log_activity), color = "#6FA5A4") +
-   geom_smooth(data = act_bs_dat, ggplot2::aes(x = bs, y = raw_act_bs), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#6FA5A4", size=1) +
-  geom_smooth(data = act_bs_dat, ggplot2::aes(x = bs, y = raw_act_bs_L95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#6FA5A4", size=0.8)+
-  geom_smooth(data = act_bs_dat, ggplot2::aes(x = bs, y = raw_act_bs_U95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#6FA5A4", size=0.8)+
+geom_point(mapping = aes(x = dens_ces, y = log_activity),color = "#26ABA5")+
+ geom_smooth(data = act_ces_dat, ggplot2::aes(x = ces, y = raw_act_ces), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#26ABA5", size=1) +
+  geom_smooth(data = act_ces_dat, ggplot2::aes(x = ces, y = raw_act_ces_L95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#26ABA5", size=0.8)+
+  geom_smooth(data = act_ces_dat, ggplot2::aes(x = ces, y = raw_act_ces_U95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#26ABA5", size=0.8)+
+  geom_point(mapping = aes(x = dens_bs2, y = log_activity), color = "#8A05A9") +
+   geom_smooth(data = act_bs_dat, ggplot2::aes(x = bs, y = raw_act_bs), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#8A05A9", size=1) +
+  geom_smooth(data = act_bs_dat, ggplot2::aes(x = bs, y = raw_act_bs_L95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#8A05A9", size=0.8)+
+  geom_smooth(data = act_bs_dat, ggplot2::aes(x = bs, y = raw_act_bs_U95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#8A05A9", size=0.8)+
    theme_classic() +
    #geom_point(mapping = aes(x = z_pl, y = log_activity),shape = 21, color = "#A2A2A2") +
    #geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_pl, y = summ_act_pl), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#A2A2A2", size=1) +
   #geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_pl, y = summ_actL95_pl), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#A2A2A2", size=0.8)+
   #geom_smooth(data = act_ces_dat, ggplot2::aes(x = z_pl, y = summ_actU95_pl), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#A2A2A2", size=0.8)+
   draw_image("./img/blackspots.png", x = 20, y = -1.5, scale = 6) +
-  draw_image("./img/cestodes.png", x = 24, y = -0.8, scale = 6) +
+  draw_image("./img/cestode.png", x = 24, y = -0.8, scale = 6) +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX(""), y = TeX("Distance swam$_{log_{2}}$"), title = "") +
-      annotate("text", x = 15, y = 1.6, label = TeX(paste0("$beta_{bs}$ = ", " -0.21 ", " 95%CI: -0.39, -0.03 **")), size =3, color = "#059687") +
- annotate("text", x = 15, y = 1.8, label = TeX(paste0("$beta_{ces}$ = "," 0.05 ", " 95%CI: -0.13, 0.24")), size=3, color = "#8F05B3")
+      annotate("text", x = 15, y = 1.6, label = TeX(paste0("$beta_{bs}$ = ", " -0.21 ", " 95%CI: -0.39, -0.03 **")), size =3, color = "#440154") +
+ annotate("text", x = 15, y = 1.8, label = TeX(paste0("$beta_{ces}$ = "," 0.05 ", " 95%CI: -0.13, 0.24")), size=3, color = "#21918c")
 
 p<-plot_grid(
   n1, n2, n3,
@@ -1879,22 +1883,22 @@ dat_slopes <- read.table("./output/dat_slopes.csv",header=T, sep=",")
 
 k1<-ggplot(data= dat_slopes)+
   theme_classic()+
-  geom_point(aes(x=bold_E,y=exp_E), color ="cyan4", size = 3)+
+  geom_point(aes(x=bold_E,y=exp_E), color ="#440154", size = 3)+
   geom_segment(data =dat_slopes,
                aes(x=bold_E, xend=bold_E, y=exp_E, yend=exp_E+se_exp_E), size = 0.2,
-               color="paleturquoise3"
+               color="#E19BF1"
                ) +
      geom_segment(data =dat_slopes,
                aes(x=bold_E, xend=bold_E, y=exp_E, yend=exp_E-se_exp_E), size = 0.2,
-               color="paleturquoise3"
+               color="#E19BF1"
                )+
   geom_segment(data =dat_slopes,
                aes(x=bold_E, xend=bold_E+se_b_E, y=exp_E, yend=exp_E), size = 0.2,
-               color="paleturquoise3"
+               color="#E19BF1"
                ) +
      geom_segment(data =dat_slopes,
                aes(x=bold_E, xend=bold_E-se_b_E, y=exp_E, yend=exp_E), size = 0.2,
-               color="paleturquoise3"
+               color="#E19BF1"
                ) +
   geom_vline(xintercept=0, color = "red2")+
   geom_hline(yintercept=0, color = "red2") +
@@ -1904,22 +1908,22 @@ k1<-ggplot(data= dat_slopes)+
 #boldness and activity E
 k2<-ggplot(data= dat_slopes)+
   theme_classic()+
-  geom_point(aes(x=bold_E,y=act_E), color ="cyan4", size = 3)+
+  geom_point(aes(x=bold_E,y=act_E), color ="#440154", size = 3)+
   geom_segment(data =dat_slopes,
                aes(x=bold_E, xend=bold_E, y=act_E, yend=act_E+se_act_E), size = 0.2,
-               color="paleturquoise3"
+               color="#E19BF1"
                ) +
      geom_segment(data =dat_slopes,
                aes(x=bold_E, xend=bold_E, y=act_E, yend=act_E-se_act_E), size = 0.2,
-               color="paleturquoise3"
+               color="#E19BF1"
                )+
   geom_segment(data =dat_slopes,
                aes(x=bold_E, xend=bold_E+se_b_E, y=act_E, yend=act_E), size = 0.2,
-               color="paleturquoise3"
+               color="#E19BF1"
                ) +
      geom_segment(data =dat_slopes,
                aes(x=bold_E, xend=bold_E-se_b_E, y=act_E, yend=act_E), size = 0.2,
-               color="paleturquoise3"
+               color="#E19BF1"
                ) +
   geom_vline(xintercept=0, color = "red2")+
   geom_hline(yintercept=0, color = "red2") +
@@ -1930,22 +1934,22 @@ k2<-ggplot(data= dat_slopes)+
 #activity and exploration E
 k3<-ggplot(data= dat_slopes)+
   theme_classic()+
-  geom_point(aes(x=exp_E,y=act_E), color ="cyan4", size = 3)+
+  geom_point(aes(x=exp_E,y=act_E), color ="#440154", size = 3)+
   geom_segment(data =dat_slopes,
                aes(x=exp_E, xend=exp_E, y=act_E, yend=act_E+se_act_E), size = 0.2,
-               color="paleturquoise3"
+               color="#E19BF1"
                ) +
      geom_segment(data =dat_slopes,
                aes(x=exp_E, xend=exp_E, y=act_E, yend=act_E-se_act_E), size = 0.2,
-               color="paleturquoise3"
+               color="#E19BF1"
                )+
   geom_segment(data =dat_slopes,
                aes(x=exp_E, xend=exp_E+se_exp_E, y=act_E, yend=act_E), size = 0.2,
-               color="paleturquoise3"
+               color="#E19BF1"
                ) +
      geom_segment(data =dat_slopes,
                aes(x=exp_E, xend=exp_E-se_exp_E, y=act_E, yend=act_E), size = 0.2,
-               color="paleturquoise3"
+               color="#E19BF1"
                )+
   geom_vline(xintercept=0, color = "red2")+
   geom_hline(yintercept=0, color = "red2") +
@@ -1960,18 +1964,18 @@ kk<- plot_grid(
 #Boldness I  vs Bold E
 k4<-ggplot(data= dat_slopes)+
   theme_classic()+
-  geom_point(aes(x=bold_I,y=bold_E), color ="darkgoldenrod", size = 3)+
+  geom_point(aes(x=bold_I,y=bold_E), color ="#21918c", size = 3)+
   geom_segment(data =dat_slopes,
-               aes(x=bold_I, xend=bold_I, y=bold_E, yend=bold_E+se_b_E), size = 0.2, color ="lemonchiffon3"
+               aes(x=bold_I, xend=bold_I, y=bold_E, yend=bold_E+se_b_E), size = 0.2, color ="#75C4C1"
                ) +
      geom_segment(data =dat_slopes,
-               aes(x=bold_I, xend=bold_I, y=bold_E, yend=bold_E-se_b_E), size = 0.2,color ="lemonchiffon3"
+               aes(x=bold_I, xend=bold_I, y=bold_E, yend=bold_E-se_b_E), size = 0.2,color ="#75C4C1"
                )+
   geom_segment(data =dat_slopes,
-               aes(x=bold_I, xend=bold_I+se_b_I, y=bold_E, yend=bold_E), size = 0.2,color ="lemonchiffon3"
+               aes(x=bold_I, xend=bold_I+se_b_I, y=bold_E, yend=bold_E), size = 0.2,color ="#75C4C1"
                ) +
      geom_segment(data =dat_slopes,
-               aes(x=bold_I, xend=bold_I-se_b_I, y=bold_E, yend=bold_E), size = 0.2,color ="lemonchiffon3"
+               aes(x=bold_I, xend=bold_I-se_b_I, y=bold_E, yend=bold_E), size = 0.2,color ="#75C4C1"
                ) +
   geom_vline(xintercept=0, color = "red2")+
   geom_hline(yintercept=0, color = "red2") +
@@ -1982,22 +1986,22 @@ k4<-ggplot(data= dat_slopes)+
 #Exp I  vs Exp E
 k5<-ggplot(data= dat_slopes)+
   theme_classic()+
-  geom_point(aes(x=exp_I,y=exp_E), color ="darkgoldenrod", size = 3)+
+  geom_point(aes(x=exp_I,y=exp_E), color ="#21918c", size = 3)+
   geom_segment(data =dat_slopes,
                aes(x=exp_I, xend=exp_I, y=exp_E, yend=exp_E+se_exp_E), size = 0.2,
-               color ="lemonchiffon3"
+               color ="#75C4C1"
                ) +
      geom_segment(data =dat_slopes,
                aes(x=exp_I, xend=exp_I, y=exp_E, yend=exp_E-se_exp_E), size = 0.2,
-               color ="lemonchiffon3"
+               color ="#75C4C1"
                )+
   geom_segment(data =dat_slopes,
                aes(x=exp_I, xend=exp_I+se_exp_I, y=exp_E, yend=exp_E), size = 0.2,
-               color ="lemonchiffon3"
+               color ="#75C4C1"
                ) +
      geom_segment(data =dat_slopes,
                aes(x=exp_I, xend=exp_I-se_exp_I, y=exp_E, yend=exp_E), size = 0.2,
-               color ="lemonchiffon3"
+               color ="#75C4C1"
                ) +
   geom_vline(xintercept=0, color = "red2")+
   geom_hline(yintercept=0, color = "red2") +
@@ -2008,22 +2012,22 @@ k5<-ggplot(data= dat_slopes)+
 #act I  vs act E
 k6<-ggplot(data= dat_slopes)+
   theme_classic()+
-  geom_point(aes(x=act_I,y=act_E), color ="darkgoldenrod", size = 3)+
+  geom_point(aes(x=act_I,y=act_E), color ="#21918c", size = 3)+
   geom_segment(data =dat_slopes,
                aes(x=act_I, xend=act_I, y=act_E, yend=act_E+se_act_E), size = 0.2,
-               color ="lemonchiffon3"
+               color ="#75C4C1"
                ) +
      geom_segment(data =dat_slopes,
                aes(x=act_I, xend=act_I, y=act_E, yend=act_E-se_act_E), size = 0.2,
-               color ="lemonchiffon3"
+               color ="#75C4C1"
                )+
   geom_segment(data =dat_slopes,
                aes(x=act_I, xend=act_I+se_act_I, y=act_E, yend=act_E), size = 0.2,
-               color ="lemonchiffon3"
+               color ="#75C4C1"
                ) +
      geom_segment(data =dat_slopes,
                aes(x=act_I, xend=act_I-se_act_I, y=act_E, yend=act_E), size = 0.2,
-               color ="lemonchiffon3"
+               color ="#75C4C1"
                ) +
   geom_vline(xintercept=0, color = "red2")+
   geom_hline(yintercept=0, color = "red2") +
