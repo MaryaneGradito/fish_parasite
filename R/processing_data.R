@@ -151,16 +151,18 @@ all_data$adj_mass3<-(all_data$mass_3-((0.003*all_data$P04_tot)+(0.0008*all_data$
 ###Adjusted mass before sacrifice
 all_data$adj_mass4<-(all_data$mass_4-((0.003*all_data$P04_tot)+(0.0008*all_data$P06)))
 
-
 #number of black spot that we want in our models
 all_data$bs_mod<-(all_data$BS_post_tot - all_data$BS_pre)
+all_data$bs_mod[all_data$bs_mod<0] <- 0
 
 ###Add new column for parasite density in total (co-infection)
-all_data$dens_tot<-(all_data$bs_mod + (all_data$P04_alive + all_data$P06)/all_data$adj_mass4)
+tot_parasite<-(all_data$bs_mod + (all_data$P04_alive + all_data$P06))
+                    
+all_data$dens_tot<-(tot_parasite/all_data$adj_mass4)
   
 ###Add new column for BS density
 #all_data$dens_bs<-(all_data$BS_post_tot/all_data$adj_mass4)
-all_data$dens_bs2<-(all_data$BS_post_tot - all_data$BS_pre)/all_data$adj_mass4
+all_data$dens_bs2<-(all_data$bs_mod/all_data$adj_mass4)
 
 ###Add new column for cestode density
 all_data$dens_ces<-((all_data$P04_alive + all_data$P06)/all_data$adj_mass4)
@@ -249,7 +251,7 @@ dat <- dat %>%
                 z_exploration = scale(exploration), tank1 = as.factor(bassin_bold), tank2 = as.factor(bassin_exp),(id = ID_fish))
 
 ###Save the new dataset with processed data
-write.table(dat, file = "all_data_p.csv",
+write.table(dat, file = "all_data_p_T.csv",
             sep = ",", row.names = F)
 
 #############################
@@ -257,34 +259,40 @@ write.table(dat, file = "all_data_p.csv",
 #############################
 #pivot data for each trial
 #we need parasite density z-transform and body condition z-transform for the next model
-all_dat <- read.table("./output/all_data_p.csv",header=T, sep=",")
+all_dat <- read.table("./output/all_data_p_T.csv",header=T, sep=",")
 
 dat_trial1<-all_dat  %>% 
-  select(ID_fish, trial, cage, treatment, exploration, log_boldness, log_activity, z_log_boldness, z_log_activity, z_exploration, fulton1, dens_tot) %>% 
+  select(ID_fish, trial, cage, treatment, exploration, log_boldness, log_activity, z_log_boldness, z_log_activity, z_exploration, fulton1, dens_tot, dens_ces, dens_bs2) %>% 
   filter(trial == 1) %>% 
   pivot_longer("fulton1",
                values_to='body_condition') %>% arrange(ID_fish)
 
 dat_trial2<-all_dat  %>% 
-  select(ID_fish, trial, cage, treatment, exploration, log_boldness, log_activity, z_log_boldness, z_log_activity, z_exploration,fulton2, dens_tot) %>%
+  select(ID_fish, trial, cage, treatment, exploration, log_boldness, log_activity, z_log_boldness, z_log_activity, z_exploration,fulton2, dens_tot, dens_ces, dens_bs2) %>%
   filter(trial == 2) %>% 
   pivot_longer("fulton2",
                values_to='body_condition') %>% arrange(ID_fish)
 
 dat_trial3<-all_dat  %>% 
-  select(ID_fish, trial, cage, treatment, exploration, log_boldness, log_activity, z_log_boldness, z_log_activity, z_exploration,fulton3, dens_tot) %>%
+  select(ID_fish, trial, cage, treatment, exploration, log_boldness, log_activity, z_log_boldness, z_log_activity, z_exploration,fulton3, dens_tot, dens_ces, dens_bs2) %>%
   filter(trial == 3) %>% 
   pivot_longer("fulton3",
                values_to='body_condition') %>% arrange(ID_fish)
 
 dat_trial4<-all_dat  %>% 
-  select(ID_fish, trial, cage, treatment, exploration, log_boldness, log_activity, z_log_boldness, z_log_activity, z_exploration, fulton4, dens_tot) %>%
+  select(ID_fish, trial, cage, treatment, exploration, log_boldness, log_activity, z_log_boldness, z_log_activity, z_exploration, fulton4, dens_tot, dens_ces, dens_bs2) %>%
   filter(trial == 4) %>% 
   pivot_longer("fulton4",
                values_to='body_condition') %>% arrange(ID_fish)
 
 #rbind together to get dataset for the model
 dat_trials <- rbind(dat_trial1, dat_trial2, dat_trial3, dat_trial4) %>% arrange(ID_fish)
+
+dat_trials <- dat_trials %>%  mutate(z_bc = scale(body_condition),
+                       z_ces = scale(dens_ces),
+                       z_bs2 = scale(dens_bs2),
+            z_dens = scale(dens_tot))
+
 
 write.table(dat_trials, file = "dat_bc.csv",
             sep = ",", row.names = F)
@@ -469,3 +477,54 @@ write.table(new_data, file = "new_data1.csv",
 
 
 
+
+#############################
+# Processing data for model5 and model6
+#############################
+#pivot data for each trial
+#we need parasite density z-transform and body condition z-transform for the next model
+all_dat <- read.table("./output/all_data_p.csv",header=T, sep=",")
+
+dat_trial1<-all_dat  %>% 
+  select(ID_fish, trial, cage, treatment, exploration, log_boldness, log_activity, z_log_boldness, z_log_activity, z_exploration, fulton1, dens_tot, dens_ces, dens_bs2) %>% 
+  filter(trial == 1) %>% 
+  pivot_longer("fulton1",
+               values_to='body_condition') %>% arrange(ID_fish)
+
+dat_trial2<-all_dat  %>% 
+  select(ID_fish, trial, cage, treatment, exploration, log_boldness, log_activity, z_log_boldness, z_log_activity, z_exploration,fulton2, dens_tot, dens_ces, dens_bs2) %>%
+  filter(trial == 2) %>% 
+  pivot_longer("fulton2",
+               values_to='body_condition') %>% arrange(ID_fish)
+
+dat_trial3<-all_dat  %>% 
+  select(ID_fish, trial, cage, treatment, exploration, log_boldness, log_activity, z_log_boldness, z_log_activity, z_exploration,fulton3, dens_tot, dens_ces, dens_bs2) %>%
+  filter(trial == 3) %>% 
+  pivot_longer("fulton3",
+               values_to='body_condition') %>% arrange(ID_fish)
+
+dat_trial4<-all_dat  %>% 
+  select(ID_fish, trial, cage, treatment, exploration, log_boldness, log_activity, z_log_boldness, z_log_activity, z_exploration, fulton4, dens_tot, dens_ces, dens_bs2) %>%
+  filter(trial == 4) %>% 
+  pivot_longer("fulton4",
+               values_to='body_condition') %>% arrange(ID_fish)
+
+#rbind together to get dataset for the model
+dat_trials <- rbind(dat_trial1, dat_trial2, dat_trial3, dat_trial4) %>% arrange(ID_fish)
+
+
+write.table(dat_trials, file = "dat_bc.csv",
+            sep = ",", row.names = F)
+#Select for each group the data and scale 
+#Experimental group
+dat_6 <- dat_trials %>% filter(treatment == "E") %>%  mutate(z_bc = scale(body_condition),
+                                                             z_dens = scale(dens_tot))
+#Control group
+dat_5 <- dat_trials %>% filter(treatment == "C") %>% mutate(z_bc = scale(body_condition))
+
+#Save data
+write.table(dat_6, file = "dat_models_E.csv",
+            sep = ",", row.names = F)
+
+write.table(dat_5, file = "dat_models_C.csv",
+            sep = ",", row.names = F)
