@@ -56,7 +56,7 @@ editor_options:
   model6_1 <- readRDS(file = "./output/models/model_6_1.rds")
   model7 <- readRDS(file = "./output/models/model_7.rds")
   model7_2<-readRDS(file = "./output/models/model_7_2.rds")
-                         model8<-readRDS(file = "./output/models/model_8.rds")
+  model8<-readRDS(file = "./output/models/model_8.rds")
   model9<-readRDS(file = "./output/models/model_9.rds")
   model_T<-readRDS(file = "./output/models/model2_T.rds")
 
@@ -140,6 +140,8 @@ editor_options:
   cage_c_b <- post_sd_cage_2[ ,grep("zlogboldness", colnames(post_sd_cage_2))]^2
    res_c_b <- post_sd_sig_C_2[,grep("b_sigma_zlogboldness_treatmentC", colnames(post_sd_sig_C_2))]^2
 
+   
+  
   #repeatability
   R_C_boldness <-   fish_c_b / (fish_c_b + cage_c_b + res_c_b)
   
@@ -996,10 +998,10 @@ geom_violin(aes(),trim = FALSE) +
 geom_jitter(aes(colour = trt),shape=16, position=position_jitter(0.1))+
 #scale_color_manual(labels = c("Uninfected/Control","Infected","Control"), values = c("#9A6FA5", "#6FA5A4","#FAFA8B"))
 scale_color_manual(labels = c("Uninfected/Control","Infected","Control"), values = c("#8A05A9", "#26ABA5","#FEE502"))+
-scale_fill_manual(values = c("#D4A5DF", "#91E5E1","#FFF9C0")) +
-geom_errorbar(data = dat1,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth =1, color = "black", inherit.aes = FALSE)+
-geom_point(data=dat1, mapping=aes(x= treatment, y= estimate), size=2.5, shape=21, fill = "white", inherit.aes = FALSE)+
-labs(x = (""), 
+scale_fill_manual(values = c("#D4A5DF", "#91E5E1","#FFFBD6")) +
+geom_errorbar(data = dat1,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.25, linewidth =1, color = "black", inherit.aes = FALSE)+
+geom_point(data=dat1, mapping=aes(x= treatment, y= estimate), size=3, shape=21, fill = "white", inherit.aes = FALSE)+
+labs(x = ("Treatment"), 
 y = TeX("Emergence time$_{log_{2}}$(sec)")) +
 theme_classic() +
   #coord_cartesian(ylim = c (-4,5), xlim = c (1, 3))+
@@ -1012,14 +1014,16 @@ theme_classic() +
 theme(legend.position = "none",
  legend.title = element_blank()) +
 geom_segment(aes(x = 1, xend = 2, y = 3.5, yend = 3.5), color = "black") +
-annotate("text",  x = 1.5, y = 3.7, label = TeX(paste0("$Contrast_{U - I}$ = -0.47, CI = -0.72, -0.22**")), size =2.5) +
-  geom_segment(aes(x = 1, xend = 3, y = 4, yend = 4), color = "black") +
-annotate("text",  x = 2, y = 4.2, label = TeX(paste0("$Contrast_{U - C}$ = -1.11, CI = -1.70, -0.50**")), size =2.5) + 
-geom_segment(aes(x = 2, xend = 3, y = 3, yend = 3), color = "black") +
-annotate("text",  x = 2.5, y = 3.2, label = TeX(paste0("$Contrast_{C - I}$ = -0.64, CI = -1.24, -0.025**")), size =2.5) +
-  annotate("text",  x = 1, y = -4.2, label = TeX(paste0("T1 & T2")), size =3.5) +
-   annotate("text",  x = 2, y = -4.2, label = TeX(paste0("T3 & T4")), size =3.5) +
-   annotate("text",  x = 3, y = -4.2, label = TeX(paste0("T3 & T4")), size =3.5)
+annotate("text",  x = 1.5, y = 3.7, label = TeX(paste0("$Contrast_{U - I}$ = -0.47,", " 95%CI = -0.72, -0.22**")), size =4) +
+  geom_segment(aes(x = 1, xend = 3, y = 4.2, yend = 4.2), color = "black") +
+annotate("text",  x = 2, y = 4.4, label = TeX(paste0("$Contrast_{U - C}$ = -1.11,", " 95%CI = -1.70, -0.50**")), size =4) + 
+geom_segment(aes(x = 2, xend = 3, y = 2.9, yend = 2.9), color = "black") +
+annotate("text",  x = 2.5, y = 3.1, label = TeX(paste0("$Contrast_{C - I}$ = -0.64,"," 95%CI = -1.24, -0.025**")), size =4) +
+  annotate("text",  x = 1, y = -4.2, label = TeX(paste0("T1 & T2")), size =6) +
+   annotate("text",  x = 2, y = -4.2, label = TeX(paste0("T3 & T4")), size =6) +
+   annotate("text",  x = 3, y = -4.2, label = TeX(paste0("T3 & T4")), size =6) +
+  theme(axis.text=element_text(size=16),
+        axis.title=element_text(size=16,face="bold"))
   
 
 
@@ -1031,10 +1035,10 @@ trt <- as.factor(all_data_T$treatment)
 m2<-ggplot(all_data_T, aes(x = trt, y = exploration, group = trt, col = trt, fill = trt)) +
 geom_violin(aes(), trim = FALSE) +
 geom_jitter(aes(colour = trt),shape=16, position=position_jitter(0.1)) +  scale_color_manual(labels = c("Uninfected/Control","Infected","Control"), values = c("#8A05A9", "#26ABA5","#FEE502"))+
-scale_fill_manual(values = c("#D4A5DF", "#91E5E1","#FFF9C0")) +
-geom_errorbar(data = dat2,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth = 0.9, color = "black", inherit.aes = FALSE)+
-geom_point(data=dat2, mapping=aes(x= treatment, y= estimate), size=2, shape=21, fill = "white", inherit.aes = FALSE)+
-labs(x = "", 
+scale_fill_manual(values = c("#D4A5DF", "#91E5E1","#FFFBD6")) +
+geom_errorbar(data = dat2,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.25, linewidth = 1, color = "black", inherit.aes = FALSE)+
+geom_point(data=dat2, mapping=aes(x= treatment, y= estimate), size=3, shape=21, fill = "white", inherit.aes = FALSE)+
+labs(x = "Treatment", 
 y = "Surface covered (%)") +
 theme_classic() +
   #draw_image("./img/parasite.png", x= 1.5,y = 1, scale = 0.6)+
@@ -1042,14 +1046,16 @@ theme_classic() +
 theme(legend.position = "none",
  legend.title = element_blank())+
 geom_segment(aes(x = 1, xend = 2, y = 0.58, yend = 0.58), color = "black") +
-annotate("text",  x = 1.5, y = 0.6, label = TeX(paste0("$Contrast_{U - I}$ = 0.42, CI = 0.18, 0.67**")), size =2.5) + 
+annotate("text",  x = 1.5, y = 0.6, label = TeX(paste0("$Contrast_{U - I}$ = 0.42,", " 95%CI = 0.18, 0.67**")), size =4) + 
  geom_segment(aes(x = 1, xend = 3, y = 0.64, yend = 0.64), color = "black") + 
-annotate("text",  x = 2, y = 0.66, label = TeX(paste0("$Contrast_{U - C}$ = 1.13, CI =  0.67, 1.62**")), size =2.5) + 
-  geom_segment(aes(x = 2, xend = 3, y = 0.53, yend = 0.53), color = "black") + 
-annotate("text",  x = 2.5, y = 0.55, label = TeX(paste0("$Contrast_{C - I}$ = 0.34, CI =  0.30, 0.37**")), size =2.5) + 
-  annotate("text",  x = 1, y = -0.05, label = TeX(paste0("T1 & T2")), size =3.5) +
-   annotate("text",  x = 2, y = -0.05, label = TeX(paste0("T3 & T4")), size =3.5) +
-   annotate("text",  x = 3, y = -0.05, label = TeX(paste0("T3 & T4")), size =3.5)
+annotate("text",  x = 2, y = 0.66, label = TeX(paste0("$Contrast_{U - C}$ = 1.13,", " 95%CI =  0.67, 1.62**")), size =4) + 
+  geom_segment(aes(x = 2, xend = 3, y = 0.52, yend = 0.52), color = "black") + 
+annotate("text",  x = 2.5, y = 0.54, label = TeX(paste0("$Contrast_{C - I}$ = 0.34,", " 95%CI =  0.30, 0.37**")), size =4) + 
+  annotate("text",  x = 1, y = -0.05, label = TeX(paste0("T1 & T2")), size =6) +
+   annotate("text",  x = 2, y = -0.05, label = TeX(paste0("T3 & T4")), size =6) +
+   annotate("text",  x = 3, y = -0.05, label = TeX(paste0("T3 & T4")), size =6)+
+  theme(axis.text=element_text(size=16),
+        axis.title=element_text(size=16, face="bold"))
 
 
 #activity
@@ -1060,9 +1066,9 @@ m3<-ggplot(all_data_T, aes(x = trt, y = z_log_activity, group = trt, col = trt, 
 geom_violin(aes(), trim = FALSE) +
 geom_jitter(aes(colour = trt), shape=16, position=position_jitter(0.1)) +
 scale_color_manual(labels = c("Uninfected/Control","Infected","Control"), values = c("#8A05A9", "#26ABA5","#FEE502"))+
-scale_fill_manual(values = c("#D4A5DF", "#91E5E1","#FFF9C0")) +
-geom_errorbar(data = dat3,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.2, linewidth =0.9, color = "black", inherit.aes = FALSE)+
-geom_point(data=dat3, mapping=aes(x= treatment, y= estimate), size=2, shape=21, fill = "white", inherit.aes = FALSE)+
+scale_fill_manual(values = c("#D4A5DF", "#91E5E1","#FFFBD6")) +
+geom_errorbar(data = dat3,aes(x = treatment,y = estimate, ymin= Lower_CI, ymax=Higher_CI), width=0.25, linewidth =1, color = "black", inherit.aes = FALSE)+
+geom_point(data=dat3, mapping=aes(x= treatment, y= estimate), size=3, shape=21, fill = "white", inherit.aes = FALSE)+
 labs(x = "Treatment", 
 y = TeX("Distance swam$_{log_{2}}$ (cm)")) +
 theme_classic() +
@@ -1071,26 +1077,30 @@ theme_classic() +
 theme(legend.position = "none",
  legend.title = element_blank()) +
 geom_segment(aes(x = 1, xend = 2, y = 3.6, yend = 3.6), color = "black") +
-annotate("text",  x = 1.5, y = 3.8, label = TeX(paste0("$Contrast_{U - I}$ = -0.26, CI = -0.54, 0.02")), size =2.5) + 
-  geom_segment(aes(x = 1, xend = 3, y = 4.2, yend = 4.2), color = "black") + 
-annotate("text",  x = 2, y = 4.4, label = TeX(paste0("$Contrast_{U - C}$ = -0.22, CI = -0.69, 0.25")), size =2.5) + 
+annotate("text",  x = 1.5, y = 3.8, label = TeX(paste0("$Contrast_{U - I}$ = -0.26,", " 95%CI = -0.54, 0.02")), size =4) + 
+  geom_segment(aes(x = 1, xend = 3, y = 4.4, yend = 4.4), color = "black") + 
+annotate("text",  x = 2, y = 4.6, label = TeX(paste0("$Contrast_{U - C}$ = -0.22,", " 95%CI = -0.69, 0.25")), size =4) + 
     geom_segment(aes(x = 2, xend = 3, y = 2.8, yend = 2.8), color = "black") + 
-annotate("text",  x = 2.5, y = 3, label = TeX(paste0("$Contrast_{C - I}$ = 0.04, CI = -0.43, 0.53")), size =2.5) + 
-  annotate("text",  x = 1, y = -4, label = TeX(paste0("T1 & T2")), size =3.5) +
-   annotate("text",  x = 2, y = -4, label = TeX(paste0("T3 & T4")), size =3.5) +
-   annotate("text",  x = 3, y = -4, label = TeX(paste0("T3 & T4")), size =3.5)
+annotate("text",  x = 2.5, y = 3, label = TeX(paste0("$Contrast_{C - I}$ = 0.04,", " 95%CI = -0.43, 0.53")), size =4) + 
+  annotate("text",  x = 1, y = -4, label = TeX(paste0("T1 & T2")), size =6) +
+   annotate("text",  x = 2, y = -4, label = TeX(paste0("T3 & T4")), size =6) +
+   annotate("text",  x = 3, y = -4, label = TeX(paste0("T3 & T4")), size =6)+
+  theme(axis.text=element_text(size=16),
+        axis.title=element_text(size=16,face="bold"))
   
 
- m<-plot_grid(
-  m1,m2,m3,
-  labels = "AUTO", ncol = 1)
+ #m<-plot_grid(
+  #m1,m2,m3,
+  #labels = "AUTO", ncol = 1)
  
- # m4<-plot_grid(
- # m1,m2,m3,
+  m4<-plot_grid(
+  m1,m2,m3,
   labels = "AUTO", ncol = 3)
 
- #ggsave("./output/figures/fig2.2.png", plot = m4, width = 42, height = 15, units = "cm")
- ggsave("./output/figures/fig2.png", plot = m, width = 15, height = 37, units = "cm")
+ ggsave("./output/figures/fig2.b.png", plot = m1, width = 15, height = 15, units = "cm")
+ ggsave("./output/figures/fig2.ex.png", plot = m2, width = 15, height = 15, units = "cm")
+ ggsave("./output/figures/fig2.act.png", plot = m3, width = 15, height = 15, units = "cm")
+ #ggsave("./output/figures/fig2.png", plot = m, width = 15, height = 37, units = "cm")
 
 fig2 <- image_read("./output/figures/fig2.png") 
 fig2
@@ -1386,6 +1396,72 @@ act_ces<-post_sd_2_p[,grep("b_zlogactivity_z_ces", colnames(post_sd_2_p))]
   #pmcmc value
   p_bold_ces<-pmcmc(bold_ces_num, twotail = TRUE) #significant
   
+  #################################
+# MODEL 12: how infection changed body condition
+#################################
+#Extract post sd from model 12.1
+post_sd_bc<- as_draws_df(model_12.1, variable = "^b", regex = TRUE)
+
+#extrait effect of parasite density on body condition
+bc_ces<-post_sd_bc[,grep("b_z_ces", colnames(post_sd_bc))]
+bc_bs<-post_sd_bc[,grep("b_z_bs2", colnames(post_sd_bc))]
+bc_treatmentE<-post_sd_bc[,grep("b_treatmentE", colnames(post_sd_bc))]
+bc_treatmentT<-post_sd_bc[,grep("b_treatmentT", colnames(post_sd_bc))]
+
+  #mean and quantile for cestode density
+  bc_ces_num<- as.numeric(unlist(bc_ces))
+  bc_ces_mean <- mean(bc_ces_num)
+  bc_Blb_ces <- round(quantile(bc_ces_num, c(0.025, 0.975))[1], 3)
+  bc_Bub_ces <- round(quantile(bc_ces_num, c(0.025, 0.975))[2], 3)
+  
+  #mean and quantile for BS density
+  bc_bs_num<- as.numeric(unlist(bc_bs))
+  bc_bs_mean <- mean(bc_bs_num)
+  bc_Blb_bs <- round(quantile(bc_bs_num, c(0.025, 0.975))[1], 3)
+  bc_Bub_bs <- round(quantile(bc_bs_num, c(0.025, 0.975))[2], 3)
+  
+   #mean and quantile for treatment E 
+  bc_E_num<- as.numeric(unlist(bc_treatmentE))
+  bc_E_mean <- mean(bc_E_num)
+  bc_Blb_E <- round(quantile(bc_E_num, c(0.025, 0.975))[1], 3)
+  bc_Bub_E <- round(quantile(bc_E_num, c(0.025, 0.975))[2], 3)
+  
+     #mean and quantile for treatment T
+  bc_T_num<- as.numeric(unlist(bc_treatmentT))
+  bc_T_mean <- mean(bc_T_num)
+  bc_Blb_T <- round(quantile(bc_T_num, c(0.025, 0.975))[1], 3)
+  bc_Bub_T <- round(quantile(bc_T_num, c(0.025, 0.975))[2], 3)
+  
+  #################################
+# MODEL 13: how co-infection impact body condition
+#################################
+#Extract post sd from model 13
+post_sd_bc_13<- as_draws_df(model_13, variable = "^b", regex = TRUE)
+
+#extrait effect of parasite density on body condition
+bc_ces_13<-post_sd_bc_13[,grep("b_z_ces", colnames(post_sd_bc_13))]
+bc_bs_13<-post_sd_bc_13[,grep("b_z_bs_2", colnames(post_sd_bc_13))]
+bc_trial<-post_sd_bc_13[,grep("b_trial", colnames(post_sd_bc_13))]
+
+  #mean and quantile for cestode density
+  bc_ces_13_num<- as.numeric(unlist(bc_ces_13))
+  bc_ces_mean_13 <- mean(bc_ces_13_num)
+  bc_Blb_ces_13 <- round(quantile(bc_ces_13_num, c(0.025, 0.975))[1], 3)
+  bc_Bub_ces_13 <- round(quantile(bc_ces_13_num, c(0.025, 0.975))[2], 3)
+  
+  #mean and quantile for BS density
+  bc_bs_13_num<- as.numeric(unlist(bc_bs_13))
+  bc_bs_13_mean <- mean(bc_bs_13_num)
+  bc_Blb_bs_13 <- round(quantile(bc_bs_13_num, c(0.025, 0.975))[1], 3)
+  bc_Bub_bs_13 <- round(quantile(bc_bs_13_num, c(0.025, 0.975))[2], 3)
+  
+   #mean and quantile for trial
+  bc_trial_num<- as.numeric(unlist(bc_trial))
+  bc_trial_mean <- mean(bc_trial_num)
+  bc_Blb_trial <- round(quantile(bc_trial_num, c(0.025, 0.975))[1], 3)
+  bc_Bub_trial <- round(quantile(bc_trial_num, c(0.025, 0.975))[2], 3)
+  
+   
   
 ```
 
@@ -1446,15 +1522,15 @@ act_bc_c_dat <- cbind(newdat4, raw_act_bc_c, raw_act_L95, raw_act_U95)
 
 #plot
    x1<- ggplot(data=dat_C)+
-  geom_point(mapping = aes(x = body_condition, y = log_activity), shape = 16,color = "#6FA5A4")+
- geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = bc, y = raw_act_bc_c), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#6FA5A4", size=1) +
-  geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = bc, y = raw_act_L95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#6FA5A4", size=0.8)+
-  geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = bc, y = raw_act_U95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#6FA5A4", size=0.8)+
+  geom_point(mapping = aes(x = body_condition, y = log_activity), shape = 16,color = "#8A05A9")+
+ geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = bc, y = raw_act_bc_c), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#8A05A9", size=1) +
+  geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = bc, y = raw_act_L95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#8A05A9", size=0.8)+
+  geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = bc, y = raw_act_U95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#8A05A9", size=0.8)+
    theme_classic() +
-    draw_image("./img/no_parasite.png", x = 0.028, y = 2.4, scale = 50) +
+    #draw_image("./img/no_parasite.png", x = 0.028, y = 2.4, scale = 50) +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
-    theme(legend.position="none") + labs(x = TeX("Body condition (g/cm)"), y = TeX("Distance swam$_{log_{2}}$ (cm)"), title = "")+
-      annotate("text", x = 0.028, y = 2.4, label = TeX(paste0("$beta_{bc}$ = ", " 0.21 ", " 95%CI: 0.04, 0.39**")), size =3, color = "black") 
+    theme(legend.position="none") + labs(x = TeX("Body condition (${g/cm^{3}}$)"), y = TeX("Distance swam$_{log_{2}}$ (cm)"), title = "")+
+      annotate("text", x = 0.028, y = 2.4, label = TeX(paste0("$beta_{bc}$ = ", " 0.21 ", " 95%CI = 0.04, 0.39**")), size =3, color = "black") 
 
 
 #################################
@@ -1499,22 +1575,26 @@ act_bc_dat <- cbind(newdat4, raw_act_bc, raw_act_L95, raw_act_U95)
 
 #plot
 x2<- ggplot(data=dat_parasite)+
-  geom_point(mapping = aes(x = body_condition, y = log_activity), shape = 16,color = "#9A6FA5")+
- geom_smooth(data = act_bc_dat, ggplot2::aes(x = bc, y = raw_act_bc), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#9A6FA5", size=1) +
-  geom_smooth(data = act_bc_dat, ggplot2::aes(x = bc, y = raw_act_L95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#9A6FA5", size=0.8)+
-  geom_smooth(data = act_bc_dat, ggplot2::aes(x = bc, y = raw_act_U95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#9A6FA5", size=0.8)+
+  geom_point(mapping = aes(x = body_condition, y = log_activity), shape = 16,color = "#26ABA5")+
+ geom_smooth(data = act_bc_dat, ggplot2::aes(x = bc, y = raw_act_bc), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#26ABA5", size=1) +
+  geom_smooth(data = act_bc_dat, ggplot2::aes(x = bc, y = raw_act_L95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#26ABA5", size=0.8)+
+  geom_smooth(data = act_bc_dat, ggplot2::aes(x = bc, y = raw_act_U95), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#26ABA5", size=0.8)+
    theme_classic() +
  draw_image("./img/parasite.png", x= -1,y = 1, scale = 100)+
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
-    theme(legend.position="none") + labs(x = TeX("Body condition (g/cm)"), y = TeX("Distance swam$_{log_{2}}$ (cm)"), title = "")+
- annotate("text", x = 0.025, y = 1.7, label = TeX(paste0("$beta_{bc}$ = "," 0.26 ", " 95%CI: 0.089,0.426**")), size=3, color = "black")
+    theme(legend.position="none") + labs(x = TeX("Body condition (${g/cm^{3}}$)"), y = TeX("Distance swam$_{log_{2}}$ (cm)"), title = "")+
+ annotate("text", x = 0.025, y = 1.7, label = TeX(paste0("$beta_{bc}$ = "," 0.26 ", " 95%CI = 0.09, 0.43**")), size=3, color = "black")
 
   
- x<- plot_grid(
-  x1,x2,
-  labels = "AUTO", ncol = 2)
+ #x<- plot_grid(
+  #x1,x2,
+  #labels = "AUTO", ncol = 2)
 
-  ggsave("./output/figures/fig3.png", plot = x, width = 22, height = 12, units = "cm")
+  #ggsave("./output/figures/fig3.png", plot = x, width = 22, height = 12, units = "cm")
+ggsave("./output/figures/fig3.un.png", plot = x1, width = 12, height = 12, units = "cm")
+ggsave("./output/figures/fig3.in.png", plot = x2, width = 12, height = 12, units = "cm")
+
+
   fig3 <- image_read("./output/figures/fig3.png")
   fig3
 ```
@@ -1664,9 +1744,11 @@ boldness_bs_dat <- cbind(newdat2, raw_bold_bs, raw_bold_bs_L95, raw_bold_bs_U95)
  draw_image("./img/blackspots.png", x = 20, y = -1.2, scale = 6)+
  draw_image("./img/cestode.png", x = 24, y = -0.5, scale = 6) +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
-    theme(legend.position="none") + labs(x = TeX(""), y = TeX("Emergence time$_{log_{2}}$"), title = "") +
-    annotate("text", x = 15, y = 1.6, label = TeX(paste0("$beta_{bs}$ = ", " -0.09 ", " 95%CI: -0.29, 0.10")), size =3, color = "#440154") + 
-  annotate("text", x = 15, y = 1.8, label = TeX(paste0("$beta_{ces}$ = "," 0.11 ", " 95%CI: -0.06, 0.39")), size=3, color = "#21918c")
+    theme(legend.position="none") + labs(x = TeX("Parasite density (no/g)"), y = TeX("Emergence time$_{log_{2}}$"), title = "") +
+    annotate("text", x = 15, y = 1.6, label = TeX(paste0("$beta_{bs}$ = ", " -0.09, ", " 95%CI = -0.29, 0.10")), size =3, color = "#440154") + 
+  annotate("text", x = 15, y = 1.8, label = TeX(paste0("$beta_{ces}$ = "," 0.11, ", " 95%CI = -0.06, 0.39")), size=3, color = "#21918c")+
+     theme(axis.text=element_text(size=16),
+        axis.title=element_text(size=16, face="bold"))
   
 #################################
 # EXPLORATION PREDICTIONS
@@ -1745,8 +1827,10 @@ n2<-ggplot(data=dat_parasite)+
   draw_image("./img/cestode.png", x = 24, y = -0.22, scale = 6) +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
     theme(legend.position="none") + labs(x = TeX("Parasite density (no/g)"), y = TeX("Surface covered (%)"), title = "") +
-  annotate("text", x = 15, y = 0.45, label = TeX(paste0("$beta_{bs}$ = ", " 0.10 ", " 95%CI: 0.09, -0.07")), size =3, color = "#440154") + 
-  annotate("text", x = 15, y = 0.47, label = TeX(paste0("$beta_{ces}$ = "," -0.11  ", " 95%CI: -0.29, 0.07")), size=3, color = "#21918c")
+  annotate("text", x = 15, y = 0.45, label = TeX(paste0("$beta_{bs}$ = ", " 0.10, ", " 95%CI = 0.09, -0.07")), size =3, color = "#440154") + 
+  annotate("text", x = 15, y = 0.47, label = TeX(paste0("$beta_{ces}$ = "," -0.11,  ", " 95%CI = -0.29, 0.07")), size=3, color = "#21918c")+ 
+  theme(axis.text=element_text(size=16),
+        axis.title=element_text(size=16, face="bold"))
 
 #################################
 # ACTIVITY PREDICTIONS
@@ -1819,15 +1903,20 @@ geom_point(mapping = aes(x = dens_ces, y = log_activity),color = "#26ABA5")+
   draw_image("./img/blackspots.png", x = 20, y = -1.5, scale = 6) +
   draw_image("./img/cestode.png", x = 24, y = -0.8, scale = 6) +
     theme(strip.background = element_rect(fill = "white", colour = "white")) +
-    theme(legend.position="none") + labs(x = TeX(""), y = TeX("Distance swam$_{log_{2}}$"), title = "") +
-      annotate("text", x = 15, y = 1.6, label = TeX(paste0("$beta_{bs}$ = ", " -0.21 ", " 95%CI: -0.39, -0.03 **")), size =3, color = "#440154") +
- annotate("text", x = 15, y = 1.8, label = TeX(paste0("$beta_{ces}$ = "," 0.05 ", " 95%CI: -0.13, 0.24")), size=3, color = "#21918c")
+    theme(legend.position="none") + labs(x = TeX("Parasite density (no/g)"), y = TeX("Distance swam$_{log_{2}}$"), title = "") +
+      annotate("text", x = 15, y = 1.6, label = TeX(paste0("$beta_{bs}$ = ", " -0.21, ", " 95%CI = -0.39, -0.03 **")), size =3, color = "#440154") +
+ annotate("text", x = 15, y = 1.8, label = TeX(paste0("$beta_{ces}$ = "," 0.05, ", " 95%CI = -0.13, 0.24")), size=3, color = "#21918c")+
+   theme(axis.text=element_text(size=16),
+        axis.title=element_text(size=16, face="bold"))
 
-p<-plot_grid(
-  n1, n2, n3,
-  labels = "AUTO", ncol = 3)
+#p<-plot_grid(
+ # n1, n2, n3,
+  #labels = "AUTO", ncol = 3)
 
-ggsave("./output/figures/fig4.png", plot = p, width = 28, height = 12, units = "cm")
+#ggsave("./output/figures/fig4.png", plot = p, width = 28, height = 12, units = "cm")
+ggsave("./output/figures/fig4.b.png", plot = n1, width = 12, height = 12, units = "cm")
+ggsave("./output/figures/fig4.ex.png", plot = n2, width = 12, height = 12, units = "cm")
+ggsave("./output/figures/fig4.act.png", plot = n3, width = 12, height = 12, units = "cm")
 
 fig4 <- image_read("./output/figures/fig4.png")
 fig4
@@ -1903,8 +1992,9 @@ k1<-ggplot(data= dat_slopes)+
   geom_vline(xintercept=0, color = "red2")+
   geom_hline(yintercept=0, color = "red2") +
       labs(y = TeX(paste0("Surface covered (%)", " Slope ", "$\\beta_{id}$")),
-           x = TeX(paste0("Emergence time$_{log_{2}}$", " Slope ", "$\\beta_{id}$")))+
-  annotate("text", x = -1, y = -0.25, label = TeX(paste0("$cor_{id}$ = ", " -0.14 ", " 95%CI: -0.76, 0.59")), size =2.5, color = "red3")
+           x = TeX(paste0("Emergence time$_{log_{2}}$", " Slope ", "$\\beta_{id}$")),
+           tag = "A")+
+  annotate("text", x = -1, y = -0.25, label = TeX(paste0("$cor_{id}$ = ", " -0.14, ", " 95%CI = -0.76, 0.59")), size =2.5, color = "red3")
 #boldness and activity E
 k2<-ggplot(data= dat_slopes)+
   theme_classic()+
@@ -1928,8 +2018,9 @@ k2<-ggplot(data= dat_slopes)+
   geom_vline(xintercept=0, color = "red2")+
   geom_hline(yintercept=0, color = "red2") +
       labs(y = TeX(paste0("Distance swam$_{log_{2}}$", " Slope ", "$\\beta_{id}$")),
-           x = TeX(paste0("Emergence time$_{log_{2}}$", " Slope ", "$\\beta_{id}$")))+
-    annotate("text", x = -1, y = -1.5, label = TeX(paste0("$cor_{id}$ = ", " -0.31 ", " 95%CI: -0.82, 0.42")), size =2.5, color = "red3")
+           x = TeX(paste0("Emergence time$_{log_{2}}$", " Slope ", "$\\beta_{id}$")),
+           tag = "B")+
+    annotate("text", x = -1, y = -1.5, label = TeX(paste0("$cor_{id}$ = ", " -0.31, ", " 95%CI = -0.82, 0.42")), size =2.5, color = "red3") 
 
 #activity and exploration E
 k3<-ggplot(data= dat_slopes)+
@@ -1954,8 +2045,9 @@ k3<-ggplot(data= dat_slopes)+
   geom_vline(xintercept=0, color = "red2")+
   geom_hline(yintercept=0, color = "red2") +
       labs(y = TeX(paste0("Distance swam$_{log_{2}}$", " Slope ", "$\\beta_{id}$")),
-           x = TeX(paste0("Surface covered (%)", " Slope ", "$\\beta_{id}$")))+
-  annotate("text", x = 0.8, y = -1.5, label = TeX(paste0("$cor_{id}$ = ", " 0.25 ", " 95%CI: -0.51, 0.80")), size =2.5, color = "red3")
+           x = TeX(paste0("Surface covered (%)", " Slope ", "$\\beta_{id}$")),
+           tag = "C")+
+  annotate("text", x = 0.8, y = -1.5, label = TeX(paste0("$cor_{id}$ = ", " 0.25, ", " 95%CI = -0.51, 0.80")), size =2.5, color = "red3")
 
  
 kk<- plot_grid(
@@ -1980,8 +2072,9 @@ k4<-ggplot(data= dat_slopes)+
   geom_vline(xintercept=0, color = "red2")+
   geom_hline(yintercept=0, color = "red2") +
      labs(x = TeX(paste0("Emergence time$_{log_{2}}$", " (personality - intercept)")),
-           y = TeX(paste0("Emergence time$_{log_{2}}$", " Slope ", " $\\beta_{id}$")))+
-  annotate("text", x = 0.6, y = -1.3, label = TeX(paste0("$cor_{id}$ = ", " -0.20 ", " 95%CI: -0.74, 0.54")), size =2.5, color = "red3")
+           y = TeX(paste0("Emergence time$_{log_{2}}$", " Slope ", " $\\beta_{id}$")),
+          tag = "D")+
+  annotate("text", x = 0.6, y = -1.3, label = TeX(paste0("$cor_{id}$ = ", " -0.20, ", " 95%CI = -0.74, 0.54")), size =2.5, color = "red3")
 
 #Exp I  vs Exp E
 k5<-ggplot(data= dat_slopes)+
@@ -2006,8 +2099,9 @@ k5<-ggplot(data= dat_slopes)+
   geom_vline(xintercept=0, color = "red2")+
   geom_hline(yintercept=0, color = "red2") +
       labs(x = TeX(paste0("Surface covered (%)", " (personality - intercept)")),
-           y = TeX(paste0("Surface covered (%)", " Slope ", " $\\beta_{id}$")))+
-  annotate("text", x = -1.0, y = -0.1, label = TeX(paste0("$cor_{id}$ = ", " -0.27 ", " 95%CI: -0.80, 0.51")), size =2.5, color = "red3")
+           y = TeX(paste0("Surface covered (%)", " Slope ", " $\\beta_{id}$")),
+           tag = "E")+
+  annotate("text", x = -1.0, y = -0.1, label = TeX(paste0("$cor_{id}$ = ", " -0.27, ", " 95%CI = -0.80, 0.51")), size =2.5, color = "red3")
 
 #act I  vs act E
 k6<-ggplot(data= dat_slopes)+
@@ -2032,14 +2126,15 @@ k6<-ggplot(data= dat_slopes)+
   geom_vline(xintercept=0, color = "red2")+
   geom_hline(yintercept=0, color = "red2") +
       labs(x = TeX(paste0("Distance swam$_{log_{2}}$", " (personality - intercept)")),
-           y = TeX(paste0("Distance swam$_{log_{2}}$", " Slope ", " $\\beta_{id}$")))+
-   annotate("text", x = -0.8, y = -1, label = TeX(paste0("$cor_{id}$ = ", " -0.49 ", " 95%CI: -0.81, 0.11")), size =2.5, color = "red3")
+           y = TeX(paste0("Distance swam$_{log_{2}}$", " Slope ", " $\\beta_{id}$")),
+           tag = "F")+
+   annotate("text", x = -0.8, y = -1, label = TeX(paste0("$cor_{id}$ = ", " -0.49, ", " 95%CI = -0.81, 0.11")), size =2.5, color = "red3")
 
 
  kkk<- plot_grid(
   k4, k5, k6, ncol = 3)
  
- lol<-plot_grid(kk,kkk,labels = "AUTO", ncol = 1)
+ lol<-plot_grid(kk,kkk, ncol = 1)
  
  ggsave("./output/figures/fig5.png", plot = lol, width = 30, height = 20, units = "cm")
 
