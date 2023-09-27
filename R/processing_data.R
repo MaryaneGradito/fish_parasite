@@ -233,7 +233,6 @@ qqline(log(all_data$boldness))
 # Test normality
 shapiro.test(log(all_data$boldness)) ## we are visually CLOSE to normality with log
 
-
 #############################
 # Last processing + save the new dataset
 #############################
@@ -262,25 +261,25 @@ write.table(dat, file = "all_data_p_T.csv",
 all_dat <- read.table("./output/all_data_p_T.csv",header=T, sep=",")
 
 dat_trial1<-all_dat  %>% 
-  select(ID_fish, trial, cage, treatment, exploration, log_boldness, log_activity, z_log_boldness, z_log_activity, z_exploration, fulton1, dens_tot, dens_ces, dens_bs2) %>% 
+  select(ID_fish, trial, cage, treatment, exploration, log_boldness, log_activity, z_log_boldness, z_log_activity, z_exploration, fulton1, dens_tot, dens_ces, BS_pre, BS_post_tot, dens_bs2) %>% 
   filter(trial == 1) %>% 
   pivot_longer("fulton1",
                values_to='body_condition') %>% arrange(ID_fish)
 
 dat_trial2<-all_dat  %>% 
-  select(ID_fish, trial, cage, treatment, exploration, log_boldness, log_activity, z_log_boldness, z_log_activity, z_exploration,fulton2, dens_tot, dens_ces, dens_bs2) %>%
+  select(ID_fish, trial, cage, treatment, exploration, log_boldness, log_activity, z_log_boldness, z_log_activity, z_exploration,fulton2, dens_tot, dens_ces, BS_pre, BS_post_tot, dens_bs2) %>%
   filter(trial == 2) %>% 
   pivot_longer("fulton2",
                values_to='body_condition') %>% arrange(ID_fish)
 
 dat_trial3<-all_dat  %>% 
-  select(ID_fish, trial, cage, treatment, exploration, log_boldness, log_activity, z_log_boldness, z_log_activity, z_exploration,fulton3, dens_tot, dens_ces, dens_bs2) %>%
+  select(ID_fish, trial, cage, treatment, exploration, log_boldness, log_activity, z_log_boldness, z_log_activity, z_exploration,fulton3, dens_tot, dens_ces, BS_pre, BS_post_tot, dens_bs2) %>%
   filter(trial == 3) %>% 
   pivot_longer("fulton3",
                values_to='body_condition') %>% arrange(ID_fish)
 
 dat_trial4<-all_dat  %>% 
-  select(ID_fish, trial, cage, treatment, exploration, log_boldness, log_activity, z_log_boldness, z_log_activity, z_exploration, fulton4, dens_tot, dens_ces, dens_bs2) %>%
+  select(ID_fish, trial, cage, treatment, exploration, log_boldness, log_activity, z_log_boldness, z_log_activity, z_exploration, fulton4, dens_tot, dens_ces, BS_pre, BS_post_tot, dens_bs2) %>%
   filter(trial == 4) %>% 
   pivot_longer("fulton4",
                values_to='body_condition') %>% arrange(ID_fish)
@@ -299,7 +298,9 @@ write.table(dat_trials, file = "dat_bc.csv",
 #Select for each group the data and scale 
 #Experimental group
 dat_6 <- dat_trials %>% filter(treatment == "E") %>%  mutate(z_bc = scale(body_condition),
-                                                            z_dens = scale(dens_tot))
+                                                            z_dens = scale(dens_tot),
+                                                            z_ces = scale(dens_ces),
+                                                            z_bs2 = scale(dens_bs2))
 #Control group
 dat_5 <- dat_trials %>% filter(treatment == "C") %>% mutate(z_bc = scale(body_condition))
 
@@ -472,10 +473,6 @@ new_data<-merge(dat_slopes, dat_change, by = "ID_fish")
 
 write.table(new_data, file = "new_data1.csv",
             sep = ",", row.names = F)
-
-
-
-
 
 
 #############################
