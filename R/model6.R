@@ -3,7 +3,7 @@
 #############################
 # Import processed data
 #############################
-  dat_E <- read.table("./output/dat_models_E.csv",header=T, sep=",")
+dat_parasite <- read.table("./output/dat_models_parasite.csv",header=T, sep=",")
 
 #############################
 # Model 6: body condition and parasite load
@@ -20,7 +20,7 @@
 
   
   model_6_1 <- brms::brm(boldness_6 + activity_6 + explore_6 + set_rescor(TRUE), 
-                       data = dat_E, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
+                       data = dat_parasite, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
                        save_pars = save_pars(), file = "./output/models/model_6_1", file_refit = "on_change",
                        control = list(adapt_delta = 0.98))
 
