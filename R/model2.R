@@ -54,7 +54,7 @@
   #############################
   # Import processed data for model2_T
   #############################
-  all_data_T <- read.table("./output/all_data_p._Tcsv",header=T, sep=",")
+  all_data_T <- read.table("./output/all_data_p_T.csv",header=T, sep=",")
   
   #look at control fish
   boxplot(all_data$exploration ~ as.factor(all_data$treatment))
@@ -75,7 +75,6 @@
                         data = all_data_T, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
                         save_pars = save_pars(), file = "./output/models/model2_T", file_refit = "on_change",
                         control = list(adapt_delta = 0.98))
-
 
 #############################
 #Model 2.2 - looking at the distribution of E and C
