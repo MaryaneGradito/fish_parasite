@@ -59,6 +59,8 @@ editor_options:
   model8<-readRDS(file = "./output/models/model_8.rds")
   model9<-readRDS(file = "./output/models/model_9.rds")
   model_T<-readRDS(file = "./output/models/model2_T.rds")
+   model_13<-readRDS(file = "./output/models/model_13.rds")
+  model_12<-readRDS(file = "./output/models/model_12.1.rds")
 
 ```
 
@@ -139,8 +141,18 @@ editor_options:
   fish_c_b <- post_sd_C_2[,grep("zlogboldness", colnames(post_sd_C_2))]^2
   cage_c_b <- post_sd_cage_2[ ,grep("zlogboldness", colnames(post_sd_cage_2))]^2
    res_c_b <- post_sd_sig_C_2[,grep("b_sigma_zlogboldness_treatmentC", colnames(post_sd_sig_C_2))]^2
-
    
+  cage_c_b_low <- round(quantile(cage_c_b[,1], c(0.025, 0.975))[1], 3)
+  cage_c_b_high<- round(quantile(cage_c_b[,1], c(0.025, 0.975))[2], 3)
+  cage_c_b_mean<-mean(cage_c_b[,1])
+
+  fish_c_b_low <- round(quantile(fish_c_b[,1], c(0.025, 0.975))[1], 3)
+  fish_c_b_high<- round(quantile(fish_c_b[,1], c(0.025, 0.975))[2], 3)
+  fish_c_b_mean<-mean(fish_c_b[,1])
+  
+  res_c_b_low <- round(quantile(res_c_b[,1], c(0.025, 0.975))[1], 3)
+  res_c_b_high <- round(quantile(res_c_b[,1], c(0.025, 0.975))[2], 3)
+    res_c_b_mean<-mean(res_c_b[,1])
   
   #repeatability
   R_C_boldness <-   fish_c_b / (fish_c_b + cage_c_b + res_c_b)
@@ -168,6 +180,14 @@ editor_options:
   cage_c_ex <- post_sd_cage_2[ ,grep("zexploration", colnames(post_sd_cage_2))]^2
    res_c_ex <- post_sd_sig_C_2[,grep("b_sigma_zexploration_treatmentC", colnames(post_sd_sig_C_2))]^2
 
+   fish_c_ex_low <- round(quantile(fish_c_ex[,1], c(0.025, 0.975))[1], 3)
+  fish_c_ex_high<- round(quantile(fish_c_ex[,1], c(0.025, 0.975))[2], 3)
+  fish_c_ex_mean<-mean(fish_c_ex[,1])
+  
+  res_c_ex_low <- round(quantile(res_c_ex[,1], c(0.025, 0.975))[1], 3)
+  res_c_ex_high <- round(quantile(res_c_ex[,1], c(0.025, 0.975))[2], 3)
+    res_c_ex_mean<-mean(res_c_ex[,1])
+   
   #repeatability
   R_C_exploration <-   fish_c_ex / (fish_c_ex + cage_c_ex + res_c_ex)
 
@@ -194,6 +214,14 @@ editor_options:
   cage_c_ac <- post_sd_cage_2[ ,grep("zlogactivity", colnames(post_sd_cage_2))]^2
   res_c_ac <- post_sd_sig_C_2[,grep("b_sigma_zlogactivity_treatmentC", colnames(post_sd_sig_C_2))]^2
 
+    fish_c_ac_low <- round(quantile(fish_c_ac[,1], c(0.025, 0.975))[1], 3)
+  fish_c_ac_high<- round(quantile(fish_c_ac[,1], c(0.025, 0.975))[2], 3)
+  fish_c_ac_mean<-mean(fish_c_ac[,1])
+  
+  res_c_ac_low <- round(quantile(res_c_ac[,1], c(0.025, 0.975))[1], 3)
+  res_c_ac_high <- round(quantile(res_c_ac[,1], c(0.025, 0.975))[2], 3)
+    res_c_ac_mean<-mean(res_c_ac[,1])
+  
   #repeatability
   R_C_activity <-   fish_c_ac / (fish_c_ac + cage_c_ac + res_c_ac)
 
@@ -226,7 +254,19 @@ editor_options:
   fish_e_b <- post_sd_E_2[,grep("zlogboldness", colnames(post_sd_E_2))]^2
   cage_e_b <- post_sd_cage_2[ ,grep("zlogboldness", colnames(post_sd_cage_2))]^2
   res_e_b <- post_sd_sig_E_2[,grep("b_sigma_zlogboldness_treatmentE", colnames(post_sd_sig_E_2))]^2
+  
+    cage_e_b_low <- round(quantile(cage_e_b[,1], c(0.025, 0.975))[1], 3)
+  cage_e_b_high<- round(quantile(cage_e_b[,1], c(0.025, 0.975))[2], 3)
+  cage_e_b_mean<-mean(cage_e_b[,1])
 
+  fish_e_b_low <- round(quantile(fish_e_b[,1], c(0.025, 0.975))[1], 3)
+  fish_e_b_high<- round(quantile(fish_e_b[,1], c(0.025, 0.975))[2], 3)
+  fish_e_b_mean<-mean(fish_e_b[,1])
+  
+  res_e_b_low <- round(quantile(res_e_b[,1], c(0.025, 0.975))[1], 3)
+  res_e_b_high <- round(quantile(res_e_b[,1], c(0.025, 0.975))[2], 3)
+    res_e_b_mean<-mean(res_e_b[,1])
+  
   #repeatability
   R_E_boldness <-   fish_e_b / (fish_e_b + cage_e_b + res_e_b)
 
@@ -240,6 +280,14 @@ editor_options:
   cage_e_ex <- post_sd_cage_2[ ,grep("zexploration", colnames(post_sd_cage_2))]^2
   res_e_ex <- post_sd_sig_E_2[,grep("b_sigma_zexploration_treatmentE", colnames(post_sd_sig_E_2))]^2
 
+    fish_e_ex_low <- round(quantile(fish_e_ex[,1], c(0.025, 0.975))[1], 3)
+  fish_e_ex_high<- round(quantile(fish_e_ex[,1], c(0.025, 0.975))[2], 3)
+  fish_e_ex_mean<-mean(fish_e_ex[,1])
+  
+  res_e_ex_low <- round(quantile(res_e_ex[,1], c(0.025, 0.975))[1], 3)
+  res_e_ex_high <- round(quantile(res_e_ex[,1], c(0.025, 0.975))[2], 3)
+    res_e_ex_mean<-mean(res_e_ex[,1])
+  
   #repeatability
   R_E_exploration <-   fish_e_ex / (fish_e_ex + cage_e_ex + res_e_ex)
 
@@ -252,6 +300,15 @@ editor_options:
   fish_e_ac <- post_sd_E_2[,grep("zlogactivity", colnames(post_sd_E_2))]^2
   cage_e_ac <- post_sd_cage_2[ ,grep("zlogactivity", colnames(post_sd_cage_2))]^2
   res_e_ac <- post_sd_sig_E_2[,grep("b_sigma_zlogactivity_treatmentE", colnames(post_sd_sig_E_2))]^2
+  
+   fish_e_ac_low <- round(quantile(fish_e_ac[,1], c(0.025, 0.975))[1], 3)
+  fish_e_ac_high<- round(quantile(fish_e_ac[,1], c(0.025, 0.975))[2], 3)
+  fish_e_ac_mean<-mean(fish_e_ac[,1])
+  
+  res_e_ac_low <- round(quantile(res_e_ac[,1], c(0.025, 0.975))[1], 3)
+  res_e_ac_high <- round(quantile(res_e_ac[,1], c(0.025, 0.975))[2], 3)
+  res_e_ac_mean<-mean(res_e_ac[,1])
+  
 
   #repeatability
   R_E_activity <-   fish_e_ac / (fish_e_ac + cage_e_ac + res_e_ac)
@@ -1094,7 +1151,7 @@ annotate("text",  x = 2.5, y = 3, label = TeX(paste0("$Contrast_{C - I}$ = 0.04,
   #labels = "AUTO", ncol = 1)
  
   m4<-plot_grid(
-  m1,m2,m3,
+  NULL, m1, m2,m3,
   labels = "AUTO", ncol = 3)
 
  ggsave("./output/figures/fig2.b.png", plot = m1, width = 15, height = 15, units = "cm")
@@ -1585,6 +1642,41 @@ x2<- ggplot(data=dat_parasite)+
     theme(legend.position="none") + labs(x = TeX("Body condition (${g/cm^{3}}$)"), y = TeX("Distance swam$_{log_{2}}$ (cm)"), title = "")+
  annotate("text", x = 0.025, y = 1.7, label = TeX(paste0("$beta_{bc}$ = "," 0.26 ", " 95%CI = 0.09, 0.43**")), size=3, color = "black")
 
+#################################
+# model 13: how co-infection affect body condition
+#################################
+dat_parasite <- read.table("./output/dat_models_parasite.csv",header=T, sep=",")
+
+ # First we want to create a design matrix.
+newdat_13 <- data.frame(intercept = 1,
+                        z_ces = seq(min(dat_parasite$z_ces), max(dat_parasite$z_ces), length.out = 100),
+                        trial = NA,
+                        z_bs_2 = 0)
+
+  #body condition for cestode density
+  pred_bc_ces_brms <- posterior_epred(model_13, re_formula = NA, newdata = newdat_13)
+  bc_ces <- pred_bc_ces_brms[,,"zbc"]
+  summ_bc_ces <- apply(pred_bc_ces_brms, 2, function(x) mean(x))
+  summ_actL95_bc_ces <- apply(pred_bc_ces_brms, 2, function(x) quantile(x, 0.025))
+  summ_actU95_bc_ces <- apply(pred_bc_ces_brms, 2, function(x) quantile(x, 0.975))
+  
+  
+  #create dataframe
+act_bc_c_dat <- cbind(newdat_13, summ_bc_ces, summ_actL95_bc_ces, summ_actU95_bc_ces)
+
+#plot
+   x3<- ggplot(data=dat_parasite)+
+  geom_point(mapping = aes(x = dens_ces, y = body_condition), shape = 16,color = "#8A05A9")+
+ geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = z_bc, y = summ_bc_ces), method =  "loess", formula = y~x, se = FALSE,lty = "solid", color = "#8A05A9", size=1) +
+  geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = z_bc, y = summ_actL95_bc_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#8A05A9", size=0.8)+
+  geom_smooth(data = act_bc_c_dat, ggplot2::aes(x = z_bc, y = summ_actU95_bc_ces), method =  "loess", formula = y~x, se = FALSE,lty = "dashed", color = "#8A05A9", size=0.8)+
+   theme_classic() +
+    #draw_image("./img/no_parasite.png", x = 0.028, y = 2.4, scale = 50) +
+    theme(strip.background = element_rect(fill = "white", colour = "white")) +
+    theme(legend.position="none") + labs(x = TeX("Body condition (${g/cm^{3}}$)"), y = TeX("Distance swam$_{log_{2}}$ (cm)"), title = "")+
+      annotate("text", x = 0.028, y = 2.4, label = TeX(paste0("$beta_{bc}$ = ", " 0.21 ", " 95%CI = 0.04, 0.39**")), size =3, color = "black") 
+
+
   
  #x<- plot_grid(
   #x1,x2,
@@ -1994,7 +2086,8 @@ k1<-ggplot(data= dat_slopes)+
       labs(y = TeX(paste0("Surface covered (%)", " Slope ", "$\\beta_{id}$")),
            x = TeX(paste0("Emergence time$_{log_{2}}$", " Slope ", "$\\beta_{id}$")),
            tag = "A")+
-  annotate("text", x = -1, y = -0.25, label = TeX(paste0("$cor_{id}$ = ", " -0.14, ", " 95%CI = -0.76, 0.59")), size =2.5, color = "red3")
+  annotate("text", x = -0.8, y = 1, label = TeX(paste0("$cor_{id}$ = ", " -0.14, ", " 95%CI = -0.76, 0.59")), size =3.8, color = "black")
+
 #boldness and activity E
 k2<-ggplot(data= dat_slopes)+
   theme_classic()+
@@ -2020,7 +2113,7 @@ k2<-ggplot(data= dat_slopes)+
       labs(y = TeX(paste0("Distance swam$_{log_{2}}$", " Slope ", "$\\beta_{id}$")),
            x = TeX(paste0("Emergence time$_{log_{2}}$", " Slope ", "$\\beta_{id}$")),
            tag = "B")+
-    annotate("text", x = -1, y = -1.5, label = TeX(paste0("$cor_{id}$ = ", " -0.31, ", " 95%CI = -0.82, 0.42")), size =2.5, color = "red3") 
+    annotate("text", x = -0.8, y = 1.2, label = TeX(paste0("$cor_{id}$ = ", " -0.31, ", " 95%CI = -0.82, 0.42")), size =3.8, color = "black") 
 
 #activity and exploration E
 k3<-ggplot(data= dat_slopes)+
@@ -2047,7 +2140,7 @@ k3<-ggplot(data= dat_slopes)+
       labs(y = TeX(paste0("Distance swam$_{log_{2}}$", " Slope ", "$\\beta_{id}$")),
            x = TeX(paste0("Surface covered (%)", " Slope ", "$\\beta_{id}$")),
            tag = "C")+
-  annotate("text", x = 0.8, y = -1.5, label = TeX(paste0("$cor_{id}$ = ", " 0.25, ", " 95%CI = -0.51, 0.80")), size =2.5, color = "red3")
+  annotate("text", x = 0.6, y = 1.2, label = TeX(paste0("$cor_{id}$ = ", " 0.25, ", " 95%CI = -0.51, 0.80")), size =3.8, color = "black")
 
  
 kk<- plot_grid(
@@ -2074,7 +2167,7 @@ k4<-ggplot(data= dat_slopes)+
      labs(x = TeX(paste0("Emergence time$_{log_{2}}$", " (personality - intercept)")),
            y = TeX(paste0("Emergence time$_{log_{2}}$", " Slope ", " $\\beta_{id}$")),
           tag = "D")+
-  annotate("text", x = 0.6, y = -1.3, label = TeX(paste0("$cor_{id}$ = ", " -0.20, ", " 95%CI = -0.74, 0.54")), size =2.5, color = "red3")
+  annotate("text", x = 0.5, y = 0.5, label = TeX(paste0("$cor_{id}$ = ", " -0.20, ", " 95%CI = -0.74, 0.54")), size =3.8, color = "black")
 
 #Exp I  vs Exp E
 k5<-ggplot(data= dat_slopes)+
@@ -2101,7 +2194,7 @@ k5<-ggplot(data= dat_slopes)+
       labs(x = TeX(paste0("Surface covered (%)", " (personality - intercept)")),
            y = TeX(paste0("Surface covered (%)", " Slope ", " $\\beta_{id}$")),
            tag = "E")+
-  annotate("text", x = -1.0, y = -0.1, label = TeX(paste0("$cor_{id}$ = ", " -0.27, ", " 95%CI = -0.80, 0.51")), size =2.5, color = "red3")
+  annotate("text", x = -0.7, y = 1, label = TeX(paste0("$cor_{id}$ = ", " -0.27, ", " 95%CI = -0.80, 0.51")), size =3.8, color = "black")
 
 #act I  vs act E
 k6<-ggplot(data= dat_slopes)+
@@ -2128,7 +2221,7 @@ k6<-ggplot(data= dat_slopes)+
       labs(x = TeX(paste0("Distance swam$_{log_{2}}$", " (personality - intercept)")),
            y = TeX(paste0("Distance swam$_{log_{2}}$", " Slope ", " $\\beta_{id}$")),
            tag = "F")+
-   annotate("text", x = -0.8, y = -1, label = TeX(paste0("$cor_{id}$ = ", " -0.49, ", " 95%CI = -0.81, 0.11")), size =2.5, color = "red3")
+   annotate("text", x = -0.5, y = 1.2, label = TeX(paste0("$cor_{id}$ = ", " -0.49, ", " 95%CI = -0.81, 0.11")), size =3.8, color = "black")
 
 
  kkk<- plot_grid(
@@ -2359,7 +2452,91 @@ dat_rep<-data.frame(
                     ,R_C_bold,R_exp_C_mean,R_act_C,R_E_bold,R_exp_E_mean,R_act_E,R_T_bold,R_T_exp,R_T_act), 
   "Lower_CI" = c(R_Blb_bold,R_Blb_exp,R_Blb_act,R_Blb_bold_C,R_Blb_exp_C,R_Blb_act_C,R_Blb_bold_E,R_Blb_exp_E,R_Blb_act_E,R_Blb_bold_T,R_Blb_exp_T,R_Blb_act_T),
   "Higher_CI" = c(R_Bub_bold,R_Bub_exp,R_Bub_act,R_Bub_bold_C,R_Bub_exp_C,R_Bub_act_C,R_Bub_bold_E,R_Bub_exp_E,R_Bub_act_E,R_Bub_bold_T,R_Bub_exp_T,R_Bub_act_T))
-  
+
+
+#FOR BOLDNESS
+dat_variance<-data.frame(
+  "Treatment"=c("Uninfected","Uninfected","Infected","Infected"),
+ "Variance_type" = c("within-individual","among-individual","within-individual","among-individual"),
+ "Variance" = c(res_c_b_mean, fish_c_b_mean, res_e_b_mean, fish_e_b_mean),
+  "low" = c(res_c_b_low, fish_c_b_low,res_e_b_low, fish_e_b_low),
+ "high" = c(res_c_b_high,fish_c_b_high, res_e_b_high, fish_e_b_high)
+ )
+
+dat_r_b<-data.frame(
+  "Treatment"=c("Uninfected1","Infected1"),
+   "Repeatability"=c(R_C_bold,R_E_bold),
+  "Lower_CI" = c(R_Blb_bold_C,R_Blb_bold_E),
+  "Higher_CI" = c(R_Bub_bold_C,R_Bub_bold_E))
+
+#variance and repeatability
+v1<-ggplot(data = dat_variance, aes(x = Treatment, y = Variance, fill = Variance_type)) +
+  geom_crossbar(aes(ymin = low, ymax = high), width = 0.5,  position = position_dodge(width = 0.7)) +
+  theme_classic() + theme(legend.position = "none") + 
+  ylab("Variance") +
+  xlab("") +
+  geom_point(data=dat_r_b, mapping=aes(x= Treatment , y= Repeatability), size=3,inherit.aes = FALSE)+
+geom_errorbar(data=dat_r_b, mapping = aes(x = Treatment, ymin= Lower_CI, ymax=Higher_CI),width = 0,inherit.aes = FALSE) +
+  scale_fill_manual(values = c("#8DDCCA","#DC8DB6")) + scale_x_discrete(limits=c("Uninfected","Uninfected1","Infected","Infected1"), labels = c("Uninfected","","Infected", ""))
+
+
+#FOR EXPLORATION
+dat_variance_exp<-data.frame(
+  "Treatment"=c("Uninfected","Uninfected","Infected","Infected"),
+ "Variance_type" = c("within-individual","among-individual","within-individual","among-individual"),
+ "Variance" = c(res_c_ex_mean, fish_c_ex_mean, res_e_ex_mean, fish_e_ex_mean),
+  "low" = c(res_c_ex_low, fish_c_ex_low,res_e_ex_low, fish_e_ex_low),
+ "high" = c(res_c_ex_high,fish_c_ex_high, res_e_ex_high, fish_e_ex_high)
+ )
+
+dat_r_exp<-data.frame(
+  "Treatment"=c("Uninfected1","Infected1"),
+   "Repeatability"=c(R_exp_C_mean,R_exp_E_mean),
+  "Lower_CI" = c(R_Blb_exp_C,R_Blb_exp_E),
+  "Higher_CI" = c(R_Bub_exp_C,R_Bub_exp_E))
+
+#variance and repeatability
+v2<-ggplot(data = dat_variance_exp, aes(x = Treatment, y = Variance, fill = Variance_type)) +
+  geom_crossbar(aes(ymin = low, ymax = high), width = 0.5, position = position_dodge(width = 0.7)) +
+  theme_classic() + theme(legend.position = "none") +
+  ylab("") +
+  xlab("Treatment") +
+  geom_point(data=dat_r_exp, mapping=aes(x= Treatment , y= Repeatability), size=3,inherit.aes = FALSE)+
+geom_errorbar(data=dat_r_exp, mapping = aes(x = Treatment, ymin= Lower_CI, ymax=Higher_CI),width = 0,inherit.aes = FALSE) +
+  scale_fill_manual(values = c("#8DDCCA","#DC8DB6")) + scale_x_discrete(limits=c("Uninfected","Uninfected1","Infected","Infected1"), labels = c("Uninfected","","Infected", ""))
+
+#FOR ACTIVITY
+dat_variance_act<-data.frame(
+  "Treatment"=c("Uninfected","Uninfected","Infected","Infected"),
+ "Variance_type" = c("within-individual","among-individual","within-individual","among-individual"),
+ "Variance" = c(res_c_ac_mean, fish_c_ac_mean, res_e_ac_mean, fish_e_ac_mean),
+  "low" = c(res_c_ac_low, fish_c_ac_low,res_e_ac_low, fish_e_ac_low),
+ "high" = c(res_c_ac_high,fish_c_ac_high, res_e_ac_high, fish_e_ac_high)
+ )
+
+dat_r_act<-data.frame(
+  "Treatment"=c("Uninfected1","Infected1"),
+   "Repeatability"=c(R_act_C,R_act_E),
+  "Lower_CI" = c(R_Blb_act_C,R_Blb_act_E),
+  "Higher_CI" = c(R_Bub_act_C,R_Bub_act_E))
+
+#variance and repeatability
+v3<-ggplot(data = dat_variance_act, aes(x = Treatment, y = Variance, fill = Variance_type)) +
+  geom_crossbar(aes(ymin = low, ymax = high), width = 0.5,  position = position_dodge(width = 0.7)) +
+  theme_classic() + theme(legend.position = "none") +
+  ylab("") +
+  xlab("") +
+  geom_point(data=dat_r_act, mapping=aes(x= Treatment , y= Repeatability), size=3,inherit.aes = FALSE) +
+geom_errorbar(data=dat_r_act, mapping = aes(x = Treatment, ymin= Lower_CI, ymax=Higher_CI),width = 0,inherit.aes = FALSE) + 
+  scale_fill_manual(values = c("#8DDCCA","#DC8DB6")) +scale_x_discrete(limits=c("Uninfected","Uninfected1","Infected","Infected1"), labels = c("Uninfected","","Infected", ""))
+
+v4<-plot_grid(
+ v1, v2, v3,
+labels = c("Boldness","Exploration","Activity"), label_size = 8,
+  align = "h", ncol = 3)
+
+
+ggsave("./output/figures/fig_var.png", plot = v4, width = 17, height = 7, units = "cm")
   
  # "Uninfected" = c(b_act_C_mean,b_exp_C_mean,act_exp_C_mean),
   #"Lower_CI_u" = c(low_b_act_C,low_b_exp_C,low_act_exp_C),
@@ -2663,17 +2840,12 @@ tab2 <- data.frame("Raw variables" = c("Emergence time (sec)", "Surface covered 
 ```
 
 ```{r}
-tab3 <- data.frame("Models" = c("Model 1", "Model 2","Model 3","Model 4","Model 5"),
-"Shyness" = c("shyness ~ 1 + treatment + (-1 + treatment |q| ID_fish) + (1|cage), sigma ~ -1 + treatment", "shyness ~ 1 + treatment + (treatment |q| ID_fish) + (1 | cage), sigma ~ -1 + treatment","shyness ~ 1 + body condition + (1|ID_fish) + (1|cage)", "shyness ~ 1 + parasite density + body condition + (1|ID_fish) + (1|cage)",
-"shyness ~ 1 + cestode density + black spot density + body condition + (1|ID_fish) + (1|cage)"),
-"Activity" = c("activity ~ 1 + treatment + (-1 + treatment |q| ID_fish) + (1|cage), sigma ~ -1 + treatment","activity ~ 1 + treatment + (treatment |q| ID_fish) + (1 | cage), sigma ~ -1 + treatment",
-"activity~ 1 + body condition + (1|ID_fish) + (1|cage)",
-"activity ~ 1 + parasite density + body condition + (1|ID_fish) + (1|cage)",
-"activity ~ 1 + cestode density + black spot density + body condition + (1|ID_fish) + (1|cage)"),
-"Exploration" = c("exploration ~ 1 + treatment + (-1 + treatment |q| ID_fish) + (1|cage), sigma ~ -1 + treatment","exploration ~ 1 + treatment + (treatment |q| ID_fish) + (1 | cage), sigma ~ -1 + treatment", "exploration~ 1 + body condition+ (1|ID_fish) + (1|cage)"," exploration ~ 1 + parasite density + body condition + (1|ID_fish) + (1|cage)",
-"exploration ~ 1 + cestode density + black spot density + body condition + (1|ID_fish) + (1|cage)"),
+tab3 <- data.frame("Models" = c("Model 1", "Model 2","Model 3","Model 4","Model 5","Model 6"),
+"Formula" = c("boldness/activity/exploration ~ 1 + treatment + (-1 + treatment |q| ID_fish) + (1|cage), sigma ~ -1 + treatment (uninfected; infected; control)","boldness/activity/exploration ~ 1 + treatment + (-1 + treatment |q| ID_fish) + (1|cage), sigma ~ -1 + treatment (uninfected;infected)", "boldness/activity/exploration ~ 1 + treatment + (treatment |q| ID_fish) + (1 | cage), sigma ~ -1 + treatment (uninfected; infected)","body condition ~ 1 + cestode density + black spot density + treatment + (1 | ID_fish) + (1 | cage) (uninfected; infected; control)", "boldness/activity/exploration ~ 1 + body condition + (1|ID_fish) + (1|cage)",
+"boldness/activity/exploration ~ 1 + cestode density + black spot density + body condition + (1|ID_fish) + (1|cage)"),
 
 check.names = FALSE)
+
 
 tab3<-gt(tab3)  %>% 
   tab_style(style = list(cell_text(weight = "bold")),
@@ -2682,7 +2854,7 @@ tab3<-gt(tab3)  %>%
     tab_style(style = cell_borders(sides = c("top", "bottom")),
           locations = list(cells_column_labels()))  %>% 
     tab_style(style = cell_borders(sides = "bottom", weight = px(2)),
-         locations =  cells_body(rows = 5))%>%
+         locations =  cells_body(rows = 6))%>%
       tab_style(style = cell_borders(sides = "bottom", weight = px(1)),
          locations =  cells_body(rows = 1))%>%
       tab_style(style = cell_borders(sides = "bottom", weight = px(0.5)),
@@ -2690,11 +2862,90 @@ tab3<-gt(tab3)  %>%
       tab_style(style = cell_borders(sides = "bottom", weight = px(0.5)),
          locations =  cells_body(rows = 3))%>%
       tab_style(style = cell_borders(sides = "bottom", weight = px(0.5)),
-         locations =  cells_body(rows = 4))
+         locations =  cells_body(rows = 4))%>%
+    tab_style(style = cell_borders(sides = "bottom", weight = px(0.5)),
+         locations =  cells_body(rows = 5))
+
 
   gtsave(tab3, filename = "tab3.html")
 
 
 ```
+
+```{r}
+tab4 <- data.frame("Variable" = c("Intercept","Cestode density","Black spot density","Trial"),
+                   "Estimate" = c("0.32±0.14","-0.30±0.10","-0.15±0.10","-0.63±0.13"),
+                    "CI95" = c("[0.05, 0.58]","[-0.49, -0.10]**","[ -0.35, 0.04]","[-0.90, -0.37]"),
+                  "Rhat" = c(1.00,1.00,1.00,1.00))
+
+tab4<-gt(tab4)  %>% 
+  tab_style(style = list(cell_text(weight = "bold")),
+          locations = list(cells_column_labels())) %>% 
+    opt_table_lines(extent = "none")  %>% 
+    tab_style(style = cell_borders(sides = c("top", "bottom")),
+          locations = list(cells_column_labels()))  %>% 
+    tab_style(style = cell_borders(sides = "bottom", weight = px(2)),
+         locations =  cells_body(rows = 4))
+
+  gtsave(tab4, filename = "tab4.html")
+```
+
+```{r}
+tab5 <- data.frame("Variable" = c("Intercept","Cestode density","Black spot density","Infected","Control"),
+                   "Estimate" = c("-0.15±0.14","-0.18±0.07","-0.13±0.08","0.30±0.17","0.27±0.26"),
+                    "CI95" = c("[-0.44, 0.14]","[-0.33, -0.04]**","[-0.28, 0.02]","[-0.04, 0.64]","[-0.23, 0.77]"),
+                  "Rhat" = c(1.00,1.00,1.00,1.00,1.00))
+
+tab5<-gt(tab5)  %>% 
+  tab_style(style = list(cell_text(weight = "bold")),
+          locations = list(cells_column_labels())) %>% 
+    opt_table_lines(extent = "none")  %>% 
+    tab_style(style = cell_borders(sides = c("top", "bottom")),
+          locations = list(cells_column_labels()))  %>% 
+    tab_style(style = cell_borders(sides = "bottom", weight = px(2)),
+         locations =  cells_body(rows = 5))
+
+  gtsave(tab5, filename = "tab5.html")
+
+```
+
+```{r}
+tab6 <- data.frame("Response variable" = c("Boldness", "Exploration","Activity","Boldness", "Exploration","Activity","Boldness", "Exploration","Activity"),
+"Interaction" = c("Black spot*cestode", "Black spot*body condition","Cestode*body condition","Black spot*cestode", "Black spot*body condition","Cestode*body condition","Black spot*cestode", "Black spot*body condition","Cestode*body condition"),
+"Estimate" = c("0.01±0.11","0.17±0.10","0.02±0.11","0.06±0.11","-0.03±0.09","-0.11±0.10","0.11±0.14","-0.10±0.12","0.07±0.13"),
+"95IC"= c("[-0.20,0.24]","[-0.03,0.37]","[-0.20, 0.24]","[-0.15,0.28]","[-0.21,0.16]","[-0.31,0.08]","[-0.16,0.38]","[-0.34,0.13]","[-0.18,0.32]"),
+
+check.names = FALSE)
+
+tab6<-gt(tab6)  %>% 
+  tab_style(style = list(cell_text(weight = "bold")),
+          locations = list(cells_column_labels())) %>% 
+    opt_table_lines(extent = "none")  %>% 
+    tab_style(style = cell_borders(sides = c("top", "bottom")),
+          locations = list(cells_column_labels()))  %>% 
+    tab_style(style = cell_borders(sides = "bottom", weight = px(2)),
+         locations =  cells_body(rows = 9))%>%
+      tab_style(style = cell_borders(sides = "bottom", weight = px(1)),
+         locations =  cells_body(rows = 1))%>%
+      tab_style(style = cell_borders(sides = "bottom", weight = px(0.5)),
+         locations =  cells_body(rows = 2))%>%
+      tab_style(style = cell_borders(sides = "bottom", weight = px(0.5)),
+         locations =  cells_body(rows = 3))%>%
+      tab_style(style = cell_borders(sides = "bottom", weight = px(0.5)),
+         locations =  cells_body(rows = 4))%>%
+      tab_style(style = cell_borders(sides = "bottom", weight = px(0.5)),
+         locations =  cells_body(rows = 5))%>%
+    tab_style(style = cell_borders(sides = "bottom", weight = px(0.5)),
+         locations =  cells_body(rows = 6))%>%
+    tab_style(style = cell_borders(sides = "bottom", weight = px(0.5)),
+         locations =  cells_body(rows = 7))%>%
+    tab_style(style = cell_borders(sides = "bottom", weight = px(0.5)),
+         locations =  cells_body(rows = 8))%>%
+    tab_style(style = cell_borders(sides = "bottom", weight = px(0.5)),
+         locations =  cells_body(rows = 9))
+
+
+```
+
 
 ## References
