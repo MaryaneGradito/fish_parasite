@@ -8,6 +8,7 @@ dat_bc <- read.table("./output/dat_bc.csv",header=T, sep=",")
 
 #for model 13
 dat_parasite <- read.table("./output/dat_models_parasite.csv",header=T, sep=",")
+dat_parasite$trial<-as.factor(dat_parasite$trial)
 
 #explore relationship between parasite density and body condition
 plot(as.factor(dat_parasite$trial),dat_parasite$body_condition)
@@ -25,7 +26,7 @@ pacman::p_load(lme4, rstan, tidyverse, StanHeaders, jsonlite, rstantools, brms, 
 
 ### Model 12:
 
-body_condition <- bf(z_bc ~ 1 + z_ces + z_bs2 + trial + (1 | ID_fish) + (1 | cage)) + gaussian()
+body_condition <- bf(z_bc ~ 1 + z_ces + z_bs2 + treatment + (1 | ID_fish) + (1 | cage)) + gaussian()
 
 model_12.1 <- brms::brm(body_condition, 
                        data = dat_bc, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
