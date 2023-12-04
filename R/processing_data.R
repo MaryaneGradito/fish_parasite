@@ -534,14 +534,19 @@ all_data <- read.table("./output/dat_models_C.csv",header=T, sep=",")
 
 all_dat <- read.table("./output/all_data_p.csv",header=T, sep=",")
 
-subset_E <- all_dat %>% filter(treatment == "E")
-subset_C <- all_dat %>% filter(treatment == "C")
+all_dat$trial[all_dat$trial %in% c("1","2")] <- "Before"
+all_dat$trial[all_dat$trial %in% c("3","4")] <- "After"
 
 #DATA BEFORE FOR BOLDNESS
-dat_before_bold<- subset_C  %>% 
-  select(ID_fish, cage, treatment, z_log_boldness) %>%
-  pivot_longer("z_log_boldness",
-               values_to='before_bold') %>% arrange(ID_fish)
+dat_before_bold<- all_dat  %>% 
+  select(ID_fish, cage, trial, z_log_boldness) %>%
+  pivot_wider(names_from = "trial", values_from = "z_log_boldness") %>% arrange(ID_fish)
+  
+
+
+
+dat_before_bold <- dat_before_bold_set %>% pivot_longer(cols = c(Before, After), names_to = "trial", values_to = "z_log_boldness") %>% arrange(ID_fish)
+
 
 #DATA AFTER FOR BOLDNESS
 dat_after_bold<- subset_E  %>% 
