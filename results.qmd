@@ -2231,7 +2231,7 @@ v1<-ggplot(data = dat_variance, aes(x = Treatment, y = Variance, fill = Variance
   xlab("") +
   geom_point(data=dat_r_b, mapping=aes(x= Treatment , y= Repeatability), size=3,inherit.aes = FALSE)+
 geom_errorbar(data=dat_r_b, mapping = aes(x = Treatment, ymin= Lower_CI, ymax=Higher_CI),width = 0,inherit.aes = FALSE) +
-  scale_fill_manual(values = c("#8DDCCA","#DC8DB6")) + scale_x_discrete(limits=c("Uninfected","Uninfected1","Infected","Infected1"), labels = c("Uninfected","","Infected", ""))
+  scale_fill_manual(values = c("white","darkgrey")) + scale_x_discrete(limits=c("Uninfected","Uninfected1","Infected","Infected1"), labels = c("Uninfected","","Infected", ""))
 
 
 #FOR EXPLORATION
@@ -2257,7 +2257,7 @@ v2<-ggplot(data = dat_variance_exp, aes(x = Treatment, y = Variance, fill = Vari
   xlab("Treatment") +
   geom_point(data=dat_r_exp, mapping=aes(x= Treatment , y= Repeatability), size=3,inherit.aes = FALSE)+
 geom_errorbar(data=dat_r_exp, mapping = aes(x = Treatment, ymin= Lower_CI, ymax=Higher_CI),width = 0,inherit.aes = FALSE) +
-  scale_fill_manual(values = c("#8DDCCA","#DC8DB6")) + scale_x_discrete(limits=c("Uninfected","Uninfected1","Infected","Infected1"), labels = c("Uninfected","","Infected", ""))
+  scale_fill_manual(values = c("white","darkgrey")) + scale_x_discrete(limits=c("Uninfected","Uninfected1","Infected","Infected1"), labels = c("Uninfected","","Infected", ""))
 
 #FOR ACTIVITY
 dat_variance_act<-data.frame(
@@ -2282,7 +2282,7 @@ v3<-ggplot(data = dat_variance_act, aes(x = Treatment, y = Variance, fill = Vari
   xlab("") +
   geom_point(data=dat_r_act, mapping=aes(x= Treatment , y= Repeatability), size=3,inherit.aes = FALSE) +
 geom_errorbar(data=dat_r_act, mapping = aes(x = Treatment, ymin= Lower_CI, ymax=Higher_CI),width = 0,inherit.aes = FALSE) + 
-  scale_fill_manual(values = c("#8DDCCA","#DC8DB6")) +scale_x_discrete(limits=c("Uninfected","Uninfected1","Infected","Infected1"), labels = c("Uninfected","","Infected", ""))
+  scale_fill_manual(values = c("white","darkgrey")) +scale_x_discrete(limits=c("Uninfected","Uninfected1","Infected","Infected1"), labels = c("Uninfected","","Infected", ""))
 
 v4<-plot_grid(
  v1, v2, v3,
