@@ -534,17 +534,18 @@ all_data <- read.table("./output/dat_models_C.csv",header=T, sep=",")
 
 all_dat <- read.table("./output/all_data_p.csv",header=T, sep=",")
 
+subset_E <- all_dat %>% filter(treatment == "E")
+subset_C <- all_dat %>% filter(treatment == "C")
+
 #DATA BEFORE FOR BOLDNESS
-dat_before_bold<-all_dat  %>% 
-  select(ID_fish, trial, cage, treatment, log_boldness, z_log_boldness, dens_tot, dens_ces, dens_bs2) %>%
-  filter(treatment == "C") %>% 
+dat_before_bold<- subset_C  %>% 
+  select(ID_fish, cage, treatment, z_log_boldness) %>%
   pivot_longer("z_log_boldness",
                values_to='before_bold') %>% arrange(ID_fish)
 
 #DATA AFTER FOR BOLDNESS
-dat_after_bold<-all_dat  %>% 
-  select(ID_fish, trial, cage, treatment, log_boldness, z_log_boldness, dens_tot, dens_ces, dens_bs2) %>%
-  filter(treatment == "E") %>% 
+dat_after_bold<- subset_E  %>% 
+  select(ID_fish, cage, treatment, z_log_boldness) %>%
   pivot_longer("z_log_boldness",
                values_to='after_bold') %>% arrange(ID_fish)
 
@@ -565,6 +566,7 @@ combined_data_bold <- bind_rows(
     select(c(ID_fish, unique_columns_after, common_columns))
 ) %>% 
   arrange(ID_fish)
+
 
 write.table(combined_data_bold, file = "dat_bold.csv",
             sep = ",", row.names = F)
