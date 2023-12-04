@@ -1,7 +1,7 @@
 #############################
 # Import raw data
 #############################
-all_data <- read.table("./data_raw/all_data_T.csv",header=T, sep=";")
+all_data <- read.table("./data_raw/all_data.csv",header=T, sep=";")
 all_data
 
 #############################
@@ -250,7 +250,7 @@ dat <- dat %>%
                 z_exploration = scale(exploration), tank1 = as.factor(bassin_bold), tank2 = as.factor(bassin_exp),(id = ID_fish))
 
 ###Save the new dataset with processed data
-write.table(dat, file = "all_data_p_T.csv",
+write.table(dat, file = "all_data_p.csv",
             sep = ",", row.names = F)
 
 #############################
@@ -258,7 +258,7 @@ write.table(dat, file = "all_data_p_T.csv",
 #############################
 #pivot data for each trial
 #we need parasite density z-transform and body condition z-transform for the next model
-all_dat <- read.table("./output/all_data_p_T.csv",header=T, sep=",")
+all_dat <- read.table("./output/all_data_p.csv",header=T, sep=",")
 
 dat_trial1<-all_dat  %>% 
   select(ID_fish, trial, cage, treatment, exploration, log_boldness, log_activity, z_log_boldness, z_log_activity, z_exploration, fulton1, dens_tot, dens_ces, BS_pre, BS_post_tot, dens_bs2) %>% 
@@ -524,4 +524,118 @@ write.table(dat_6, file = "dat_models_E.csv",
             sep = ",", row.names = F)
 
 write.table(dat_5, file = "dat_models_C.csv",
+            sep = ",", row.names = F)
+
+all_data <- read.table("./output/dat_models_C.csv",header=T, sep=",")
+
+#############################
+# Bivariate models
+#############################
+
+all_dat <- read.table("./output/all_data_p.csv",header=T, sep=",")
+
+#DATA BEFORE FOR BOLDNESS
+dat_before_bold<-all_dat  %>% 
+  select(ID_fish, trial, cage, treatment, log_boldness, z_log_boldness, dens_tot, dens_ces, dens_bs2) %>%
+  filter(treatment == "C") %>% 
+  pivot_longer("z_log_boldness",
+               values_to='before_bold') %>% arrange(ID_fish)
+
+#DATA AFTER FOR BOLDNESS
+dat_after_bold<-all_dat  %>% 
+  select(ID_fish, trial, cage, treatment, log_boldness, z_log_boldness, dens_tot, dens_ces, dens_bs2) %>%
+  filter(treatment == "E") %>% 
+  pivot_longer("z_log_boldness",
+               values_to='after_bold') %>% arrange(ID_fish)
+
+# Identify common columns
+common_columns <- intersect(names(dat_before_bold), names(dat_after_bold))
+
+# Identify unique columns in dat_before_bold
+unique_columns_before <- setdiff(names(dat_before_bold), common_columns)
+
+# Identify unique columns in dat_after_bold
+unique_columns_after <- setdiff(names(dat_after_bold), common_columns)
+
+# Use rbind on common columns and include unique columns
+combined_data_bold <- bind_rows(
+  dat_before_bold %>%
+    select(c(ID_fish, unique_columns_before, common_columns)),
+  dat_after_bold %>%
+    select(c(ID_fish, unique_columns_after, common_columns))
+) %>% 
+  arrange(ID_fish)
+
+write.table(combined_data_bold, file = "dat_bold.csv",
+            sep = ",", row.names = F)
+
+
+#DATA BEFORE FOR EXPLORATION
+dat_before_exp<-all_dat  %>% 
+  select(ID_fish, trial, cage, treatment, exploration, z_exploration, dens_tot, dens_ces, dens_bs2) %>%
+  filter(treatment == "C") %>% 
+  pivot_longer("z_exploration",
+               values_to='before_exp') %>% arrange(ID_fish)
+
+#DATA AFTER FOR EXPLORATION
+dat_after_exp<-all_dat  %>% 
+  select(ID_fish, trial, cage, treatment, exploration, z_exploration, dens_tot, dens_ces, dens_bs2) %>%
+  filter(treatment == "E") %>% 
+  pivot_longer("z_exploration",
+               values_to='after_exp') %>% arrange(ID_fish)
+
+# Identify common columns
+common_columns <- intersect(names(dat_before_exp), names(dat_after_exp))
+
+# Identify unique columns in dat_before_bold
+unique_columns_before <- setdiff(names(dat_before_exp), common_columns)
+
+# Identify unique columns in dat_after_bold
+unique_columns_after <- setdiff(names(dat_after_exp), common_columns)
+
+# Use rbind on common columns and include unique columns
+combined_data_exp <- bind_rows(
+  dat_before_exp %>%
+    select(c(ID_fish, unique_columns_before, common_columns)),
+  dat_after_exp %>%
+    select(c(ID_fish, unique_columns_after, common_columns))
+) %>% 
+  arrange(ID_fish)
+
+write.table(combined_data_exp, file = "dat_exp.csv",
+            sep = ",", row.names = F)
+
+#DATA BEFORE FOR ACTIVITY
+dat_before_act<-all_dat  %>% 
+  select(ID_fish, trial, cage, treatment, log_activity, z_log_activity, dens_tot, dens_ces, dens_bs2) %>%
+  filter(treatment == "C") %>% 
+  pivot_longer("z_log_activity",
+               values_to='before_act') %>% arrange(ID_fish)
+
+#DATA AFTER FOR ACTIVITY
+dat_after_act<-all_dat  %>% 
+  select(ID_fish, trial, cage, treatment, log_activity, z_log_activity, dens_tot, dens_ces, dens_bs2) %>%
+  filter(treatment == "E") %>% 
+  pivot_longer("z_log_activity",
+               values_to='after_act') %>% arrange(ID_fish)
+
+# Identify common columns
+common_columns <- intersect(names(dat_before_act), names(dat_after_act))
+
+# Identify unique columns in dat_before_bold
+unique_columns_before <- setdiff(names(dat_before_act), common_columns)
+
+# Identify unique columns in dat_after_bold
+unique_columns_after <- setdiff(names(dat_after_act), common_columns)
+
+# Use rbind on common columns and include unique columns
+combined_data_act <- bind_rows(
+  dat_before_act %>%
+    select(c(ID_fish, unique_columns_before, common_columns)),
+  dat_after_act %>%
+    select(c(ID_fish, unique_columns_after, common_columns))
+) %>% 
+  arrange(ID_fish)
+
+write.table(combined_data_act, file = "dat_act.csv",
             sep = ",", row.names = F)
