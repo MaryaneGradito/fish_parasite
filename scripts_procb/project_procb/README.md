@@ -1,5 +1,4 @@
-Data and R code for: Gradito,M., Dubois, F., Noble, DWA. & Binning, SAB. (in prep). Double trouble? Parasitic co-infection reduces body condition and activity levels in pumpkinseed sunfish
-For questions or to notify the authors if any errors are identified in the script or data, please contact Maryane Gradito (maryane.gradito@umontreal.ca) or Sandra Binning (sandra.ann.binning@umontreal.ca).
+Data and R code for: Double trouble? Parasitic co-infection reduces body condition and activity levels in pumpkinseed sunfish
 
 ## About The Project
 
@@ -16,8 +15,8 @@ This type of data structure could apply to researchers working on a wide range o
 ### Key File Description
 
 1. all_data_T.csv : raw data collected
-2. meta_data.csv : detailled description of each variable 
+2. meta_data.csv : detailed description of each variable 
 3. func.r : functions needed for the R code
-4. script: R code 
-
+4. script: R code including models and figures
+5. All files named "Cromwell" are used to create a map of the lake. + quai.csv is the dock entry point coordonates. 
 
