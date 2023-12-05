@@ -250,7 +250,7 @@ dat <- dat %>%
                 z_exploration = scale(exploration), tank1 = as.factor(bassin_bold), tank2 = as.factor(bassin_exp),(id = ID_fish))
 
 ###Save the new dataset with processed data
-write.table(dat, file = "all_data_p.csv",
+write.table(dat, file = "all_data_p2.csv",
             sep = ",", row.names = F)
 
 #############################
@@ -532,21 +532,52 @@ all_data <- read.table("./output/dat_models_C.csv",header=T, sep=",")
 # Bivariate models
 #############################
 
-all_dat <- read.table("./output/all_data_p.csv",header=T, sep=",")
+all_dat <- read.table("./output/all_data_p2.csv",header=T, sep=",")
 
-all_dat$trial[all_dat$trial %in% c("1","2")] <- "Before"
-all_dat$trial[all_dat$trial %in% c("3","4")] <- "After"
+all_dat$trial[all_dat$trial %in% c("1", "2")] <- 1
+all_dat$trial[all_dat$trial %in% c("3", "4")] <- 2
+
+dat_before_bold<- all_dat  %>% 
+  select(ID_fish, cage, trial, z_log_boldness) %>%
+  mutate(trial_type = ifelse(trial %in% "1", "before", "after"))  %>% 
+  pivot_wider(names_from = "trial_type", values_from = "z_log_boldness") %>% arrange(ID_fish)
+
+#dat2 <- dat_before_bold %>% pivot_longer(cols = c("before", "after"), names_to = "trial_type", values_to = "z_log_boldness") %>% arrange(ID_fish)
+
+dat2 <- dat_before_bold %>%
+  group_by(ID_fish) %>%
+  separate(c("before","after"), into = c("before", "after"), sep = ",", convert = TRUE)
+ungroup()
+
+# Separate the values into two columns within each group of ID_fish
+dat2 <- dat2 %>%
+  separate(value_pair, into = c("value1", "value2"), sep = ",", convert = TRUE)
+
 
 #DATA BEFORE FOR BOLDNESS
 dat_before_bold<- all_dat  %>% 
+  select(ID_fish, cage, trial, z_log_boldness) %>% mutate(trial_type = ifelse(trial %in% "1", "before", "after"))
+
+dat_trial<- dat_before_bold %>%
+  pivot_wider(names_from = "trial_type", values_from = "z_log_boldness") %>% arrange(ID_fish)
+
+
+all_dat <- read.table("./output/all_data_p2.csv", header = TRUE, sep = ",")
+
+########
+
+all_dat$trial[all_dat$trial %in% c("1", "2")] <- 1
+all_dat$trial[all_dat$trial %in% c("3", "4")] <- 2
+
+#DATA BEFORE FOR BOLDNESS
+dat_before_bold <- all_dat %>%
   select(ID_fish, cage, trial, z_log_boldness) %>%
-  pivot_wider(names_from = "trial", values_from = "z_log_boldness") %>% arrange(ID_fish)
-  
+  mutate(trial_type = ifelse(trial %in% "1", "before", "after"))
 
+dat_trial <- dat_before_bold %>%
+  group_by(ID_fish, trial_type) 
 
-
-dat_before_bold <- dat_before_bold_set %>% pivot_longer(cols = c(Before, After), names_to = "trial", values_to = "z_log_boldness") %>% arrange(ID_fish)
-
+dat_trial <- spread(dat_trial, key = trial_type, value = z_log_boldness)
 
 #DATA AFTER FOR BOLDNESS
 dat_after_bold<- subset_E  %>% 
