@@ -20,30 +20,32 @@
 
 ### Model 2: without tank effect
 
-  boldness_2 <- bf(z_log_boldness ~ 1 + treatment + (-1 + treatment |q| ID_fish) + (1 | cage),
+  boldness_2 <- bf(z_log_boldness ~ 1 + treatment + (-1 + treatment |q| ID_fish) + (1 | cage) + (1 | date_bold),
                   sigma ~ -1 + treatment) + gaussian()
-  activity_2 <- bf(z_log_activity ~ 1 + treatment + (-1 + treatment |q| ID_fish) + (1 | cage),
+  activity_2 <- bf(z_log_activity ~ 1 + treatment + (-1 + treatment |q| ID_fish) + (1 | cage)+ (1 | date_act),
                   sigma ~ -1 + treatment) + gaussian()
-  explore_2 <- bf(z_exploration ~ 1 + treatment + (-1 + treatment |q| ID_fish) + (1 | cage),
+  explore_2 <- bf(z_exploration ~ 1 + treatment + (-1 + treatment |q| ID_fish) + (1 | cage)+ (1 | date_act),
                   sigma ~ -1 + treatment) + gaussian()
 
 
-  model2 <- brms::brm(boldness_2 + activity_2 + explore_2 + set_rescor(TRUE), 
+  model2_date <- brms::brm(boldness_2 + activity_2 + explore_2 + set_rescor(TRUE), 
                       data = all_data, iter = 6000, warmup = 2000, chains = 4, cores = 4, 
-                      save_pars = save_pars(), file = "./output/models/model2", file_refit = "on_change",
+                      save_pars = save_pars(), file = "./output/models/model2_date", file_refit = "on_change",
                       control = list(adapt_delta = 0.98))
   
   # Compare models  
-  model2 <- add_criterion(model2 , c("loo", "waic"), moment_match = TRUE)
+  model2_date <- add_criterion(model2_date , c("loo", "waic"), moment_match = TRUE)
   
-  saveRDS(model2, file = "./output/models/model2.rds")
+  saveRDS(model2_date, file = "./output/models/model2_date.rds")
   
-  # Compare model 1 and 2: should we keep tank effect ? 
+  # Compare model 1 and 2: should we keep tank effect and day effect? 
   
   model1 <- readRDS(file = "./output/models/model1.rds")
   model2 <- readRDS(file = "./output/models/model2.rds")
   
-  loo(model1, model2)
+  
+  
+  loo(model1, model2,model2_date)
   
   # Look at the MCMC chains.
   plot(model2)
