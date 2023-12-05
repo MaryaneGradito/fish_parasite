@@ -2385,9 +2385,9 @@ fig9
 
 tab1 <- data.frame(Trait = c("Log emergence time (sec)", "Surface covered (%)","Log distance swam (cm)"), 
 "Overall" = c(R_bold_mean, R_exp_mean, R_act_mean),
-"95% CI (O)" = c("[0.007, 0.362]","[0.019, 0.437]","[0.095, 0.497]**"),
+"95% CI (O)" = c("[0.007, 0.362]","[0.019, 0.437]","[0.095, 0.497]"),
 "Uninfected" = c(mean(R_C_boldness[,1]), mean(R_C_exploration[,1]), mean(R_C_activity[,1])), 
-"95% CI (U)" = c("[0.010, 0.366]","[0.106, 0.468]**","[0.160, 0.516]**"),
+"95% CI (U)" = c("[0.010, 0.366]","[0.106, 0.468]","[0.160, 0.516]"),
 "Infected" = c(mean(R_E_boldness[,1]), mean(R_E_exploration[,1]), mean(R_E_activity[,1])),
 "95% CI (I)" = c("[0.003, 0.388]","[0.004, 0.433]","[0.047, 0.515]"), 
 "Control" = c(R_T_bold, R_T_exp,R_T_act),
